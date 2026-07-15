@@ -1,0 +1,152 @@
+import { useMemo, useState } from 'react';
+import type { Cargo, AccionLogro } from '../types';
+import CargoPicker from './CargoPicker';
+import { CLASIFICACIONES } from '../data/seed';
+import { normalizeClasificacion } from '../utils';
+
+interface Props {
+  cargos: Cargo[];
+  accionesLogros: AccionLogro[];
+  onToggle: (cargoId: string, accionLogroId: string) => void;
+  onAdd: (accion: string, logro: string, clasificacion: string) => void;
+}
+
+export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, onAdd }: Props) {
+  const [cargoId, setCargoId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [accion, setAccion] = useState('');
+  const [logro, setLogro] = useState('');
+  const [clasificacion, setClasificacion] = useState(CLASIFICACIONES[0]);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? null, [cargos, cargoId]);
+
+  // Solo se listan las acciones/logros que pertenecen a la clasificación del
+  // cargo seleccionado. Las que ya estaban asignadas se siguen mostrando
+  // aunque su clasificación no calce, para no ocultar asignaciones previas.
+  const disponibles = useMemo(() => {
+    if (!cargo) return [];
+    const clasifCargo = normalizeClasificacion(cargo.clasificacion);
+    return accionesLogros.filter(
+      (al) =>
+        normalizeClasificacion(al.clasificacion) === clasifCargo ||
+        cargo.accionLogroIds.includes(al.id)
+    );
+  }, [accionesLogros, cargo]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (q === '') return disponibles;
+    return disponibles.filter(
+      (al) => al.accion.toLowerCase().includes(q) || al.logro.toLowerCase().includes(q)
+    );
+  }, [disponibles, search]);
+
+  function flash(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 1400);
+  }
+
+  function submitNew(e: React.FormEvent) {
+    e.preventDefault();
+    if (!accion.trim()) return;
+    onAdd(accion.trim(), logro.trim(), clasificacion);
+    setAccion('');
+    setLogro('');
+    setClasificacion(CLASIFICACIONES[0]);
+    setShowForm(false);
+    flash('Acción y logro agregados al catálogo');
+  }
+
+  return (
+    <div className="view">
+      <header className="view-header view-header-row">
+        <div>
+          <h1>Acciones y Logros</h1>
+          <p>Elige nivel, clasificación y cargo, luego marca las acciones (con su logro esperado) que le correspondan.</p>
+        </div>
+        <button className="btn-secondary" onClick={() => setShowForm(true)}>+ Nueva acción y logro</button>
+      </header>
+
+      <CargoPicker cargos={cargos} selectedCargoId={cargoId} onSelectCargo={setCargoId} />
+
+      {toast && <div className="toast">{toast}</div>}
+
+      {cargo && (
+        <div className="asignar-items-panel" style={{ marginTop: 20 }}>
+          <div className="asignar-items-head">
+            <div>
+              <div className="detail-panel-nivel">{cargo.clasificacion}</div>
+              <h2>{cargo.nombre}</h2>
+            </div>
+            <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
+          </div>
+
+          <input
+            type="text"
+            placeholder="Buscar en el catálogo de acciones..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ marginBottom: 14, width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid var(--border)' }}
+          />
+
+          <div className="asignar-item-list">
+            {disponibles.length === 0 && (
+              <div className="empty-hint" style={{ padding: 24 }}>
+                No hay acciones/logros para la clasificación "{cargo.clasificacion}". Créalas con el botón "+ Nueva acción y logro".
+              </div>
+            )}
+            {filtered.map((al) => {
+              const checked = cargo.accionLogroIds.includes(al.id);
+              return (
+                <label key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
+                  <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} />
+                  <div>
+                    <div className="asignar-item-accion">{al.accion}</div>
+                    <div className="asignar-item-meta">
+                      <span><strong>Logro:</strong> {al.logro || '—'}</span>
+                    </div>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {showForm && (
+        <div className="detail-overlay" onClick={() => setShowForm(false)}>
+          <div className="detail-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="detail-panel-head">
+              <h2>Nueva acción y logro</h2>
+              <button className="icon-btn" onClick={() => setShowForm(false)}>✕</button>
+            </div>
+            <form className="form" onSubmit={submitNew}>
+              <label>
+                Acción
+                <textarea required rows={2} value={accion} onChange={(e) => setAccion(e.target.value)} />
+              </label>
+              <label>
+                Logro
+                <textarea rows={2} value={logro} onChange={(e) => setLogro(e.target.value)} />
+              </label>
+              <label>
+                Clasificación
+                <select value={clasificacion} onChange={(e) => setClasificacion(e.target.value)}>
+                  {CLASIFICACIONES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </label>
+              <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancelar</button>
+                <button type="submit" className="btn-primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

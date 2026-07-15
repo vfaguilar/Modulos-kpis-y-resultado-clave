@@ -1,0 +1,2097 @@
+[
+  {
+    "id": "rc-1",
+    "texto": "Alta satisfacción del cliente",
+    "kpis": [
+      {
+        "id": "kpi-1",
+        "texto": "Nivel de satisfacción del cliente"
+      },
+      {
+        "id": "kpi-2",
+        "texto": "NPS / Satisfacción de clientes corporativos."
+      },
+      {
+        "id": "kpi-3",
+        "texto": "Nivel de satisfacción de clientes (NPS)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-2",
+    "texto": "Aportar al flujo de prospectos",
+    "kpis": [
+      {
+        "id": "kpi-4",
+        "texto": "Generación de leads (oportunidades comerciales)"
+      },
+      {
+        "id": "kpi-5",
+        "texto": "Flujo de Caja (Cash Flow)"
+      },
+      {
+        "id": "kpi-6",
+        "texto": "Reclamos asociados al proceso de reparación."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-3",
+    "texto": "Apoyar al vendedor asesorando en negociación",
+    "kpis": [
+      {
+        "id": "kpi-7",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-8",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-9",
+        "texto": "Cumplimiento de presupuesto de ventas (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-4",
+    "texto": "Asegurar alineación comercial",
+    "kpis": [
+      {
+        "id": "kpi-10",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-11",
+        "texto": "Tiempo de respuesta a solicitudes comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-5",
+    "texto": "Asegurar continuidad operativa",
+    "kpis": [
+      {
+        "id": "kpi-12",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-13",
+        "texto": "Cumplimiento de procesos administrativos"
+      },
+      {
+        "id": "kpi-14",
+        "texto": "Errores en procesos y bonos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-6",
+    "texto": "Asegurar conversión efectiva",
+    "kpis": [
+      {
+        "id": "kpi-15",
+        "texto": "Tasa de cierre, conversión y venta cruzada"
+      },
+      {
+        "id": "kpi-16",
+        "texto": "Efectividad de cierre (conversion rate)"
+      },
+      {
+        "id": "kpi-17",
+        "texto": "Tasa de cierre"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-7",
+    "texto": "Asegurar correcta secuencia de trabajos",
+    "kpis": [
+      {
+        "id": "kpi-18",
+        "texto": "Tiempos de ciclo por trabajo"
+      },
+      {
+        "id": "kpi-19",
+        "texto": "Cumplimiento de procesos administrativos"
+      },
+      {
+        "id": "kpi-20",
+        "texto": "Reclamos asociados al proceso de reparación."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-8",
+    "texto": "Asegurar crecimiento sostenible",
+    "kpis": [
+      {
+        "id": "kpi-21",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-22",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-23",
+        "texto": "Market Share segmento flotas y camiones"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-9",
+    "texto": "Asegurar crecimiento sostenido",
+    "kpis": [
+      {
+        "id": "kpi-24",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-25",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-26",
+        "texto": "Market Share segmento flotas y camiones"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-10",
+    "texto": "Asegurar cumplimiento de tiempos",
+    "kpis": [
+      {
+        "id": "kpi-27",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-28",
+        "texto": "Tiempos de respuesta a clientes"
+      },
+      {
+        "id": "kpi-29",
+        "texto": "Tiempos de ciclo por trabajo"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-11",
+    "texto": "Asegurar desempeño sostenido",
+    "kpis": [
+      {
+        "id": "kpi-30",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-31",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      },
+      {
+        "id": "kpi-32",
+        "texto": "Apoyo al cumplimiento de metas."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-12",
+    "texto": "Asegurar ejecución oportuna y cumplimiento",
+    "kpis": [
+      {
+        "id": "kpi-33",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-34",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-35",
+        "texto": "Cumplimiento de procesos comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-13",
+    "texto": "Asegurar ejecución transversal",
+    "kpis": [
+      {
+        "id": "kpi-36",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-37",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-38",
+        "texto": "Cumplimiento de procesos comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-14",
+    "texto": "Asegurar estándar visual",
+    "kpis": [
+      {
+        "id": "kpi-39",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-40",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-41",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-15",
+    "texto": "Asegurar experiencia de cliente",
+    "kpis": [
+      {
+        "id": "kpi-42",
+        "texto": "Nivel de satisfacción del cliente"
+      },
+      {
+        "id": "kpi-43",
+        "texto": "Flujo de Caja (Cash Flow)"
+      },
+      {
+        "id": "kpi-44",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-16",
+    "texto": "Asegurar fluidez en el cumplimiento de entregas",
+    "kpis": [
+      {
+        "id": "kpi-45",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-46",
+        "texto": "Tiempos de ciclo por trabajo"
+      },
+      {
+        "id": "kpi-47",
+        "texto": "Cumplimiento de procesos administrativos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-17",
+    "texto": "Asegurar fluidez en procesos",
+    "kpis": [
+      {
+        "id": "kpi-48",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-49",
+        "texto": "Tiempos de ciclo por trabajo"
+      },
+      {
+        "id": "kpi-50",
+        "texto": "Eficiencia en procesos administrativos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-18",
+    "texto": "Asegurar precisión en proyecciones",
+    "kpis": [
+      {
+        "id": "kpi-51",
+        "texto": "Calidad de proyecciones de compra"
+      },
+      {
+        "id": "kpi-52",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-53",
+        "texto": "Eficiencia en captación (tasa de toma)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-19",
+    "texto": "Asegurar terminaciones.",
+    "kpis": [
+      {
+        "id": "kpi-54",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-55",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-56",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-20",
+    "texto": "Asegurar trazabilidad y visibilidad",
+    "kpis": [
+      {
+        "id": "kpi-57",
+        "texto": "Calidad y actualización de CRM"
+      },
+      {
+        "id": "kpi-58",
+        "texto": "Exactitud y oportunidad de reportes"
+      },
+      {
+        "id": "kpi-59",
+        "texto": "Cumplimiento del calendario de marketing (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-21",
+    "texto": "Asegurar vehículos competitivos",
+    "kpis": [
+      {
+        "id": "kpi-60",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-61",
+        "texto": "Cumplimiento de auditorías y controles"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-22",
+    "texto": "Aumentar rentabilidad integral",
+    "kpis": [
+      {
+        "id": "kpi-62",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-63",
+        "texto": "Rentabilidad (P&L) del área"
+      },
+      {
+        "id": "kpi-64",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-23",
+    "texto": "Aumentar valor agregado",
+    "kpis": [
+      {
+        "id": "kpi-65",
+        "texto": "Margen Bruto Total por Unidad (PPU)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-24",
+    "texto": "Aumentar visibilidad y demanda",
+    "kpis": [
+      {
+        "id": "kpi-66",
+        "texto": "Exactitud y oportunidad de reportes"
+      },
+      {
+        "id": "kpi-67",
+        "texto": "Cumplimiento del calendario de marketing (%)"
+      },
+      {
+        "id": "kpi-68",
+        "texto": "Market Share segmento flotas y camiones"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-25",
+    "texto": "Calidad y estándar comercial previo a venta",
+    "kpis": [
+      {
+        "id": "kpi-69",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-70",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-71",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-26",
+    "texto": "Coherencia comercial y competitividad",
+    "kpis": [
+      {
+        "id": "kpi-72",
+        "texto": "Exactitud y vigencia de la lista de precios"
+      },
+      {
+        "id": "kpi-73",
+        "texto": "Market Share segmento flotas y camiones"
+      },
+      {
+        "id": "kpi-74",
+        "texto": "Market Share de marcas asignadas"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-27",
+    "texto": "Concretar ventas",
+    "kpis": [
+      {
+        "id": "kpi-75",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-76",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-77",
+        "texto": "Cumplimiento de presupuesto de ventas (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-28",
+    "texto": "Condiciones comerciales óptimas",
+    "kpis": [
+      {
+        "id": "kpi-78",
+        "texto": "Generación de leads (oportunidades comerciales)"
+      },
+      {
+        "id": "kpi-79",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-80",
+        "texto": "Tiempo de respuesta a solicitudes comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-29",
+    "texto": "Consistencia, crecimiento y posicionamiento progresivo",
+    "kpis": [
+      {
+        "id": "kpi-81",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-82",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-83",
+        "texto": "Market Share segmento flotas y camiones"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-30",
+    "texto": "Continuidad del servicio.",
+    "kpis": [
+      {
+        "id": "kpi-84",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-85",
+        "texto": "Cumplimiento de procesos administrativos"
+      },
+      {
+        "id": "kpi-86",
+        "texto": "Errores en procesos y bonos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-31",
+    "texto": "Continuidad operativa.",
+    "kpis": [
+      {
+        "id": "kpi-87",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-88",
+        "texto": "Cumplimiento de procesos administrativos"
+      },
+      {
+        "id": "kpi-89",
+        "texto": "Errores en procesos y bonos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-32",
+    "texto": "Control de desviaciones presupuestarias.",
+    "kpis": [
+      {
+        "id": "kpi-90",
+        "texto": "Variación de gastos vs. Presupuesto"
+      },
+      {
+        "id": "kpi-91",
+        "texto": "Variaciones de gastos operativos vs. presupuesto"
+      },
+      {
+        "id": "kpi-92",
+        "texto": "Control de presupuesto de bonos."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-33",
+    "texto": "Controlar correcta aplicación de descuentos.",
+    "kpis": [
+      {
+        "id": "kpi-93",
+        "texto": "Flujo de Caja (Cash Flow)"
+      },
+      {
+        "id": "kpi-94",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-95",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-34",
+    "texto": "Correcta ejecución de campañas y políticas",
+    "kpis": [
+      {
+        "id": "kpi-96",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-97",
+        "texto": "Cumplimiento del calendario de marketing (%)"
+      },
+      {
+        "id": "kpi-98",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-35",
+    "texto": "Correcta gestión administrativa",
+    "kpis": [
+      {
+        "id": "kpi-99",
+        "texto": "Reclamos asociados a gestión administrativa."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-36",
+    "texto": "Cultura de liderazgo comercial activo",
+    "kpis": [
+      {
+        "id": "kpi-100",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-101",
+        "texto": "Tiempo de respuesta a solicitudes comerciales."
+      },
+      {
+        "id": "kpi-102",
+        "texto": "Apoyo al cumplimiento de metas."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-37",
+    "texto": "Cumplimiento de metas comerciales",
+    "kpis": [
+      {
+        "id": "kpi-103",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-104",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      },
+      {
+        "id": "kpi-105",
+        "texto": "Apoyo al cumplimiento de metas."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-38",
+    "texto": "Cumplimiento de metas de volumen, rentabilidad y cuota de mercado",
+    "kpis": [
+      {
+        "id": "kpi-106",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-107",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-108",
+        "texto": "Cumplimiento presupuesto de ventas y margen"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-39",
+    "texto": "Cumplimiento de objetivos financieros y comerciales",
+    "kpis": [
+      {
+        "id": "kpi-109",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-110",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-111",
+        "texto": "Cumplimiento presupuesto de ventas y margen"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-40",
+    "texto": "Cumplimiento de objetivos operativos",
+    "kpis": [
+      {
+        "id": "kpi-112",
+        "texto": "Cumplimiento de procesos administrativos"
+      },
+      {
+        "id": "kpi-113",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-114",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-41",
+    "texto": "Cumplimiento de políticas comerciales",
+    "kpis": [
+      {
+        "id": "kpi-115",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-116",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-117",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-42",
+    "texto": "Cumplimiento normativo y confiabilidad de información",
+    "kpis": [
+      {
+        "id": "kpi-118",
+        "texto": "Cumplimiento de auditorías y controles"
+      },
+      {
+        "id": "kpi-119",
+        "texto": "Cumplimiento de normas de seguridad"
+      },
+      {
+        "id": "kpi-120",
+        "texto": "Cumplimiento de auditorías."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-43",
+    "texto": "Cumplir con plazos comprometidos",
+    "kpis": [
+      {
+        "id": "kpi-121",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-122",
+        "texto": "Tiempo promedio de entrega a clientes corporativos"
+      },
+      {
+        "id": "kpi-123",
+        "texto": "Tiempos de respuesta a clientes"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-44",
+    "texto": "Cumplir estándares de marca",
+    "kpis": [
+      {
+        "id": "kpi-124",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-125",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-126",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-45",
+    "texto": "Cumplir metas de volumen",
+    "kpis": [
+      {
+        "id": "kpi-127",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-128",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-129",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-46",
+    "texto": "Cumplir metas margen",
+    "kpis": [
+      {
+        "id": "kpi-130",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-131",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      },
+      {
+        "id": "kpi-132",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-47",
+    "texto": "Cumplir metas rotación",
+    "kpis": [
+      {
+        "id": "kpi-133",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      },
+      {
+        "id": "kpi-134",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-135",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-48",
+    "texto": "Cumplir normas.",
+    "kpis": [
+      {
+        "id": "kpi-136",
+        "texto": "Cumplimiento de auditorías y controles"
+      },
+      {
+        "id": "kpi-137",
+        "texto": "Cumplimiento de normas de seguridad"
+      },
+      {
+        "id": "kpi-138",
+        "texto": "Resultado de auditorías"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-49",
+    "texto": "Cumplir presupuesto.",
+    "kpis": [
+      {
+        "id": "kpi-139",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-140",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-141",
+        "texto": "Cumplimiento de presupuesto de ventas (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-50",
+    "texto": "Decisiones comerciales ajustadas a realidad competitiva",
+    "kpis": [
+      {
+        "id": "kpi-142",
+        "texto": "Exactitud y oportunidad de reportes"
+      },
+      {
+        "id": "kpi-143",
+        "texto": "Calidad de proyecciones de compra"
+      },
+      {
+        "id": "kpi-144",
+        "texto": "Tiempo de respuesta a solicitudes comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-51",
+    "texto": "Detectar desviaciones",
+    "kpis": [
+      {
+        "id": "kpi-145",
+        "texto": "Variación de gastos vs. Presupuesto"
+      },
+      {
+        "id": "kpi-146",
+        "texto": "Variaciones de gastos operativos vs. presupuesto"
+      },
+      {
+        "id": "kpi-147",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-52",
+    "texto": "Disponibilidad de unidades",
+    "kpis": [
+      {
+        "id": "kpi-148",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      },
+      {
+        "id": "kpi-149",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-150",
+        "texto": "Rotación de inventario y días de stock"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-53",
+    "texto": "Eficiencia operativa y control financiero",
+    "kpis": [
+      {
+        "id": "kpi-151",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-152",
+        "texto": "Errores en procesos y bonos"
+      },
+      {
+        "id": "kpi-153",
+        "texto": "Cumplimiento de EBITDA por zona/sucursal"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-54",
+    "texto": "Estandarizar experiencia comercial y ventas de valor",
+    "kpis": [
+      {
+        "id": "kpi-154",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-155",
+        "texto": "Cumplimiento presupuesto de ventas y margen"
+      },
+      {
+        "id": "kpi-156",
+        "texto": "Tasa de cierre, conversión y venta cruzada"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-55",
+    "texto": "Estandarizar operación",
+    "kpis": [
+      {
+        "id": "kpi-157",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-158",
+        "texto": "Cumplimiento de EBITDA por zona/sucursal"
+      },
+      {
+        "id": "kpi-159",
+        "texto": "Variaciones de gastos operativos vs. presupuesto"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-56",
+    "texto": "Evitar detenciones o retrasos",
+    "kpis": [
+      {
+        "id": "kpi-160",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-57",
+    "texto": "Evitar errores o inconsistencias en ingresos",
+    "kpis": [
+      {
+        "id": "kpi-161",
+        "texto": "Errores en procesos y bonos"
+      },
+      {
+        "id": "kpi-162",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-163",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-58",
+    "texto": "Facilitar cierre de negocios.",
+    "kpis": [
+      {
+        "id": "kpi-164",
+        "texto": "Efectividad de cierre (conversion rate)"
+      },
+      {
+        "id": "kpi-165",
+        "texto": "Tasa de conversión de negocios"
+      },
+      {
+        "id": "kpi-166",
+        "texto": "Tasa de cierre, conversión y venta cruzada"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-59",
+    "texto": "Fichas actualizadas con fotos y precios",
+    "kpis": [
+      {
+        "id": "kpi-167",
+        "texto": "Exactitud y vigencia de la lista de precios"
+      },
+      {
+        "id": "kpi-168",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-169",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-60",
+    "texto": "Fidelizar clientes y asegurar negocios de largo plazo",
+    "kpis": [
+      {
+        "id": "kpi-170",
+        "texto": "NPS / Satisfacción de clientes corporativos."
+      },
+      {
+        "id": "kpi-171",
+        "texto": "Nivel de satisfacción de clientes (NPS)."
+      },
+      {
+        "id": "kpi-172",
+        "texto": "NPS de clientes"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-61",
+    "texto": "Fidelizar clientes.",
+    "kpis": [
+      {
+        "id": "kpi-173",
+        "texto": "NPS / Satisfacción de clientes corporativos."
+      },
+      {
+        "id": "kpi-174",
+        "texto": "Nivel de satisfacción de clientes (NPS)."
+      },
+      {
+        "id": "kpi-175",
+        "texto": "NPS de clientes"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-62",
+    "texto": "Fluidez operativa",
+    "kpis": [
+      {
+        "id": "kpi-176",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-177",
+        "texto": "Tiempos de ciclo por trabajo"
+      },
+      {
+        "id": "kpi-178",
+        "texto": "Eficiencia en procesos administrativos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-63",
+    "texto": "Fortalecer calidad del proceso de venta",
+    "kpis": [
+      {
+        "id": "kpi-179",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-180",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-181",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-64",
+    "texto": "Fuerza de ventas capacitada",
+    "kpis": [
+      {
+        "id": "kpi-182",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-183",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-184",
+        "texto": "Cumplimiento de presupuesto de ventas (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-65",
+    "texto": "Fuerza de ventas preparada.",
+    "kpis": [
+      {
+        "id": "kpi-185",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-186",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-187",
+        "texto": "Cumplimiento de presupuesto de ventas (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-66",
+    "texto": "Garantizar calidad",
+    "kpis": [
+      {
+        "id": "kpi-188",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-189",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-190",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-67",
+    "texto": "Garantizar cumplimiento de metas",
+    "kpis": [
+      {
+        "id": "kpi-191",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-192",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      },
+      {
+        "id": "kpi-193",
+        "texto": "Apoyo al cumplimiento de metas."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-68",
+    "texto": "Garantizar disponibilidad de activos.",
+    "kpis": [
+      {
+        "id": "kpi-194",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      },
+      {
+        "id": "kpi-195",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-196",
+        "texto": "Rotación de inventario y días de stock"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-69",
+    "texto": "Garantizar ejecución efectiva",
+    "kpis": [
+      {
+        "id": "kpi-197",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-198",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-199",
+        "texto": "Cumplimiento de procesos comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-70",
+    "texto": "Garantizar entrega satisfactoria.",
+    "kpis": [
+      {
+        "id": "kpi-200",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-201",
+        "texto": "Tiempo promedio de entrega a clientes corporativos"
+      },
+      {
+        "id": "kpi-202",
+        "texto": "Tiempos de respuesta a clientes"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-71",
+    "texto": "Garantizar flujo constante de inventario",
+    "kpis": [
+      {
+        "id": "kpi-203",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-204",
+        "texto": "Rotación de inventario y días de stock"
+      },
+      {
+        "id": "kpi-205",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-72",
+    "texto": "Garantizar los costos acordados",
+    "kpis": [
+      {
+        "id": "kpi-206",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-207",
+        "texto": "Cumplimiento de auditorías y controles"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-73",
+    "texto": "Garantizar márgenes adecuados",
+    "kpis": [
+      {
+        "id": "kpi-208",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-209",
+        "texto": "Rentabilidad (P&L) del área"
+      },
+      {
+        "id": "kpi-210",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-74",
+    "texto": "Garantizar trabajos de calidad",
+    "kpis": [
+      {
+        "id": "kpi-211",
+        "texto": "Calidad de ejecución (según estándares de marca)"
+      },
+      {
+        "id": "kpi-212",
+        "texto": "Retrabajos o devoluciones por fallas de calidad"
+      },
+      {
+        "id": "kpi-213",
+        "texto": "Calidad de servicio (NPS / Reclamos)."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-75",
+    "texto": "Garantizar trabajos seguros",
+    "kpis": [
+      {
+        "id": "kpi-214",
+        "texto": "Tiempos de ciclo por trabajo"
+      },
+      {
+        "id": "kpi-215",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-216",
+        "texto": "Penetración de Seguros y otros intangibles"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-76",
+    "texto": "Garantizar ventas correctamente cursadas",
+    "kpis": [
+      {
+        "id": "kpi-217",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-218",
+        "texto": "Cumplimiento de presupuesto de ventas"
+      },
+      {
+        "id": "kpi-219",
+        "texto": "Cumplimiento de presupuesto de ventas (%)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-77",
+    "texto": "Garantizar visibilidad de resultados.",
+    "kpis": [
+      {
+        "id": "kpi-220",
+        "texto": "Cumplimiento del calendario de marketing (%)"
+      },
+      {
+        "id": "kpi-221",
+        "texto": "Exactitud y oportunidad de reportes"
+      },
+      {
+        "id": "kpi-222",
+        "texto": "ROI de activaciones de marketing."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-78",
+    "texto": "Generar nuevas oportunidades comerciales",
+    "kpis": [
+      {
+        "id": "kpi-223",
+        "texto": "Generación de leads (oportunidades comerciales)"
+      },
+      {
+        "id": "kpi-224",
+        "texto": "Calidad y actualización de CRM"
+      },
+      {
+        "id": "kpi-225",
+        "texto": "Cumplimiento de procesos comerciales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-79",
+    "texto": "Gestión comercial ágil.",
+    "kpis": [
+      {
+        "id": "kpi-226",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-227",
+        "texto": "Tiempo de respuesta a solicitudes comerciales."
+      },
+      {
+        "id": "kpi-228",
+        "texto": "Reclamos asociados a gestión administrativa."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-80",
+    "texto": "Gestión de inventario eficiente.",
+    "kpis": [
+      {
+        "id": "kpi-229",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-230",
+        "texto": "Rotación de inventario y días de stock"
+      },
+      {
+        "id": "kpi-231",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-81",
+    "texto": "Incrementar participación de mercado",
+    "kpis": [
+      {
+        "id": "kpi-232",
+        "texto": "Market Share segmento flotas y camiones"
+      },
+      {
+        "id": "kpi-233",
+        "texto": "Market Share de marcas asignadas"
+      },
+      {
+        "id": "kpi-234",
+        "texto": "Flujo de Caja (Cash Flow)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-82",
+    "texto": "Liquidez y salud financiera",
+    "kpis": [
+      {
+        "id": "kpi-235",
+        "texto": "Flujo de Caja (Cash Flow)"
+      },
+      {
+        "id": "kpi-236",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-237",
+        "texto": "Nivel de endeudamiento"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-83",
+    "texto": "Mantener clima laboral positivo",
+    "kpis": [
+      {
+        "id": "kpi-238",
+        "texto": "Clima laboral"
+      },
+      {
+        "id": "kpi-239",
+        "texto": "Índice de rotación de personal"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-84",
+    "texto": "Mantener presencia activa y coherente",
+    "kpis": [
+      {
+        "id": "kpi-240",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-241",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-242",
+        "texto": "Cumplimiento presupuesto de ventas y margen"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-85",
+    "texto": "Maximizar aporte al negocio",
+    "kpis": [
+      {
+        "id": "kpi-243",
+        "texto": "Reclamos asociados al proceso de reparación."
+      },
+      {
+        "id": "kpi-244",
+        "texto": "Apoyo al cumplimiento de metas."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-86",
+    "texto": "Maximizar rentabilidad",
+    "kpis": [
+      {
+        "id": "kpi-245",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-246",
+        "texto": "Rentabilidad (P&L) del área"
+      },
+      {
+        "id": "kpi-247",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-87",
+    "texto": "Mejorar desempeño y cerrar brechas",
+    "kpis": [
+      {
+        "id": "kpi-248",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-249",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      },
+      {
+        "id": "kpi-250",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-88",
+    "texto": "Minimizar capital inmovilizado",
+    "kpis": [
+      {
+        "id": "kpi-251",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-252",
+        "texto": "Rotación de inventario y días de stock"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-89",
+    "texto": "Minimizar riesgos",
+    "kpis": [
+      {
+        "id": "kpi-253",
+        "texto": "Cumplimiento de auditorías y controles"
+      },
+      {
+        "id": "kpi-254",
+        "texto": "Errores contractuales"
+      },
+      {
+        "id": "kpi-255",
+        "texto": "Resultado de auditorías"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-90",
+    "texto": "Mix de compras eficiente",
+    "kpis": [
+      {
+        "id": "kpi-256",
+        "texto": "Calidad de proyecciones de compra"
+      },
+      {
+        "id": "kpi-257",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-258",
+        "texto": "Rotación de inventario y días de stock"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-91",
+    "texto": "Ofrecer propuestas de valor",
+    "kpis": [
+      {
+        "id": "kpi-259",
+        "texto": "Margen Bruto Total por Unidad (PPU)"
+      },
+      {
+        "id": "kpi-260",
+        "texto": "Flujo de Caja (Cash Flow)"
+      },
+      {
+        "id": "kpi-261",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-92",
+    "texto": "Optimizar cumplimiento de metas",
+    "kpis": [
+      {
+        "id": "kpi-262",
+        "texto": "Cumplimiento de metas de venta (unidades y margen)"
+      },
+      {
+        "id": "kpi-263",
+        "texto": "Cumplimiento de metas de venta y margen (Marcas Emergentes)"
+      },
+      {
+        "id": "kpi-264",
+        "texto": "Apoyo al cumplimiento de metas."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-93",
+    "texto": "Optimizar decisiones consistentes",
+    "kpis": [
+      {
+        "id": "kpi-265",
+        "texto": "Exactitud y oportunidad de reportes"
+      },
+      {
+        "id": "kpi-266",
+        "texto": "Calidad de proyecciones de compra"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-94",
+    "texto": "Optimizar niveles de inventario y disponibilidad",
+    "kpis": [
+      {
+        "id": "kpi-267",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      },
+      {
+        "id": "kpi-268",
+        "texto": "Rotación de inventario y días de stock"
+      },
+      {
+        "id": "kpi-269",
+        "texto": "Rotación de inventario (DOI)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-95",
+    "texto": "Optimizar niveles de márgenes",
+    "kpis": [
+      {
+        "id": "kpi-270",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-271",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      },
+      {
+        "id": "kpi-272",
+        "texto": "Cumplimiento de EBITDA por zona/sucursal"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-96",
+    "texto": "Optimizar recursos",
+    "kpis": [
+      {
+        "id": "kpi-273",
+        "texto": "Variación de gastos vs. Presupuesto"
+      },
+      {
+        "id": "kpi-274",
+        "texto": "Variaciones de gastos operativos vs. presupuesto"
+      },
+      {
+        "id": "kpi-275",
+        "texto": "Eficiencia en uso del presupuesto táctico"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-97",
+    "texto": "Optimizar rentabilidad",
+    "kpis": [
+      {
+        "id": "kpi-276",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-277",
+        "texto": "Rentabilidad (P&L) del área"
+      },
+      {
+        "id": "kpi-278",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-98",
+    "texto": "Optimizar rotación",
+    "kpis": [
+      {
+        "id": "kpi-279",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      },
+      {
+        "id": "kpi-280",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-281",
+        "texto": "Rotación de inventario y días de stock"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-99",
+    "texto": "Potenciar colocación financiera",
+    "kpis": [
+      {
+        "id": "kpi-282",
+        "texto": "Flujo de Caja (Cash Flow)"
+      },
+      {
+        "id": "kpi-283",
+        "texto": "Nivel de endeudamiento"
+      },
+      {
+        "id": "kpi-284",
+        "texto": "Margen Ebitda y rentabilidad"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-100",
+    "texto": "Procesos comerciales eficientes",
+    "kpis": [
+      {
+        "id": "kpi-285",
+        "texto": "Cumplimiento de procesos comerciales."
+      },
+      {
+        "id": "kpi-286",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-287",
+        "texto": "Cumplimiento de procesos administrativos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-101",
+    "texto": "Procesos de entrega fluidos.",
+    "kpis": [
+      {
+        "id": "kpi-288",
+        "texto": "Cumplimiento de plazos de entrega (%)"
+      },
+      {
+        "id": "kpi-289",
+        "texto": "Cumplimiento de procesos administrativos"
+      },
+      {
+        "id": "kpi-290",
+        "texto": "Tiempos de ciclo por trabajo"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-102",
+    "texto": "Reducción de capital inmovilizado",
+    "kpis": [
+      {
+        "id": "kpi-291",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-292",
+        "texto": "Rotación de inventario y días de stock"
+      },
+      {
+        "id": "kpi-293",
+        "texto": "Flujo de Caja (Cash Flow)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-103",
+    "texto": "Reducir errores financieros",
+    "kpis": [
+      {
+        "id": "kpi-294",
+        "texto": "Errores en procesos y bonos"
+      },
+      {
+        "id": "kpi-295",
+        "texto": "Eficiencia en procesos administrativos"
+      },
+      {
+        "id": "kpi-296",
+        "texto": "Errores contractuales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-104",
+    "texto": "Reducir riesgos",
+    "kpis": [
+      {
+        "id": "kpi-297",
+        "texto": "Cumplimiento de auditorías y controles"
+      },
+      {
+        "id": "kpi-298",
+        "texto": "Errores contractuales"
+      },
+      {
+        "id": "kpi-299",
+        "texto": "Resultado de auditorías"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-105",
+    "texto": "Reducir riesgos operativos",
+    "kpis": [
+      {
+        "id": "kpi-300",
+        "texto": "Cumplimiento de auditorías y controles"
+      },
+      {
+        "id": "kpi-301",
+        "texto": "Errores contractuales"
+      },
+      {
+        "id": "kpi-302",
+        "texto": "Errores en procesos y bonos"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-106",
+    "texto": "Reducir riesgos.",
+    "kpis": [
+      {
+        "id": "kpi-303",
+        "texto": "Cumplimiento de auditorías y controles"
+      },
+      {
+        "id": "kpi-304",
+        "texto": "Errores contractuales"
+      },
+      {
+        "id": "kpi-305",
+        "texto": "Resultado de auditorías"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-107",
+    "texto": "Rentabilidad adecuada",
+    "kpis": [
+      {
+        "id": "kpi-306",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-307",
+        "texto": "Rentabilidad (P&L) del área"
+      },
+      {
+        "id": "kpi-308",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-108",
+    "texto": "Sostenibilidad financiera",
+    "kpis": [
+      {
+        "id": "kpi-309",
+        "texto": "Margen Ebitda y rentabilidad"
+      },
+      {
+        "id": "kpi-310",
+        "texto": "Rentabilidad (P&L) del área"
+      },
+      {
+        "id": "kpi-311",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-109",
+    "texto": "Sotenibilidad de toma de decisiones informada",
+    "kpis": [
+      {
+        "id": "kpi-312",
+        "texto": "Exactitud y oportunidad de reportes"
+      },
+      {
+        "id": "kpi-313",
+        "texto": "Calidad de proyecciones de compra"
+      },
+      {
+        "id": "kpi-314",
+        "texto": "Eficiencia en captación (tasa de toma)"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-110",
+    "texto": "Trazabilidad del inventario",
+    "kpis": [
+      {
+        "id": "kpi-315",
+        "texto": "Rotación de inventario (DOI)"
+      },
+      {
+        "id": "kpi-316",
+        "texto": "Rotación de inventario y días de stock"
+      },
+      {
+        "id": "kpi-317",
+        "texto": "Cumplimiento de metas de stock y rotación"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-111",
+    "texto": "Trazabilidad y control",
+    "kpis": [
+      {
+        "id": "kpi-318",
+        "texto": "Calidad y actualización de CRM"
+      },
+      {
+        "id": "kpi-319",
+        "texto": "Exactitud de inventarios"
+      },
+      {
+        "id": "kpi-320",
+        "texto": "Rotación de inventario y días de stock"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-112",
+    "texto": "Validar la rentabilidad de cada negocio y ejecutar el cierre de ventas",
+    "kpis": [
+      {
+        "id": "kpi-321",
+        "texto": "Cumplimiento de presupuesto de ventas (volumen y margen)"
+      },
+      {
+        "id": "kpi-322",
+        "texto": "Cumplimiento presupuesto de ventas y margen"
+      },
+      {
+        "id": "kpi-323",
+        "texto": "Margen Ebitda y rentabilidad"
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "rc-113",
+    "texto": "Vender productos adicionales",
+    "kpis": [
+      {
+        "id": "kpi-324",
+        "texto": "Margen Bruto / Rentabilidad de productos adicionales"
+      },
+      {
+        "id": "kpi-325",
+        "texto": "Cierre de productos adicionales"
+      },
+      {
+        "id": "kpi-326",
+        "texto": "NPS asociado a productos adicionales."
+      }
+    ],
+    "clasificacion": "Sin clasificar"
+  }
+]

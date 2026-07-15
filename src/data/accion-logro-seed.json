@@ -1,0 +1,992 @@
+[
+  {
+    "id": "al-1",
+    "accion": "Apoyar la gestión comercial del área Rent a Car.",
+    "logro": "Cumplimiento de metas comerciales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-2",
+    "accion": "Gestionar cotizaciones, contratos y documentación.",
+    "logro": "Procesos comerciales eficientes.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-3",
+    "accion": "Coordinar reservas, entregas y devoluciones.",
+    "logro": "Fluidez operativa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-4",
+    "accion": "Atender clientes presencial y remotamente.",
+    "logro": "Alta satisfacción del cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-5",
+    "accion": "Registrar operaciones en sistemas.",
+    "logro": "Trazabilidad y control.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-6",
+    "accion": "Apoyar facturación y cobros.",
+    "logro": "Correcta gestión administrativa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-7",
+    "accion": "Coordinar con operación y flota.",
+    "logro": "Continuidad del servicio.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-8",
+    "accion": "Apoyar campañas comerciales.",
+    "logro": "Aumento de ventas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-9",
+    "accion": "Gestionar reclamos básicos.",
+    "logro": "Resolución oportuna.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-10",
+    "accion": "Mantener orden documental.",
+    "logro": "Cumplimiento de procesos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-11",
+    "accion": "Coordinar la ejecución del plan de marketing y calendarización mensual.",
+    "logro": "Asegurar cumplimiento de tiempos y correcta implementación de campañas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-12",
+    "accion": "Gestionar proveedores (agencias, diseñadores, imprentas, medios).",
+    "logro": "Garantizar calidad, tiempos óptimos y costos acordados.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-13",
+    "accion": "Administrar publicaciones digitales: pauta, redes sociales, portales y contenido.",
+    "logro": "Mantener presencia activa y coherente con identidad de marca.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-14",
+    "accion": "Preparar y revisar materiales gráficos para aprobación del Jefe de Marketing.",
+    "logro": "Asegurar estándar visual, consistencia y correcta aplicación de marca.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-15",
+    "accion": "Coordinar eventos, activaciones y ferias comerciales.",
+    "logro": "Asegurar logística, montaje, insumos y experiencia adecuada.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-16",
+    "accion": "Controlar inventario de materiales (merchandising, gráficas, POP, folletos).",
+    "logro": "Mantener orden, disponibilidad y correcta distribución en sucursales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-17",
+    "accion": "Apoyar la ejecución de campañas de generación de leads junto al equipo comercial.",
+    "logro": "Asegurar seguimiento y calidad de la demanda generada.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-18",
+    "accion": "Cargar, monitorear y actualizar contenido digital (banners, flyers, landing pages).",
+    "logro": "Mantener campañas vigentes y alineadas al plan mensual.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-19",
+    "accion": "Generar reportes operativos de campañas (alcance, clics, participación).",
+    "logro": "Dar visibilidad al desempeño táctico y apoyar la toma de decisiones.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-20",
+    "accion": "Velar por la correcta implementación gráfica en sucursales.",
+    "logro": "Asegurar imagen corporativa consistente y homogénea.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-21",
+    "accion": "Prospectar y captar nuevos clientes del segmento empresas y flotas.",
+    "logro": "Generar nuevas oportunidades comerciales y ampliar la cartera de clientes.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-22",
+    "accion": "Gestionar y mantener relaciones comerciales con clientes corporativos.",
+    "logro": "Fidelizar clientes y asegurar negocios de largo plazo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-23",
+    "accion": "Levantar necesidades de clientes y asesorar en soluciones de movilidad.",
+    "logro": "Ofrecer propuestas adecuadas que generen valor y aumenten la probabilidad de cierre.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-24",
+    "accion": "Elaborar cotizaciones, propuestas comerciales y licitaciones.",
+    "logro": "Concretar ventas y cumplir con los objetivos comerciales definidos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-25",
+    "accion": "Realizar seguimiento a oportunidades comerciales hasta el cierre.",
+    "logro": "Asegurar la conversión efectiva de negocios.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-26",
+    "accion": "Coordinar con áreas internas (finanzas, operaciones, postventa) el proceso de venta.",
+    "logro": "Garantizar una correcta ejecución y entrega de los negocios.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-27",
+    "accion": "Realizar seguimiento postventa a clientes de flota.",
+    "logro": "Fortalecer la relación comercial y detectar nuevas oportunidades.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-28",
+    "accion": "Mantener actualizada la información de clientes y gestión en sistemas CRM.",
+    "logro": "Asegurar trazabilidad y control de la gestión comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-29",
+    "accion": "Gestionar la operación administrativa diaria de la sucursal.",
+    "logro": "Asegurar continuidad operativa y correcto funcionamiento del negocio.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-30",
+    "accion": "Ejecutar y controlar los procesos administrativos de ventas (documentación, cierres, validaciones).",
+    "logro": "Garantizar ventas correctamente cursadas y sin reprocesos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-31",
+    "accion": "Coordinar y administrar al equipo administrativo de la sucursal.",
+    "logro": "Asegurar ejecución oportuna, orden y cumplimiento de funciones.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-32",
+    "accion": "Supervisar el cumplimiento de políticas, procedimientos y controles internos.",
+    "logro": "Reducir riesgos operativos y asegurar cumplimiento corporativo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-33",
+    "accion": "Gestionar la planificación de vacaciones, turnos y coberturas administrativas.",
+    "logro": "Mantener continuidad operacional sin afectar la atención ni los procesos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-34",
+    "accion": "Controlar gastos operativos, caja chica y recursos administrativos.",
+    "logro": "Asegurar uso eficiente del presupuesto asignado.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-35",
+    "accion": "Coordinar la ejecución administrativa de campañas comerciales e incentivos.",
+    "logro": "Apoyar el negocio asegurando correcta aplicación y trazabilidad.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-36",
+    "accion": "Resolver contingencias operativas del día a día de la sucursal.",
+    "logro": "Evitar interrupciones en la operación y asegurar fluidez del negocio.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-37",
+    "accion": "Supervisar el correcto funcionamiento de infraestructura, insumos y servicios generales.",
+    "logro": "Mantener condiciones adecuadas para la operación y atención al cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-38",
+    "accion": "Reportar indicadores operativos y administrativos al Jefe Zonal.",
+    "logro": "Entregar visibilidad y control de la gestión de la sucursal.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-39",
+    "accion": "Gestionar cartera activa de clientes B2B y prospectar nuevos negocios.",
+    "logro": "Asegurar crecimiento sostenido y mantener flujo saludable de oportunidades.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-40",
+    "accion": "Realizar el proceso comercial completo: levantamiento de necesidades, cotización, negociación, seguimiento y cierre.",
+    "logro": "Estandarizar la experiencia comercial y asegurar ventas consultivas de valor.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-41",
+    "accion": "Administrar y actualizar CRM, pipeline y reportabilidad semanal.",
+    "logro": "Asegurar trazabilidad del negocio y visibilidad de oportunidades.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-42",
+    "accion": "Coordinar con áreas internas (operaciones, pricing, finanzas, postventa).",
+    "logro": "Asegurar fluidez en los procesos y cumplimiento de tiempos de entrega.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-43",
+    "accion": "Gestionar documentación comercial (OC, convenios, contratos y aprobaciones especiales).",
+    "logro": "Garantizar cumplimiento normativo, orden administrativo y trazabilidad.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-44",
+    "accion": "Apoyar en gestión operativa de stock, disponibilidades y reservas de unidades.",
+    "logro": "Evitar quiebres, retrasos y asegurar disponibilidad alineada a la demanda.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-45",
+    "accion": "Acompañar al cliente en la postventa inicial y entrega de unidades.",
+    "logro": "Mejorar experiencia del cliente y fortalecer fidelización.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-46",
+    "accion": "Monitorear indicadores clave del negocio asignado (productos, márgenes, oportunidades, precios).",
+    "logro": "Apoyar la toma de decisiones y asegurar rentabilidad por operación.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-47",
+    "accion": "Coordinar y apoyar acciones de marketing B2B, eventos y activaciones comerciales.",
+    "logro": "Aumentar visibilidad del negocio y generación de leads.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-48",
+    "accion": "Representar a la empresa en reuniones comerciales con clientes corporativos.",
+    "logro": "Fortalecer posicionamiento y relaciones estratégicas con empresas clave.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-49",
+    "accion": "Coordinar el ingreso de trabajos de desabolladura y pintura según la planificación del taller.",
+    "logro": "Asegurar una correcta secuencia de trabajos y uso eficiente de la capacidad del taller.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-50",
+    "accion": "Controlar los tiempos de ejecución de los trabajos.",
+    "logro": "Cumplir con los plazos comprometidos con los clientes.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-51",
+    "accion": "Verificar la disponibilidad de materiales, insumos y herramientas para cada etapa del proceso.",
+    "logro": "Evitar detenciones o retrasos en la operación.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-52",
+    "accion": "Supervisar el cumplimiento de procedimientos técnicos y normas de seguridad.",
+    "logro": "Garantizar trabajos seguros y de calidad.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-53",
+    "accion": "Realizar inspecciones visuales y técnicas preliminares de los trabajos.",
+    "logro": "Detectar desviaciones y asegurar correcta ejecución.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-54",
+    "accion": "Apoyar al equipo técnico en la resolución de problemas operativos o técnicos menores.",
+    "logro": "Mantener continuidad operativa del taller.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-55",
+    "accion": "Coordinar con áreas relacionadas (repuestos, recepción técnica, etc.).",
+    "logro": "Asegurar fluidez del proceso productivo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-56",
+    "accion": "Velar por el orden y la limpieza del área de trabajo.",
+    "logro": "Cumplir estándares de seguridad y calidad.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-57",
+    "accion": "Apoyar la capacitación y orientación del personal nuevo o en formación.",
+    "logro": "Facilitar la integración y aprendizaje del equipo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-58",
+    "accion": "Informar avances, retrasos o contingencias al jefe directo.",
+    "logro": "Permitir una gestión oportuna y correctiva.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-59",
+    "accion": "Ser responsable directo del resultado comercial de todos los productos adicionales.",
+    "logro": "Maximizar rentabilidad y aporte al negocio automotriz.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-60",
+    "accion": "Diseñar la estrategia comercial de productos adicionales y financiamiento en conjunto con las áreas de vehículos y otras áreas.",
+    "logro": "Asegurar alineación comercial y ejecución transversal.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-61",
+    "accion": "Diseñar, administrar y optimizar productos intangibles.",
+    "logro": "Aumentar valor agregado y diferenciación de la oferta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-62",
+    "accion": "Liderar la gestión integral del financiamiento automotriz.",
+    "logro": "Potenciar colocación financiera y rentabilidad asociada.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-63",
+    "accion": "Definir y administrar la estructura de incentivos comerciales asociada a productos y financiamiento.",
+    "logro": "Impulsar foco comercial y resultados sostenibles.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-64",
+    "accion": "Desarrollar y controlar indicadores de performance comercial.",
+    "logro": "Medir desempeño, detectar brechas y mejorar resultados.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-65",
+    "accion": "Diseñar y mejorar procesos comerciales y protocolos de venta.",
+    "logro": "Estandarizar la gestión y mejorar la experiencia del cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-66",
+    "accion": "Impulsar la innovación de productos y mejoras en la experiencia de cliente.",
+    "logro": "Aumentar conversión, satisfacción y fidelización.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-67",
+    "accion": "Desarrollar dashboards e informes de gestión comercial.",
+    "logro": "Entregar visibilidad clara y oportuna de resultados.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-68",
+    "accion": "Analizar el mercado y tendencias de la industria automotriz.",
+    "logro": "Anticipar oportunidades y ajustar la estrategia comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-69",
+    "accion": "Crear sinergias y nuevos productos a nivel transversal en Salfa Sur.",
+    "logro": "Generar nuevas fuentes de ingresos y eficiencia comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-70",
+    "accion": "Coordinar con RRHH la capacitación y entrenamiento continuo a vendedores y gerentes.",
+    "logro": "Asegurar correcta ejecución comercial (sin ejecutar directamente la capacitación).",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-71",
+    "accion": "Definir y ejecutar la estrategia comercial del negocio de Usados.",
+    "logro": "Alinear al equipo para cumplir metas de volumen, margen y rotación.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-72",
+    "accion": "Liderar, gestionar y desarrollar al equipo comercial.",
+    "logro": "Asegurar desempeño sostenido, venta consultiva y experiencia de cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-73",
+    "accion": "Coordinar y supervisar la captación de unidades (tomas en parte pago, compras, trade-in y subastas).",
+    "logro": "Garantizar flujo constante y adecuado del inventario.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-74",
+    "accion": "Analizar pricing, márgenes y competitividad del inventario.",
+    "logro": "Optimizar rentabilidad y reducir riesgos de depreciación.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-75",
+    "accion": "Controlar la rotación del inventario y los días en stock (DOI).",
+    "logro": "Minimizar capital inmovilizado y acelerar la conversión.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-76",
+    "accion": "Supervisar el proceso comercial completo: publicación, prospección, cotización, negociación y cierre.",
+    "logro": "Homologar la operación y asegurar estándar de calidad.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-77",
+    "accion": "Coordinar publicaciones digitales y presencia en portales de venta.",
+    "logro": "Maximizar visibilidad, tráfico y generación de leads.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-78",
+    "accion": "Revisar documentación comercial, estados de vehículos y procesos de preparación.",
+    "logro": "Asegurar calidad y cumplimiento normativo en la entrega.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-79",
+    "accion": "Colaborar con Marketing y Pricing en estrategias de promoción y campañas.",
+    "logro": "Impulsar la demanda y lograr mayor competitividad del stock.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-80",
+    "accion": "Reportar KPIs comerciales, desviaciones y oportunidades al Gerente Automotriz.",
+    "logro": "Asegurar control de gestión y toma de decisiones oportunas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-81",
+    "accion": "Diseñar e implementar la estrategia comercial del segmento B2B.",
+    "logro": "Asegurar crecimiento sostenible del negocio y alineación con objetivos corporativos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-82",
+    "accion": "Liderar, acompañar y gestionar el desempeño del equipo de ventas de Flotas y Vans.",
+    "logro": "Garantizar ejecución efectiva, desarrollo del equipo y cumplimiento de metas comerciales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-83",
+    "accion": "Supervisar la operación comercial de Camiones (stock, precios especiales y aprobaciones).",
+    "logro": "Optimizar rentabilidad, tiempos de respuesta y asegurar decisiones consistentes con la estrategia.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-84",
+    "accion": "Gestionar cartera de clientes corporativos clave y desarrollar nuevas oportunidades.",
+    "logro": "Incrementar participación de mercado, fidelización y tasa de recurrencia.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-85",
+    "accion": "Ser el vínculo estratégico con el importador Mix para acuerdos comerciales, disponibilidad y proyectos conjuntos.",
+    "logro": "Asegurar condiciones competitivas, soporte estratégico y continuidad operacional.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-86",
+    "accion": "Supervisar e impulsar campañas comerciales y acciones de marketing B2B.",
+    "logro": "Generar demanda, fortalecer posicionamiento y acelerar el ciclo de ventas consultivas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-87",
+    "accion": "Administrar y controlar el P&L del segmento B2B.",
+    "logro": "Asegurar rentabilidad, eficiencia de costos y cumplimiento financiero del negocio.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-88",
+    "accion": "Monitorear KPIs comerciales y reportar avances, desvíos y oportunidades.",
+    "logro": "Tomar decisiones oportunas y asegurar control de gestión continuo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-89",
+    "accion": "Coordinar con áreas internas (operaciones, finanzas, postventa) para garantizar experiencia integral al cliente.",
+    "logro": "Mejorar satisfacción, continuidad operacional y experiencia post-venta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-90",
+    "accion": "Velar por el cumplimiento de procesos comerciales, políticas internas y estándares de calidad.",
+    "logro": "Minimizar riesgos, asegurar trazabilidad y fortalecer el modelo comercial de la compañía.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-91",
+    "accion": "Validar la rentabilidad de cada negocio y ejecutar el cierre de ventas.",
+    "logro": "Garantizar márgenes adecuados y cumplimiento de políticas comerciales, maximizando el PPU.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-92",
+    "accion": "Vender productos adicionales (financiamiento, seguros, garantías, mantenciones, OnStar, accesorios, etc.).",
+    "logro": "Aumentar la rentabilidad integral del negocio y mejorar la protección y experiencia del cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-93",
+    "accion": "Apoyar al vendedor asesorando en negociación, objeciones y cierres.",
+    "logro": "Aumentar la tasa de conversión y fortalecer la calidad del proceso de venta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-94",
+    "accion": "Controlar correcta aplicación de descuentos, bonos, asignaciones y procesos de venta.",
+    "logro": "Reducir errores financieros y asegurar consistencia operativa y administrativa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-95",
+    "accion": "Realizar seguimiento del movimiento de piso (clientes ingresados, cotizaciones, créditos, preaprobados, rechazos).",
+    "logro": "Optimizar la gestión comercial y asegurar visibilidad total del proceso.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-96",
+    "accion": "Realizar clínicas de venta (role play, deal desk).",
+    "logro": "Desarrollar capacidades del equipo y mejorar la ejecución comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-97",
+    "accion": "Proponer y detectar oportunidades de nuevos negocios.",
+    "logro": "Aumentar volumen y diversificación de oportunidades comerciales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-98",
+    "accion": "Apoyar en la correcta captura de productos F&I y seguimiento de oportunidades no tomadas por el vendedor.",
+    "logro": "Incrementar penetración de productos y mejorar la experiencia.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-99",
+    "accion": "Asegurar la trazabilidad y completitud de la información en CRM.",
+    "logro": "Mejorar control de procesos y efectividad comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-100",
+    "accion": "Gestionar la relación con áreas clave (F&I, intangibles, marketing, administrativo).",
+    "logro": "Asegurar fluidez operativa y cumplimiento integral del proceso comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-101",
+    "accion": "Supervisar la gestión integral de las sucursales de su zona.",
+    "logro": "Asegurar cumplimiento de objetivos operativos, financieros y comerciales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-102",
+    "accion": "Controlar indicadores administrativos y de gestión (costos, presupuesto, gastos, dotación).",
+    "logro": "Garantizar eficiencia operativa y control financiero.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-103",
+    "accion": "Revisar y validar el cumplimiento de procesos, políticas y procedimientos corporativos.",
+    "logro": "Estandarizar la operación y reducir riesgos operacionales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-104",
+    "accion": "Analizar resultados por sucursal y definir planes de acción correctivos.",
+    "logro": "Mejorar desempeño y cerrar brechas de resultados.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-105",
+    "accion": "Liderar de manera matricial a jefes administrativos y jefes de negocio de sucursal.",
+    "logro": "Alinear equipos locales con objetivos zonales y corporativos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-106",
+    "accion": "Apoyar la gestión comercial de las sucursales (40%), acompañando planes de venta, metas y campañas.",
+    "logro": "Fortalecer ejecución comercial sin duplicar funciones de jefaturas locales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-107",
+    "accion": "Monitorear cumplimiento de presupuestos de venta, margen y resultados globales.",
+    "logro": "Asegurar logro de metas zonales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-108",
+    "accion": "Coordinar implementación de campañas, acciones comerciales y directrices corporativas.",
+    "logro": "Asegurar ejecución homogénea en toda la zona.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-109",
+    "accion": "Realizar visitas periódicas a sucursales para revisión de gestión y acompañamiento.",
+    "logro": "Mantener cercanía, control y alineación con equipos locales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-110",
+    "accion": "Reportar resultados, alertas y oportunidades al Gerente General.",
+    "logro": "Facilitar la toma de decisiones estratégicas a nivel corporativo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-111",
+    "accion": "Liderar la planificación financiera, presupuestaria y proyecciones del negocio.",
+    "logro": "Asegurar sostenibilidad financiera y toma de decisiones informada.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-112",
+    "accion": "Supervisar la gestión contable, tributaria y financiera de la compañía.",
+    "logro": "Garantizar cumplimiento normativo y confiabilidad de la información financiera.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-113",
+    "accion": "Administrar el flujo de caja y la estructura de financiamiento.",
+    "logro": "Asegurar liquidez y salud financiera de la organización.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-114",
+    "accion": "Analizar resultados financieros y proponer acciones de mejora.",
+    "logro": "Optimizar rentabilidad y eficiencia operativa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-115",
+    "accion": "Coordinar la elaboración y control del presupuesto anual.",
+    "logro": "Asegurar disciplina financiera y control del gasto.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-116",
+    "accion": "Liderar procesos de cierre contable y reportabilidad interna.",
+    "logro": "Garantizar información oportuna y precisa para la toma de decisiones.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-117",
+    "accion": "Supervisar la relación con entidades financieras, auditores y organismos externos.",
+    "logro": "Asegurar cumplimiento normativo y buenas prácticas financieras.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-118",
+    "accion": "Participar activamente en decisiones estratégicas junto a la Gerencia General.",
+    "logro": "Alinear la gestión financiera con los objetivos corporativos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-119",
+    "accion": "Implementar mejoras en procesos financieros y sistemas de control.",
+    "logro": "Incrementar eficiencia, trazabilidad y control interno.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-120",
+    "accion": "Liderar y desarrollar al equipo de finanzas.",
+    "logro": "Fortalecer capacidades internas y continuidad operativa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-121",
+    "accion": "Administrar la lista de precios de Vehículos Nuevos (actualizaciones, vigencia y control).",
+    "logro": "Asegurar coherencia comercial, competitividad y cumplimiento de políticas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-122",
+    "accion": "Gestionar y controlar bonos, incentivos, descuentos y condiciones comerciales vigentes.",
+    "logro": "Mantener rentabilidad adecuada y correcta ejecución por parte de las sucursales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-123",
+    "accion": "Supervisar el stock disponible y su distribución entre sucursales.",
+    "logro": "Optimizar rotación, disponibilidad y cumplimiento de metas comerciales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-124",
+    "accion": "Proponer el mix de compras y proyecciones de inventario al Gerente Automotriz.",
+    "logro": "Anticipar demanda y asegurar disponibilidad adecuada para la operación.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-125",
+    "accion": "Coordinar con Analista de Logística la llegada, asignación, predelivery y disponibilidad de unidades.",
+    "logro": "Garantizar tiempos de entrega competitivos y visibilidad operativa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-126",
+    "accion": "Supervisar el trabajo del Analista de Marcas en pricing, performance y estandarización.",
+    "logro": "Asegurar consistencia y alineación de información comercial por marca.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-127",
+    "accion": "Analizar márgenes, precios especiales, rotación y competitividad del portafolio.",
+    "logro": "Respaldar decisiones comerciales eficientes y basadas en datos.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-128",
+    "accion": "Consolidar información de disponibilidad, tiempos de llegada y planificación operacional.",
+    "logro": "Dar visibilidad transversal a sucursales y equipo comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-129",
+    "accion": "Dar visibilidad transversal a sucursales y equipo comercial.",
+    "logro": "Mantener información correcta en canales digitales y preventa.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-130",
+    "accion": "Elaborar reportabilidad operativa y comercial para Gerencia Automotriz.",
+    "logro": "Facilitar control de gestión y toma de decisiones estratégicas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-131",
+    "accion": "Supervisar los procesos de recepción, revisión y documentación de unidades ingresadas.",
+    "logro": "Evitar errores, retrasos o inconsistencias que afecten la venta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-132",
+    "accion": "Controlar la preparación estética y mecánica del inventario.",
+    "logro": "Asegurar calidad y estándar comercial previo a la publicación y entrega.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-133",
+    "accion": "Gestionar la publicación de vehículos en portales automotrices.",
+    "logro": "Mantener fichas actualizadas, con fotos, precios y descripción correcta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-134",
+    "accion": "Llevar el control operativo del inventario (estado, ubicación, disponibilidad).",
+    "logro": "Garantizar trazabilidad y actualización permanente para la venta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-135",
+    "accion": "Supervisar la rotación del stock y alertar vehículos con sobretiempo (DOI alto).",
+    "logro": "Evitar depreciación y apoyar decisiones comerciales del Jefe de Usados.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-136",
+    "accion": "Coordinar con talleres internos y externos para trabajos de reparación o estética.",
+    "logro": "Asegurar tiempos óptimos de alistamiento y entrega al cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-137",
+    "accion": "Apoyar el proceso de toma en parte de pago (inspección visual, check list básico).",
+    "logro": "Entregar información operativa que facilite negociación comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-138",
+    "accion": "Controlar el proceso documental previo a la entrega del vehículo.",
+    "logro": "Cumplir normativa, procesos internos y asegurar satisfacción del cliente.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-139",
+    "accion": "Supervisar la limpieza, presentación y orden de la zona de exhibición.",
+    "logro": "Mantener una experiencia de cliente profesional y atractiva.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-140",
+    "accion": "Gestionar reportabilidad operativa al Jefe de Usados (estado de stock, tiempos, alertas).",
+    "logro": "Dar visibilidad para toma de decisiones comerciales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-141",
+    "accion": "Desarrollar y ejecutar el plan comercial por marca emergente, alineado a la estrategia general de rentabilidad y market share..",
+    "logro": "Asegurar consistencia, crecimiento y posicionamiento progresivo en el mercado.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-142",
+    "accion": "Gestionar el portafolio (mix, stock, pricing, versiones y oportunidades del mercado).",
+    "logro": "Optimizar niveles de inventario, márgenes y disponibilidad adecuada para la venta.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-143",
+    "accion": "Coordinar con marketing acciones de lanzamiento, activaciones y campañas.",
+    "logro": "Aumentar visibilidad, generación de demanda y recordación de marca.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-144",
+    "accion": "Realizar benchmark de mercado (competencia, precios, posicionamiento, tendencias).",
+    "logro": "Ajustar decisiones comerciales con datos reales y oportunidades detectadas.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-145",
+    "accion": "Apoyar al equipo comercial con información técnica, atributos y argumentación de valor.",
+    "logro": "Fortalecer venta consultiva y mejorar las tasas de conversión.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-146",
+    "accion": "Administrar relación operativa con proveedores e importadores de marcas emergentes.",
+    "logro": "Asegurar cumplimiento de acuerdos, abastecimiento y soporte técnico/comercial.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-147",
+    "accion": "Monitorear performance de venta, márgenes, rotación y demanda.",
+    "logro": "Tomar decisiones oportunas para mejorar rentabilidad y metas trimestrales.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-148",
+    "accion": "Participar en definición de precios especiales, promociones y condiciones tácticas.",
+    "logro": "Mantener competitividad controlando impacto en margen.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-149",
+    "accion": "Acompañar activaciones comerciales, lanzamientos y presentaciones de producto.",
+    "logro": "Potenciar conocimiento, visibilidad y adopción en mercado objetivo.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-150",
+    "accion": "Gestionar documentación técnica, fichas comerciales y contenido de producto.",
+    "logro": "Mantener información actualizada, homologada y disponible para la operación.",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-151",
+    "accion": "Responsable del cumplimiento de las metas de volumen, rentabilidad y cuota de mercado en todas las sucursales.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-152",
+    "accion": "Asegurar la correcta ejecución de las campañas comerciales, políticas de precios, descuentos y bonos definidos por la empresa.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-153",
+    "accion": "Coordinar con importadores y áreas de soporte para asegurar condiciones comerciales óptimas.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-154",
+    "accion": "Supervisar, inspirar y desarrollar a los Gerentes de Sucursal, promoviendo una cultura de liderazgo comercial activo y de terreno.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-155",
+    "accion": "Diseñar e implementar programas de formación continua para vendedores en técnicas de ventas consultivas, manejo de objeciones y cierre.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-156",
+    "accion": "Acompañar presencialmente a la fuerza de ventas en terreno como mentor y modelo.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-157",
+    "accion": "Generar, adaptar y aplicar metodologías de venta consultiva (SPIN Selling, Challenger, etc.) orientadas al cliente final y corporativo.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-158",
+    "accion": "Implementar procesos estandarizados de venta en todas las sucursales, asegurando consistencia en la experiencia y desempeño.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-159",
+    "accion": "Liderar el \"Deal Desk\" o Clínica de Ventas semanal, promoviendo la reflexión estratégica y el aprendizaje entre pares.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-160",
+    "accion": "Monitorear en tiempo real los KPIs críticos del negocio (tasa de cierre, tráfico, conversión, ticket promedio, venta cruzada).",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-161",
+    "accion": "Analizar desvíos, diagnosticar causas raíz y ejecutar acciones correctivas.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-162",
+    "accion": "Establecer sistemas de feedback comercial para detectar oportunidades de mejora y ajustar la estrategia.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-163",
+    "accion": "Asegurar una experiencia de cliente diferenciadora, alineada con los estándares de marca.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-164",
+    "accion": "Promover la venta integral de productos relacionados: financiamiento, seguros, garantías, mantenimiento y otros intangibles.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  },
+  {
+    "id": "al-165",
+    "accion": "Potenciar la digitalización del proceso comercial, incorporando herramientas CRM, video asesoramiento, y cotización online.",
+    "logro": "",
+    "clasificacion": "Sin clasificar"
+  }
+]
