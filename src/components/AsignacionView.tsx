@@ -48,7 +48,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
           <div className="asignar-items-head">
             <div>
               <div className="detail-panel-nivel">{cargo.clasificacion}</div>
-              <h2>{cargo.cargo}</h2>
+              <h2>{cargo.nombre}</h2>
             </div>
             <div className="asignar-progress">
               {cargo.resultadoClaveIds.length} resultados · {cargo.kpiIds.length} KPIs asignados
@@ -75,7 +75,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                         flash('Guardado');
                       }}
                     />
-                    <div className="asignar-item-accion">{r.resultado_clave}</div>
+                    <div className="asignar-item-accion">{r.texto}</div>
                   </label>
 
                   {checked && r.kpis.length > 0 && (
@@ -92,7 +92,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                                 flash('Guardado');
                               }}
                             />
-                            <span>{k.resultado_clave}</span>
+                            <span>{k.texto}</span>
                           </label>
                         );
                       })}

@@ -13,11 +13,11 @@ interface Props {
   cargos: Cargo[];
   resultados: ResultadoClave[];
   accionesLogros: AccionLogro[];
-  onImportResultados: (parsed: { resultado_clave: string; kpis: string[]; clasificacion?: string }[]) => number;
+  onImportResultados: (parsed: { texto: string; kpis: string[]; clasificacion?: string }[]) => number;
   onImportCargosResultados: (
-    parsed: { cargo: string; nivel: Cargo['nivel']; clasificacion: string; resultadosTexto: string[] }[]
+    parsed: { nombre: string; nivel: Cargo['nivel']; clasificacion: string; resultadosTexto: string[] }[]
   ) => number;
-  onImportAccionesLogros: (parsed: { acciones: string; logros: string; clasificacion?: string }[]) => number;
+  onImportAccionesLogros: (parsed: { accion: string; logro: string; clasificacion?: string }[]) => number;
 }
 
 export default function ImportExportView({

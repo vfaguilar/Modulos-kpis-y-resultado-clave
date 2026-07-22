@@ -226,7 +226,7 @@ function AsignarRequisitos({
                   className={`asignar-cargo-item ${selectedCargoId === c.id ? 'active' : ''}`}
                   onClick={() => setSelectedCargoId(c.id)}
                 >
-                  <span>{c.cargo}</span>
+                  <span>{c.nombre}</span>
                   <span className="cargo-chip-badge">{c.requisitoIds.length}</span>
                 </button>
               ))}
@@ -246,7 +246,7 @@ function AsignarRequisitos({
         ) : (
           <>
             <div className="asignar-items-head">
-              <h2>{selectedCargo.cargo}</h2>
+              <h2>{selectedCargo.nombre}</h2>
               <div className="asignar-progress">
                 {selectedCargo.requisitoIds.length} de {requisitos.length} asignados
               </div>

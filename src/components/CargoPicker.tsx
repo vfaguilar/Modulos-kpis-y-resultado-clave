@@ -27,7 +27,7 @@ export default function CargoPicker({ cargos, selectedCargoId, onSelectCargo }: 
     if (!nivel || !clasificacion) return [];
     return cargos
       .filter((c) => c.nivel === nivel && (c.clasificacion || 'Sin clasificación') === clasificacion)
-      .sort((a, b) => a.cargo.localeCompare(b.cargo));
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
   }, [cargos, nivel, clasificacion]);
 
   // Si el cargo seleccionado externamente cambia, sincroniza los selects.
@@ -85,7 +85,7 @@ export default function CargoPicker({ cargos, selectedCargoId, onSelectCargo }: 
         >
           <option value="">{clasificacion ? 'Selecciona un cargo...' : 'Elige primero una clasificación'}</option>
           {cargosDisponibles.map((c) => (
-            <option key={c.id} value={c.id}>{c.cargo}</option>
+            <option key={c.id} value={c.id}>{c.nombre}</option>
           ))}
         </select>
       </label>

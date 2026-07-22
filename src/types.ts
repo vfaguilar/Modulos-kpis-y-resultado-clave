@@ -14,13 +14,13 @@ export interface NivelInfo {
 
 export interface Kpi {
   id: string;
-  resultado_clave: string;
+  texto: string;
 }
 
 // Catálogo: un Resultado Clave con sus KPIs asociados.
 export interface ResultadoClave {
   id: string;
-  resultado_clave: string;
+  texto: string;
   clasificacion: string;
   kpis: Kpi[];
 }
@@ -28,8 +28,8 @@ export interface ResultadoClave {
 // Catálogo: un par Acción + Logro (van siempre unidos).
 export interface AccionLogro {
   id: string;
-  acciones: string;
-  logros: string;
+  accion: string;
+  logro: string;
   clasificacion: string;
 }
 
@@ -41,11 +41,11 @@ export interface Requisito {
 
 export interface Cargo {
   id: string;
-  cargo: string;
+  nombre: string;
   nivel: NivelKey;
   clasificacion: string;
   resultadoClaveIds: string[];
-  kpiIds: string[]; 
+  kpiIds: string[]; // subconjunto de kpis (de los resultados asignados) que aplican a este cargo
   accionLogroIds: string[];
   requisitoIds: string[];
 }

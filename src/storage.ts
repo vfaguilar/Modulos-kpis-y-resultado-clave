@@ -1,59 +1,58 @@
 import type { Cargo, ResultadoClave, AccionLogro, Requisito } from './types';
-import { supabase } from './lib/supabase';
 import { seedCargos, seedResultadosClave, seedAccionesLogros, seedRequisitos } from './data/seed';
 
-// Utility for fetching from Supabase with fallback to local seed
-async function fetchFromSupabase<T>(table: string, seedFallback: T[]): Promise<T[]> {
+const CARGOS_KEY = 'gc2_cargos_v1';
+const RESULTADOS_KEY = 'gc2_resultados_v1';
+const ACCIONLOGRO_KEY = 'gc2_accionlogro_v1';
+const REQUISITOS_KEY = 'gc2_requisitos_v1';
+
+function loadOrSeed<T>(key: string, seed: T[]): T[] {
   try {
-    const { data, error } = await supabase.from(table).select('*');
-    if (error) {
-      console.error(`Error fetching ${table}:`, error.message);
-      return seedFallback;
-    }
-    return (data as T[]) || seedFallback;
-  } catch (err) {
-    console.error(`Unexpected error fetching ${table}:`, err);
-    return seedFallback;
+    const raw = localStorage.getItem(key);
+    if (!raw) return seed;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    return seed;
+  } catch {
+    return seed;
   }
 }
 
-export async function loadCargos(): Promise<Cargo[]> {
-  const data = await fetchFromSupabase<any>('cargos', seedCargos);
-  return data.map((c: any) => ({
-    id: c.id,
-    cargo: c.cargo || c.nombre_cargo || c.cargo,
-    nivel: c.nivel_nuevo || c.nivel,
-    clasificacion: c.categoria_antigua || c.clasificacion,
-    resultadoClaveIds: c.resultadoClaveIds ?? c.metadata?.resultadoClaveIds ?? [],
-    kpiIds: c.kpiIds ?? c.metadata?.kpiIds ?? [],
-    accionLogroIds: c.accionLogroIds ?? c.metadata?.accionLogroIds ?? [],
-    requisitoIds: c.requisitoIds ?? c.metadata?.requisitoIds ?? [],
+export function loadCargos(): Cargo[] {
+  return loadOrSeed<Cargo>(CARGOS_KEY, seedCargos).map((c) => ({
+    ...c,
+    resultadoClaveIds: c.resultadoClaveIds ?? [],
+    kpiIds: c.kpiIds ?? [],
+    accionLogroIds: c.accionLogroIds ?? [],
+    requisitoIds: c.requisitoIds ?? [],
   }));
 }
-
-export async function loadResultadosClave(): Promise<ResultadoClave[]> {
-  return fetchFromSupabase<ResultadoClave>('resultados_clave', seedResultadosClave);
+export function loadResultadosClave(): ResultadoClave[] {
+  return loadOrSeed<ResultadoClave>(RESULTADOS_KEY, seedResultadosClave);
+}
+export function loadAccionesLogros(): AccionLogro[] {
+  return loadOrSeed<AccionLogro>(ACCIONLOGRO_KEY, seedAccionesLogros);
+}
+export function loadRequisitos(): Requisito[] {
+  return loadOrSeed<Requisito>(REQUISITOS_KEY, seedRequisitos);
 }
 
-export async function loadAccionesLogros(): Promise<AccionLogro[]> {
-  return fetchFromSupabase<AccionLogro>('acciones_logros', seedAccionesLogros);
+export function saveCargos(v: Cargo[]) {
+  localStorage.setItem(CARGOS_KEY, JSON.stringify(v));
+}
+export function saveResultadosClave(v: ResultadoClave[]) {
+  localStorage.setItem(RESULTADOS_KEY, JSON.stringify(v));
+}
+export function saveAccionesLogros(v: AccionLogro[]) {
+  localStorage.setItem(ACCIONLOGRO_KEY, JSON.stringify(v));
+}
+export function saveRequisitos(v: Requisito[]) {
+  localStorage.setItem(REQUISITOS_KEY, JSON.stringify(v));
 }
 
-export async function loadRequisitos(): Promise<Requisito[]> {
-  return fetchFromSupabase<Requisito>('requisitos', seedRequisitos);
-}
-
-export async function saveCargos(cargos: Cargo[]) {
-  // En la nube, las guardadas se realizarán de manera individual o en batch a la tabla 'cargos'
-  // Por ahora, actualizamos la metadata localmente.
-  console.log('Guardando cargos en Supabase (mock)...', cargos.length);
-}
-export async function saveResultadosClave(v: ResultadoClave[]) {
-  console.log('Guardando resultados_clave en Supabase (mock)...', v.length);
-}
-export async function saveAccionesLogros(v: AccionLogro[]) {
-  console.log('Guardando acciones_logros en Supabase (mock)...', v.length);
-}
-export async function saveRequisitos(v: Requisito[]) {
-  console.log('Guardando requisitos en Supabase (mock)...', v.length);
+export function resetAll() {
+  localStorage.removeItem(CARGOS_KEY);
+  localStorage.removeItem(RESULTADOS_KEY);
+  localStorage.removeItem(ACCIONLOGRO_KEY);
+  localStorage.removeItem(REQUISITOS_KEY);
 }
