@@ -18,7 +18,7 @@ export default function Sidebar({ view, onChange, totalCargos }: Props) {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <img src="/logo-salfasur.png" alt="Salfa Sur Automotriz" className="sidebar-logo" />
+
         <div className="sidebar-brand-title strong">Gestión de Resultados claves/KPIs</div>
       </div>
 
