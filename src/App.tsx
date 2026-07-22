@@ -16,15 +16,33 @@ export type View = 'resultados' | 'asignacion' | 'acciones' | 'requisitos' | 'im
 
 export default function App() {
   const [view, setView] = useState<View>('asignacion');
-  const [cargos, setCargos] = useState<Cargo[]>(() => loadCargos());
-  const [resultados, setResultados] = useState<ResultadoClave[]>(() => loadResultadosClave());
-  const [accionesLogros, setAccionesLogros] = useState<AccionLogro[]>(() => loadAccionesLogros());
-  const [requisitos, setRequisitos] = useState<Requisito[]>(() => loadRequisitos());
+  const [cargos, setCargos] = useState<Cargo[]>([]);
+  const [resultados, setResultados] = useState<ResultadoClave[]>([]);
+  const [accionesLogros, setAccionesLogros] = useState<AccionLogro[]>([]);
+  const [requisitos, setRequisitos] = useState<Requisito[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => saveCargos(cargos), [cargos]);
-  useEffect(() => saveResultadosClave(resultados), [resultados]);
-  useEffect(() => saveAccionesLogros(accionesLogros), [accionesLogros]);
-  useEffect(() => saveRequisitos(requisitos), [requisitos]);
+  useEffect(() => {
+    async function init() {
+      const [c, r, a, req] = await Promise.all([
+        loadCargos(),
+        loadResultadosClave(),
+        loadAccionesLogros(),
+        loadRequisitos(),
+      ]);
+      setCargos(c);
+      setResultados(r);
+      setAccionesLogros(a);
+      setRequisitos(req);
+      setLoading(false);
+    }
+    init();
+  }, []);
+
+  useEffect(() => { if (!loading) saveCargos(cargos); }, [cargos, loading]);
+  useEffect(() => { if (!loading) saveResultadosClave(resultados); }, [resultados, loading]);
+  useEffect(() => { if (!loading) saveAccionesLogros(accionesLogros); }, [accionesLogros, loading]);
+  useEffect(() => { if (!loading) saveRequisitos(requisitos); }, [requisitos, loading]);
 
   const norm = (s: string) => s.trim().toLowerCase();
 
@@ -211,14 +229,18 @@ export default function App() {
     <div className="app-shell">
       <Sidebar view={view} onChange={setView} totalCargos={cargos.length} />
       <main className="app-content">
-        {view === 'resultados' && (
-          <ResultadosClaveView
-            resultados={resultados}
-            onAdd={handleAddResultado}
-            onUpdate={handleUpdateResultado}
-            onDelete={handleDeleteResultado}
-          />
-        )}
+        {loading ? (
+          <div style={{ padding: '2rem', textAlign: 'center' }}>Cargando datos desde la nube...</div>
+        ) : (
+          <>
+            {view === 'resultados' && (
+              <ResultadosClaveView
+                resultados={resultados}
+                onAdd={handleAddResultado}
+                onUpdate={handleUpdateResultado}
+                onDelete={handleDeleteResultado}
+              />
+            )}
         {view === 'asignacion' && (
           <AsignacionView
             cargos={cargos}
@@ -254,6 +276,8 @@ export default function App() {
             onImportCargosResultados={handleImportCargosResultados}
             onImportAccionesLogros={handleImportAccionesLogros}
           />
+        )}
+          </>
         )}
       </main>
     </div>
