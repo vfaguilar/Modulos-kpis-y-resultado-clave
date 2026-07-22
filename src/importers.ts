@@ -29,7 +29,7 @@ function colIndex(headerRow: any[], pattern: RegExp): number {
 // IMPORTAR: Resultado Clave -> KPIs   (formato Libro12)
 // ---------------------------------------------------------------------
 export interface ParsedResultado {
-  texto: string;
+  resultado_clave: string;
   kpis: string[];
   clasificacion?: string;
 }
@@ -52,7 +52,7 @@ export async function parseResultadosFile(file: File): Promise<ParsedResultado[]
       .map((cell, idx) => (idx === textoIdx || idx === clasifIdx ? '' : cellText(cell)))
       .filter((v) => v !== '');
     const clasificacion = clasifIdx >= 0 ? cellText(row[clasifIdx]) : '';
-    out.push({ texto, kpis, clasificacion: clasificacion || undefined });
+    out.push({ resultado_clave: texto, kpis, clasificacion: clasificacion || undefined });
   }
   return out;
 }
@@ -61,7 +61,7 @@ export async function parseResultadosFile(file: File): Promise<ParsedResultado[]
 // IMPORTAR: Cargo + Nivel + Clasificación + Resultados asignados (Libro11)
 // ---------------------------------------------------------------------
 export interface ParsedCargoResultados {
-  nombre: string;
+  cargo: string;
   nivel: Cargo['nivel'];
   clasificacion: string;
   resultadosTexto: string[];
@@ -85,7 +85,7 @@ export async function parseCargosResultadosFile(file: File): Promise<ParsedCargo
     if (!nombre) continue;
     const resultadosTexto = row.slice(firstResultadoIdx).map(cellText).filter((v) => v !== '');
     out.push({
-      nombre,
+      cargo: nombre,
       nivel: normalizeNivel(cellText(row[nivelIdx])),
       clasificacion: clasifIdx >= 0 ? cellText(row[clasifIdx]) : '',
       resultadosTexto,
@@ -98,8 +98,8 @@ export async function parseCargosResultadosFile(file: File): Promise<ParsedCargo
 // IMPORTAR: Acciones + Logros (Libro13)
 // ---------------------------------------------------------------------
 export interface ParsedAccionLogro {
-  accion: string;
-  logro: string;
+  acciones: string;
+  logros: string;
   clasificacion?: string;
 }
 export async function parseAccionLogroFile(file: File): Promise<ParsedAccionLogro[]> {
@@ -129,7 +129,7 @@ export async function parseAccionLogroFile(file: File): Promise<ParsedAccionLogr
       .map((cell, offset) => (logroStart + offset === clasifIdx ? '' : cellText(cell)))
       .filter((v) => v !== '');
     acciones.forEach((accion, idx) => {
-      out.push({ accion, logro: logros[idx] ?? '', clasificacion: clasificacion || undefined });
+      out.push({ accion, logros: logros[idx] ?? '', clasificacion: clasificacion || undefined });
     });
   }
   return out;
@@ -154,19 +154,19 @@ export function exportResultadosClave(resultados: ResultadoClave[]) {
   const header = ['Resultado Clave', 'CLASIFICACION', ...Array.from({ length: maxKpis }, (_, i) => (i === 0 ? 'KPIs' : ''))];
   const rows: any[][] = [header];
   resultados.forEach((r) => {
-    rows.push([r.texto, r.clasificacion, ...r.kpis.map((k) => k.texto)]);
+    rows.push([r.resultado_clave, r.clasificacion, ...r.kpis.map((k) => k.resultado_clave)]);
   });
   downloadWorkbook(rows, 'Resultados Clave', 'resultados-clave-kpis.xlsx');
 }
 
 export function exportCargosResultados(cargos: Cargo[], resultados: ResultadoClave[]) {
-  const byId = new Map(resultados.map((r) => [r.id, r.texto]));
+  const byId = new Map(resultados.map((r) => [r.id, r.resultado_clave]));
   const maxResultados = Math.max(1, ...cargos.map((c) => c.resultadoClaveIds.length));
   const header = ['CARGO', 'NIVEL', 'CLASIFICACION', ...Array.from({ length: maxResultados }, (_, i) => (i === 0 ? 'RESULTADO CLAVE' : ''))];
   const rows: any[][] = [header];
   cargos.forEach((c) => {
     const textos = c.resultadoClaveIds.map((id) => byId.get(id) ?? '').filter(Boolean);
-    rows.push([c.nombre, nivelLabelOf(c.nivel), c.clasificacion, ...textos]);
+    rows.push([c.cargo, nivelLabelOf(c.nivel), c.clasificacion, ...textos]);
   });
   downloadWorkbook(rows, 'Cargos', 'cargos-resultados-clave.xlsx');
 }
@@ -182,11 +182,11 @@ export function exportAccionesLogros(cargos: Cargo[], accionesLogros: AccionLogr
   const rows: any[][] = [header];
   cargos.forEach((c) => {
     const pairs = c.accionLogroIds.map((id) => byId.get(id)).filter(Boolean) as AccionLogro[];
-    const acciones = pairs.map((p) => p.accion);
-    const logros = pairs.map((p) => p.logro);
+    const acciones = pairs.map((p) => p.acciones);
+    const logros = pairs.map((p) => p.logros);
     while (acciones.length < maxAcciones) acciones.push('');
     while (logros.length < maxAcciones) logros.push('');
-    rows.push([c.nombre, c.clasificacion, nivelLabelOf(c.nivel), ...acciones, ...logros]);
+    rows.push([c.cargo, c.clasificacion, nivelLabelOf(c.nivel), ...acciones, ...logros]);
   });
   downloadWorkbook(rows, 'Acciones y Logros', 'cargos-acciones-logros.xlsx');
 }

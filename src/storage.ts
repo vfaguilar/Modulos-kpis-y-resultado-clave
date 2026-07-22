@@ -21,7 +21,7 @@ export async function loadCargos(): Promise<Cargo[]> {
   const data = await fetchFromSupabase<any>('cargos', seedCargos);
   return data.map((c: any) => ({
     id: c.id,
-    nombre: c.nombre_cargo || c.nombre,
+    cargo: c.cargo || c.nombre_cargo || c.cargo,
     nivel: c.nivel_nuevo || c.nivel,
     clasificacion: c.categoria_antigua || c.clasificacion,
     resultadoClaveIds: c.resultadoClaveIds ?? c.metadata?.resultadoClaveIds ?? [],

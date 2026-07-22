@@ -47,21 +47,21 @@ export default function App() {
   const norm = (s: string) => s.trim().toLowerCase();
 
   // ---------------- Resultados Clave (catálogo) ----------------
-  function handleAddResultado(texto: string, kpisText: string[], clasificacion: string) {
+  function handleAddResultado(resultado_clave: string, kpisText: string[], clasificacion: string) {
     const id = `rc-${Date.now()}`;
-    const kpis: Kpi[] = kpisText.map((t, i) => ({ id: `kpi-${Date.now()}-${i}`, texto: t }));
-    setResultados((prev) => [...prev, { id, texto, clasificacion, kpis }]);
+    const kpis: Kpi[] = kpisText.map((t, i) => ({ id: `kpi-${Date.now()}-${i}`, resultado_clave: t }));
+    setResultados((prev) => [...prev, { id, resultado_clave, clasificacion, kpis }]);
   }
-  function handleUpdateResultado(id: string, texto: string, kpisText: string[], clasificacion: string) {
+  function handleUpdateResultado(id: string, resultado_clave: string, kpisText: string[], clasificacion: string) {
     setResultados((prev) =>
       prev.map((r) => {
         if (r.id !== id) return r;
         // conserva ids de KPIs existentes (por texto) para no romper asignaciones ya hechas
         const kpis: Kpi[] = kpisText.map((t, i) => {
-          const existing = r.kpis.find((k) => k.texto === t);
-          return existing ?? { id: `kpi-${Date.now()}-${i}`, texto: t };
+          const existing = r.kpis.find((k) => k.resultado_clave === t);
+          return existing ?? { id: `kpi-${Date.now()}-${i}`, resultado_clave: t };
         });
-        return { ...r, texto, clasificacion, kpis };
+        return { ...r, resultado_clave, clasificacion, kpis };
       })
     );
   }
@@ -108,9 +108,9 @@ export default function App() {
   }
 
   // ---------------- Acciones y Logros ----------------
-  function handleAddAccionLogro(accion: string, logro: string, clasificacion: string) {
+  function handleAddAccionLogro(acciones: string, logros: string, clasificacion: string) {
     const id = `al-${Date.now()}`;
-    setAccionesLogros((prev) => [...prev, { id, accion, logro, clasificacion }]);
+    setAccionesLogros((prev) => [...prev, { id, acciones, logros, clasificacion }]);
   }
   function handleToggleAccionLogro(cargoId: string, accionLogroId: string) {
     setCargos((prev) =>
@@ -153,20 +153,20 @@ export default function App() {
   }
 
   // ---------------- Importar desde Excel ----------------
-  function handleImportResultados(parsed: { texto: string; kpis: string[]; clasificacion?: string }[]): number {
+  function handleImportResultados(parsed: { resultado_clave: string; kpis: string[]; clasificacion?: string }[]): number {
     let affected = 0;
     setResultados((prev) => {
       const next = [...prev];
       for (const p of parsed) {
-        const idx = next.findIndex((r) => norm(r.texto) === norm(p.texto));
+        const idx = next.findIndex((r) => norm(r.resultado_clave) === norm(p.resultado_clave));
         const kpis: Kpi[] = p.kpis.map((t, i) => {
-          const existing = idx >= 0 ? next[idx].kpis.find((k) => norm(k.texto) === norm(t)) : undefined;
-          return existing ?? { id: `kpi-${Date.now()}-${next.length}-${i}`, texto: t };
+          const existing = idx >= 0 ? next[idx].kpis.find((k) => norm(k.resultado_clave) === norm(t)) : undefined;
+          return existing ?? { id: `kpi-${Date.now()}-${next.length}-${i}`, resultado_clave: t };
         });
         // si el Excel trae clasificación se usa; si no, se conserva la que ya tenía
         const clasificacion = p.clasificacion?.trim() || (idx >= 0 ? next[idx].clasificacion : 'Sin clasificar');
         if (idx >= 0) next[idx] = { ...next[idx], kpis, clasificacion };
-        else next.push({ id: `rc-${Date.now()}-${next.length}`, texto: p.texto, clasificacion, kpis });
+        else next.push({ id: `rc-${Date.now()}-${next.length}`, resultado_clave: p.resultado_clave, clasificacion, kpis });
         affected++;
       }
       return next;
@@ -175,25 +175,25 @@ export default function App() {
   }
 
   function handleImportCargosResultados(
-    parsed: { nombre: string; nivel: Cargo['nivel']; clasificacion: string; resultadosTexto: string[] }[]
+    parsed: { cargo: string; nivel: Cargo['nivel']; clasificacion: string; resultadosTexto: string[] }[]
   ): number {
     let affected = 0;
     setCargos((prevCargos) => {
       const next = [...prevCargos];
       for (const p of parsed) {
         const resultadoIds = p.resultadosTexto
-          .map((t) => resultados.find((r) => norm(r.texto) === norm(t))?.id)
+          .map((t) => resultados.find((r) => norm(r.resultado_clave) === norm(t))?.id)
           .filter((id): id is string => Boolean(id));
         const kpiIds = resultadoIds.flatMap(
           (rid) => resultados.find((r) => r.id === rid)?.kpis.map((k) => k.id) ?? []
         );
-        const idx = next.findIndex((c) => norm(c.nombre) === norm(p.nombre));
+        const idx = next.findIndex((c) => norm(c.cargo) === norm(p.cargo));
         if (idx >= 0) {
           next[idx] = { ...next[idx], nivel: p.nivel, clasificacion: p.clasificacion, resultadoClaveIds: resultadoIds, kpiIds };
         } else {
           next.push({
             id: `cargo-${Date.now()}-${next.length}`,
-            nombre: p.nombre,
+            cargo: p.cargo,
             nivel: p.nivel,
             clasificacion: p.clasificacion,
             resultadoClaveIds: resultadoIds,
@@ -209,15 +209,15 @@ export default function App() {
     return affected;
   }
 
-  function handleImportAccionesLogros(parsed: { accion: string; logro: string; clasificacion?: string }[]): number {
+  function handleImportAccionesLogros(parsed: { acciones: string; logros: string; clasificacion?: string }[]): number {
     let affected = 0;
     setAccionesLogros((prev) => {
       const next = [...prev];
       for (const p of parsed) {
-        const idx = next.findIndex((al) => norm(al.accion) === norm(p.accion));
+        const idx = next.findIndex((al) => norm(al.acciones) === norm(p.acciones));
         const clasificacion = p.clasificacion?.trim() || (idx >= 0 ? next[idx].clasificacion : 'Sin clasificar');
-        if (idx >= 0) next[idx] = { ...next[idx], logro: p.logro, clasificacion };
-        else next.push({ id: `al-${Date.now()}-${next.length}`, accion: p.accion, logro: p.logro, clasificacion });
+        if (idx >= 0) next[idx] = { ...next[idx], logros: p.logros, clasificacion };
+        else next.push({ id: `al-${Date.now()}-${next.length}`, acciones: p.acciones, logros: p.logros, clasificacion });
         affected++;
       }
       return next;

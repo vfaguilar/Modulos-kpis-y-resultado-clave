@@ -8,7 +8,7 @@ interface Props {
   cargos: Cargo[];
   accionesLogros: AccionLogro[];
   onToggle: (cargoId: string, accionLogroId: string) => void;
-  onAdd: (accion: string, logro: string, clasificacion: string) => void;
+  onAdd: (acciones: string, logros: string, clasificacion: string) => void;
 }
 
 export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, onAdd }: Props) {
@@ -39,7 +39,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     const q = search.trim().toLowerCase();
     if (q === '') return disponibles;
     return disponibles.filter(
-      (al) => al.accion.toLowerCase().includes(q) || al.logro.toLowerCase().includes(q)
+      (al) => al.acciones.toLowerCase().includes(q) || al.logros.toLowerCase().includes(q)
     );
   }, [disponibles, search]);
 
@@ -78,7 +78,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
           <div className="asignar-items-head">
             <div>
               <div className="detail-panel-nivel">{cargo.clasificacion}</div>
-              <h2>{cargo.nombre}</h2>
+              <h2>{cargo.cargo}</h2>
             </div>
             <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
           </div>
@@ -103,9 +103,9 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                 <label key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
                   <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} />
                   <div>
-                    <div className="asignar-item-accion">{al.accion}</div>
+                    <div className="asignar-item-accion">{al.acciones}</div>
                     <div className="asignar-item-meta">
-                      <span><strong>Logro:</strong> {al.logro || '—'}</span>
+                      <span><strong>Logro:</strong> {al.logros || '—'}</span>
                     </div>
                   </div>
                 </label>

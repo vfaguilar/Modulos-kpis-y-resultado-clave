@@ -4,8 +4,8 @@ import { CLASIFICACIONES } from '../data/seed';
 
 interface Props {
   resultados: ResultadoClave[];
-  onAdd: (texto: string, kpis: string[], clasificacion: string) => void;
-  onUpdate: (id: string, texto: string, kpis: string[], clasificacion: string) => void;
+  onAdd: (resultado_clave: string, kpis: string[], clasificacion: string) => void;
+  onUpdate: (id: string, resultado_clave: string, kpis: string[], clasificacion: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -14,7 +14,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
   const [filterClasificacion, setFilterClasificacion] = useState('TODAS');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [texto, setTexto] = useState('');
+  const [resultado_clave, setTexto] = useState('');
   const [clasificacion, setClasificacion] = useState(CLASIFICACIONES[0]);
   const [kpis, setKpis] = useState<string[]>(['']);
   const [toast, setToast] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
     const q = search.trim().toLowerCase();
     return resultados.filter((r) => {
       const matchClasif = filterClasificacion === 'TODAS' || (r.clasificacion || 'Sin clasificar') === filterClasificacion;
-      const matchSearch = q === '' || r.texto.toLowerCase().includes(q) || r.kpis.some((k) => k.texto.toLowerCase().includes(q));
+      const matchSearch = q === '' || r.resultado_clave.toLowerCase().includes(q) || r.kpis.some((k) => k.resultado_clave.toLowerCase().includes(q));
       return matchClasif && matchSearch;
     });
   }, [resultados, search, filterClasificacion]);
@@ -57,9 +57,9 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
 
   function startEdit(r: ResultadoClave) {
     setEditingId(r.id);
-    setTexto(r.texto);
+    setTexto(r.resultado_clave);
     setClasificacion(r.clasificacion || CLASIFICACIONES[0]);
-    setKpis(r.kpis.length > 0 ? r.kpis.map((k) => k.texto) : ['']);
+    setKpis(r.kpis.length > 0 ? r.kpis.map((k) => k.resultado_clave) : ['']);
     setShowForm(true);
   }
 
@@ -73,20 +73,20 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!texto.trim()) return;
+    if (!resultado_clave.trim()) return;
     const cleanKpis = kpis.map((k) => k.trim()).filter((k) => k !== '');
     if (editingId) {
-      onUpdate(editingId, texto.trim(), cleanKpis, clasificacion);
+      onUpdate(editingId, resultado_clave.trim(), cleanKpis, clasificacion);
       flash('Resultado clave actualizado');
     } else {
-      onAdd(texto.trim(), cleanKpis, clasificacion);
+      onAdd(resultado_clave.trim(), cleanKpis, clasificacion);
       flash('Resultado clave agregado');
     }
     closeForm();
   }
 
   function handleDelete(r: ResultadoClave) {
-    if (confirm(`¿Eliminar el resultado clave "${r.texto}"? También se quitará de los cargos que lo tengan asignado.`)) {
+    if (confirm(`¿Eliminar el resultado clave "${r.resultado_clave}"? También se quitará de los cargos que lo tengan asignado.`)) {
       onDelete(r.id);
       flash('Resultado clave eliminado');
     }
@@ -137,7 +137,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
             {items.map((r) => (
               <div className="rc-card" key={r.id}>
                 <div className="rc-card-head">
-                  <h3>{r.texto}</h3>
+                  <h3>{r.resultado_clave}</h3>
                   <div className="row-actions">
                     <button className="icon-btn" onClick={() => startEdit(r)} title="Editar">✏️</button>
                     <button className="icon-btn" onClick={() => handleDelete(r)} title="Eliminar">🗑️</button>
@@ -148,7 +148,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
                 ) : (
                   <ul className="rc-kpi-list">
                     {r.kpis.map((k) => (
-                      <li key={k.id}>{k.texto}</li>
+                      <li key={k.id}>{k.resultado_clave}</li>
                     ))}
                   </ul>
                 )}
@@ -168,7 +168,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
             <form className="form" onSubmit={submit}>
               <label>
                 Resultado clave
-                <textarea required rows={2} value={texto} onChange={(e) => setTexto(e.target.value)} />
+                <textarea required rows={2} value={resultado_clave} onChange={(e) => setTexto(e.target.value)} />
               </label>
 
               <label>
