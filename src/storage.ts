@@ -33,7 +33,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     const { data: dbAL, error: errAL } = await supabase.from('acciones_logros').select('*');
     if (errAL) console.error('Error fetching acciones_logros from Supabase:', errAL);
 
-    // 5. Fetch Asignaciones
+    // 5. Fetch Asignaciones relacionales activas
     const { data: dbAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').select('*');
     if (errAsign) console.error('Error fetching asignacion_resultados_cargos from Supabase:', errAsign);
 
@@ -57,7 +57,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       nivel: al.nivel || 'Sin nivel',
     }));
 
-    // Build map of asignaciones per cargo_id
+    // Construir mapa de asignaciones reales por cargo_id
     const asignacionesByCargo = new Map<string, { rcIds: Set<string>; kpiIds: Set<string>; alIds: Set<string> }>();
     (dbAsign || []).forEach((a: any) => {
       const cargoId = String(a.cargo_id || '');
@@ -71,33 +71,27 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
     });
 
-    // Map Cargos adaptando dinámicamente cualquier esquema de columnas (cargos o perfiles_cargo)
+    // Map Cargos: si no tiene filas en asignacion_resultados_cargos, los arreglos se inicializan estrictamente en VACÍO ([])
     const sourceCargos = dbCargos.length > 0 ? dbCargos : seedCargos;
     const cargos: Cargo[] = sourceCargos.map((c: any) => {
       const cargoId = String(c.id || c.idCargo || c.codigo || '');
-      const asign = asignacionesByCargo.get(cargoId) || { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() };
+      const asign = asignacionesByCargo.get(cargoId);
       return {
         id: cargoId,
         nombre: c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || 'Cargo sin nombre',
         nivel: normalizeNivel(c.nivel_nuevo || c.nivel_jerarquico || c.nivel || 'INTERMEDIO') as NivelKey,
         clasificacion: c.categoria_antigua || c.clasificacion || c.area || c.gerencia || 'Sin clasificar',
-        resultadoClaveIds: Array.from(asign.rcIds),
-        kpiIds: Array.from(asign.kpiIds),
-        accionLogroIds: Array.from(asign.alIds),
+        resultadoClaveIds: asign ? Array.from(asign.rcIds) : [],
+        kpiIds: asign ? Array.from(asign.kpiIds) : [],
+        accionLogroIds: asign ? Array.from(asign.alIds) : [],
         requisitoIds: c.requisitoIds || [],
       };
     });
 
-    // Fallback a semillas si las tablas de resultados están completamente vacías (Sembrado inicial)
+    // Cargar semillas de catálogo si las tablas están vacías (sin autoguardar asignaciones ficticias)
     if (resultadosClave.length === 0 && seedResultadosClave.length > 0) {
       resultadosClave = seedResultadosClave;
       accionesLogros = seedAccionesLogros;
-      await saveToSupabase({
-        cargos: seedCargos,
-        resultadosClave: seedResultadosClave,
-        accionesLogros: seedAccionesLogros,
-        requisitos: seedRequisitos,
-      });
     }
 
     return {
@@ -107,9 +101,9 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       requisitos: seedRequisitos,
     };
   } catch (error) {
-    console.error('Error al cargar datos desde Supabase (fallback a seed):', error);
+    console.error('Error al cargar datos desde Supabase (fallback seguro):', error);
     return {
-      cargos: seedCargos,
+      cargos: seedCargos.map((c) => ({ ...c, resultadoClaveIds: [], kpiIds: [], accionLogroIds: [], requisitoIds: [] })),
       resultadosClave: seedResultadosClave,
       accionesLogros: seedAccionesLogros,
       requisitos: seedRequisitos,
