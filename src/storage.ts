@@ -85,7 +85,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
         resultadoClaveIds: asign ? Array.from(asign.rcIds) : [],
         kpiIds: asign ? Array.from(asign.kpiIds) : [],
         accionLogroIds: asign ? Array.from(asign.alIds) : [],
-        requisitoIds: c.requisitoIds || [],
+        requisitoIds: [],
       };
     });
 
