@@ -29,9 +29,10 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       id: String(rc.id),
       texto: rc.texto || '',
       clasificacion: rc.clasificacion || 'Sin clasificar',
+      nivel: rc.nivel || 'Sin nivel',
       kpis: (dbKPI || [])
         .filter((k: any) => String(k.resultado_clave_id) === String(rc.id))
-        .map((k: any) => ({ id: String(k.id), texto: k.texto || '' })),
+        .map((k: any) => ({ id: String(k.id), texto: k.texto || '', nivel: k.nivel || 'Sin nivel' })),
     }));
 
     // Map Acciones y Logros
@@ -40,6 +41,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       accion: al.accion || '',
       logro: al.logro || '',
       clasificacion: al.clasificacion || 'Sin clasificar',
+      nivel: al.nivel || 'Sin nivel',
     }));
 
     // Build map of asignaciones per cargo_id
@@ -110,6 +112,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         id: String(r.id),
         texto: r.texto,
         clasificacion: r.clasificacion || 'Sin clasificar',
+        nivel: r.nivel || 'Sin nivel',
       }));
       const { error: errRC } = await supabase.from('resultados_clave').upsert(rcRows);
       if (errRC) console.error('Error upserting resultados_clave:', errRC);
@@ -122,6 +125,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
             id: String(k.id),
             resultado_clave_id: String(r.id),
             texto: k.texto,
+            nivel: k.nivel || r.nivel || 'Sin nivel',
           });
         });
       });
@@ -138,6 +142,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         accion: al.accion,
         logro: al.logro,
         clasificacion: al.clasificacion || 'Sin clasificar',
+        nivel: al.nivel || 'Sin nivel',
       }));
       const { error: errAL } = await supabase.from('acciones_logros').upsert(alRows);
       if (errAL) console.error('Error upserting acciones_logros:', errAL);
