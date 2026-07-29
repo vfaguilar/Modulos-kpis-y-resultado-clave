@@ -21,18 +21,81 @@ body {
 
 .app-shell {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background: var(--bg);
 }
 
-/* ---------- Sidebar ---------- */
-.sidebar {
-  width: 250px;
-  flex-shrink: 0;
-  background: var(--navy-900);
-  color: #fff;
+/* ---------- Top Tabs ---------- */
+.top-tabs-container {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px 0 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.top-tabs-wrapper {
   display: flex;
   flex-direction: column;
-  padding: 22px 16px;
+  gap: 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.top-tabs-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-tabs-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-900);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.top-tabs-badge {
+  font-size: 12px;
+  background: #eef3ff;
+  color: var(--accent);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.top-tabs-nav {
+  display: flex;
+  gap: 24px;
+}
+
+.top-tab-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 4px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.top-tab-button:hover {
+  color: var(--navy-900);
+}
+
+.top-tab-button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.top-tab-icon {
+  font-size: 16px;
 }
 
 .sidebar-brand {
