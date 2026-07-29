@@ -28,7 +28,6 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
     });
   }, [resultados, search, filterClasificacion]);
 
-  // Agrupa los resultados filtrados por clasificación, en el orden del catálogo.
   const grupos = useMemo(() => {
     const map = new Map<string, ResultadoClave[]>();
     for (const r of filtered) {
@@ -86,7 +85,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
   }
 
   function handleDelete(r: ResultadoClave) {
-    if (confirm(`¿Eliminar el resultado clave "${r.texto}"? También se quitará de los cargos que lo tengan asignado.`)) {
+    if (confirm(`¿Eliminar el resultado clave "${r.texto}"? Se quitará de los cargos asignados.`)) {
       onDelete(r.id);
       flash('Resultado clave eliminado');
     }
@@ -106,31 +105,31 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
     <div className="view">
       <header className="view-header view-header-row">
         <div>
-          <h1>Resultados Clave</h1>
-          <p>Crea, edita o elimina los resultados clave y los KPIs asociados a cada uno. Luego podrás asignarlos a los cargos en el módulo Asignación.</p>
+          <h1>Catálogo Maestro de Resultados Clave y KPIs</h1>
+          <p>Gestiona los resultados clave y los indicadores KPI asociados para la organización.</p>
         </div>
+        <button className="btn-primary" onClick={startAdd}>+ Nuevo resultado clave</button>
       </header>
 
-      <div className="toolbar">
+      <div className="toolbar" style={{ marginBottom: '16px' }}>
         <select value={filterClasificacion} onChange={(e) => setFilterClasificacion(e.target.value)}>
-          <option value="TODAS">Todas las clasificaciones</option>
+          <option value="TODAS">Todas las clasificaciones ({resultados.length})</option>
           {CLASIFICACIONES.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
         <input
           type="text"
-          placeholder="Buscar resultado clave o KPI..."
+          placeholder="Buscar en el catálogo..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="btn-primary" onClick={startAdd}>+ Nuevo resultado clave</button>
       </div>
 
       {toast && <div className="toast">{toast}</div>}
 
       <div className="rc-list">
-        {filtered.length === 0 && <div className="empty-hint" style={{ padding: 24 }}>No hay resultados.</div>}
+        {filtered.length === 0 && <div className="empty-hint" style={{ padding: 24 }}>No hay resultados clave creados.</div>}
         {grupos.map(([clasif, items]) => (
           <div key={clasif} className="rc-group">
             <div className="rc-group-label">{clasif} <span className="cargo-chip-badge">{items.length}</span></div>
@@ -139,8 +138,8 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
                 <div className="rc-card-head">
                   <h3>{r.texto}</h3>
                   <div className="row-actions">
-                    <button className="icon-btn" onClick={() => startEdit(r)} title="Editar">✏️</button>
-                    <button className="icon-btn" onClick={() => handleDelete(r)} title="Eliminar">🗑️</button>
+                    <button className="btn-table-action" onClick={() => startEdit(r)}>Editar</button>
+                    <button className="btn-table-action danger" onClick={() => handleDelete(r)}>Eliminar</button>
                   </div>
                 </div>
                 {r.kpis.length === 0 ? (
@@ -162,12 +161,12 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
         <div className="detail-overlay" onClick={closeForm}>
           <div className="detail-panel" onClick={(e) => e.stopPropagation()}>
             <div className="detail-panel-head">
-              <h2>{editingId ? 'Editar resultado clave' : 'Nuevo resultado clave'}</h2>
+              <h2>{editingId ? 'Editar Resultado Clave' : 'Nuevo Resultado Clave'}</h2>
               <button className="icon-btn" onClick={closeForm}>✕</button>
             </div>
             <form className="form" onSubmit={submit}>
               <label>
-                Resultado clave
+                Resultado Clave
                 <textarea required rows={2} value={texto} onChange={(e) => setTexto(e.target.value)} />
               </label>
 
@@ -181,13 +180,13 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
               </label>
 
               <div className="kpi-fields">
-                <span className="kpi-fields-label">KPIs</span>
+                <span className="kpi-fields-label">Indicadores KPI Asociados</span>
                 {kpis.map((k, idx) => (
                   <div className="kpi-field-row" key={idx}>
                     <input
                       type="text"
                       value={k}
-                      placeholder={`KPI ${idx + 1}`}
+                      placeholder={`Nombre de KPI ${idx + 1}`}
                       onChange={(e) => updateKpiField(idx, e.target.value)}
                     />
                     <button type="button" className="icon-btn" onClick={() => removeKpiField(idx)}>✕</button>

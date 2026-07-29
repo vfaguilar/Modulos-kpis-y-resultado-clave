@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Cargo, ResultadoClave, AccionLogro, Requisito, Kpi } from './types';
 import { fetchDataFromSupabase, saveToSupabase } from './storage';
-import TopTabs from './components/TopTabs';
 import ResultadosClaveView from './components/ResultadosClaveView';
 import AsignacionView from './components/AsignacionView';
 import AccionesLogrosView from './components/AccionesLogrosView';
@@ -35,6 +34,28 @@ export default function App() {
     if (!isLoadedRef.current) return;
     saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
   }, [cargos, resultados, accionesLogros, requisitos]);
+
+  // Escuchar cambio de vista desde el sidebar de la Plataforma DO (hash o postMessage)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#/', '').replace('#', '');
+      if (hash === 'acciones' || hash === 'requisitos' || hash === 'resultados') {
+        setView(hash as View);
+      }
+    };
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'CHANGE_VIEW' && e.data.view) {
+        setView(e.data.view as View);
+      }
+    };
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   // ---------------- Resultados Clave (catálogo) ----------------
   function handleAddResultado(texto: string, kpisText: string[], clasificacion: string) {
@@ -144,9 +165,8 @@ export default function App() {
   if (loading) {
     return (
       <div className="app-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <div style={{ textAlign: 'center', color: '#1f2f4d', fontFamily: 'sans-serif' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔄</div>
-          <h3>Cargando módulo de KPIs desde Supabase...</h3>
+        <div style={{ textAlign: 'center', color: '#0f1c33', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem', fontWeight: 600 }}>Cargando datos desde Supabase...</div>
         </div>
       </div>
     );
@@ -154,22 +174,21 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <TopTabs view={view} onChange={setView} totalCargos={cargos.length} />
       <main className="app-content">
         {view === 'resultados' && (
           <div>
-            <div className="subtabs">
+            <div className="subtabs-pills" style={{ marginBottom: '16px', display: 'inline-flex' }}>
               <button
-                className={`subtab ${rcSubtab === 'asignacion' ? 'active' : ''}`}
+                className={`subtab-pill ${rcSubtab === 'asignacion' ? 'active' : ''}`}
                 onClick={() => setRcSubtab('asignacion')}
               >
-                🔗 Asignar a Cargo
+                Asignación por Cargo
               </button>
               <button
-                className={`subtab ${rcSubtab === 'catalogo' ? 'active' : ''}`}
+                className={`subtab-pill ${rcSubtab === 'catalogo' ? 'active' : ''}`}
                 onClick={() => setRcSubtab('catalogo')}
               >
-                📚 Catálogo Maestro de Resultados y KPIs
+                Catálogo Maestro de Resultados y KPIs ({resultados.length})
               </button>
             </div>
             {rcSubtab === 'asignacion' ? (

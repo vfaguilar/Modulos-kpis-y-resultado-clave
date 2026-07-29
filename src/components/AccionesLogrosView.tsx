@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, AccionLogro } from '../types';
-import CargoPicker from './CargoPicker';
+import CargoListSidebar from './CargoListSidebar';
 import { CLASIFICACIONES } from '../data/seed';
 import { normalizeClasificacion } from '../utils';
 
@@ -20,7 +20,6 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   const [clasificacion, setClasificacion] = useState(CLASIFICACIONES[0]);
   const [toast, setToast] = useState<string | null>(null);
 
-  // Auto-selección por defecto del primer cargo disponible
   useEffect(() => {
     if (!cargoId && cargos.length > 0) {
       setCargoId(cargos[0].id);
@@ -61,64 +60,77 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     setLogro('');
     setClasificacion(CLASIFICACIONES[0]);
     setShowForm(false);
-    flash('Acción y logro agregados al catálogo');
+    flash('Acción y logro agregados');
   }
 
   return (
-    <div className="view">
-      <header className="view-header view-header-row">
+    <div className="view-2col-container">
+      <div className="view-header-simple view-header-row">
         <div>
           <h1>Acciones y Logros Esperados</h1>
-          <p>Selecciona un cargo y marca las acciones y logros esperados que le correspondan.</p>
+          <p>Selecciona un cargo de la lista izquierda para marcar las acciones y sus logros esperados.</p>
         </div>
-        <button className="btn-secondary" onClick={() => setShowForm(true)}>+ Nueva acción y logro</button>
-      </header>
+        <button className="btn-primary" onClick={() => setShowForm(true)}>+ Nueva acción y logro</button>
+      </div>
 
-      <CargoPicker cargos={cargos} selectedCargoId={cargoId || (cargos[0]?.id ?? null)} onSelectCargo={setCargoId} />
+      <div className="layout-2col">
+        {/* Panel Izquierdo: Lista de Cargos */}
+        <CargoListSidebar
+          cargos={cargos}
+          selectedCargoId={cargoId || (cargos[0]?.id ?? null)}
+          onSelectCargo={(id) => setCargoId(id)}
+          countType="acciones"
+        />
 
-      {toast && <div className="toast">{toast}</div>}
-
-      {cargo && (
-        <div className="asignar-items-panel" style={{ marginTop: 20 }}>
-          <div className="asignar-items-head">
-            <div>
-              <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
-              <h2>{cargo.nombre}</h2>
-            </div>
-            <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
-          </div>
-
-          <input
-            type="text"
-            placeholder="Buscar en el catálogo de acciones..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ marginBottom: 14, width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid var(--border)' }}
-          />
-
-          <div className="asignar-item-list">
-            {disponibles.length === 0 && (
-              <div className="empty-hint" style={{ padding: 24 }}>
-                No hay acciones/logros en el catálogo. Créalas con el botón "+ Nueva acción y logro".
+        {/* Panel Derecho: Área de Asignación */}
+        <div className="panel-derecho-asignacion">
+          {cargo ? (
+            <div className="asignar-items-panel">
+              <div className="asignar-items-head">
+                <div>
+                  <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
+                  <h2>{cargo.nombre}</h2>
+                </div>
+                <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
               </div>
-            )}
-            {filtered.map((al) => {
-              const checked = cargo.accionLogroIds.includes(al.id);
-              return (
-                <label key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
-                  <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado en Supabase'); }} />
-                  <div>
-                    <div className="asignar-item-accion">{al.accion}</div>
-                    <div className="asignar-item-meta">
-                      <span><strong>Logro:</strong> {al.logro || '—'}</span>
-                    </div>
+
+              <div className="search-catalog-box">
+                <input
+                  type="text"
+                  placeholder="Buscar en el catálogo de acciones y logros..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="search-catalog-input"
+                />
+              </div>
+
+              <div className="asignar-item-list">
+                {disponibles.length === 0 && (
+                  <div className="empty-hint">
+                    No hay acciones creadas aún. Haz clic en "+ Nueva acción y logro" para agregar.
                   </div>
-                </label>
-              );
-            })}
-          </div>
+                )}
+                {filtered.map((al) => {
+                  const checked = cargo.accionLogroIds.includes(al.id);
+                  return (
+                    <label key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
+                      <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} />
+                      <div>
+                        <div className="asignar-item-accion">{al.accion}</div>
+                        <div className="asignar-item-meta">
+                          <span><strong>Logro esperado:</strong> {al.logro || '—'}</span>
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="empty-hint">Selecciona un cargo de la lista para gestionar sus asignaciones.</div>
+          )}
         </div>
-      )}
+      </div>
 
       {showForm && (
         <div className="detail-overlay" onClick={() => setShowForm(false)}>
@@ -129,11 +141,11 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
             </div>
             <form className="form" onSubmit={submitNew}>
               <label>
-                Acción
+                Acción (Qué hace)
                 <textarea required rows={2} value={accion} onChange={(e) => setAccion(e.target.value)} />
               </label>
               <label>
-                Logro
+                Logro Esperado (Para qué lo hace)
                 <textarea rows={2} value={logro} onChange={(e) => setLogro(e.target.value)} />
               </label>
               <label>
@@ -152,6 +164,8 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
           </div>
         </div>
       )}
+
+      {toast && <div className="toast">{toast}</div>}
     </div>
   );
 }

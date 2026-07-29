@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, Requisito } from '../types';
-import { NIVELES, CATEGORIAS_REQUISITO } from '../data/seed';
+import CargoListSidebar from './CargoListSidebar';
+import { CATEGORIAS_REQUISITO } from '../data/seed';
 
 interface Props {
   requisitos: Requisito[];
@@ -14,40 +15,8 @@ interface Props {
 const emptyForm: Omit<Requisito, 'id'> = { categoria: CATEGORIAS_REQUISITO[0], descripcion: '' };
 
 export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, onDelete, onToggleAssignment }: Props) {
-  const [tab, setTab] = useState<'catalogo' | 'asignar'>('catalogo');
-
-  return (
-    <div className="view">
-      <header className="view-header">
-        <h1>Requisitos del Cargo</h1>
-        <p>Crea los requisitos (educación, experiencia, conocimientos, etc.) y asígnalos a cada cargo.</p>
-      </header>
-
-      <div className="subtabs">
-        <button className={`subtab ${tab === 'catalogo' ? 'active' : ''}`} onClick={() => setTab('catalogo')}>
-          Catálogo
-        </button>
-        <button className={`subtab ${tab === 'asignar' ? 'active' : ''}`} onClick={() => setTab('asignar')}>
-          Asignar a cargos
-        </button>
-      </div>
-
-      {tab === 'catalogo' ? (
-        <CatalogoRequisitos requisitos={requisitos} onAdd={onAdd} onUpdate={onUpdate} onDelete={onDelete} />
-      ) : (
-        <AsignarRequisitos requisitos={requisitos} cargos={cargos} onToggleAssignment={onToggleAssignment} />
-      )}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------
-function CatalogoRequisitos({
-  requisitos,
-  onAdd,
-  onUpdate,
-  onDelete,
-}: Pick<Props, 'requisitos' | 'onAdd' | 'onUpdate' | 'onDelete'>) {
+  const [cargoId, setCargoId] = useState<string | null>(null);
+  const [subtab, setSubtab] = useState<'asignar' | 'catalogo'>('asignar');
   const [search, setSearch] = useState('');
   const [filterCategoria, setFilterCategoria] = useState<string>('TODAS');
   const [showForm, setShowForm] = useState(false);
@@ -55,7 +24,15 @@ function CatalogoRequisitos({
   const [form, setForm] = useState<Omit<Requisito, 'id'>>(emptyForm);
   const [toast, setToast] = useState<string | null>(null);
 
-  const filtered = useMemo(() => {
+  useEffect(() => {
+    if (!cargoId && cargos.length > 0) {
+      setCargoId(cargos[0].id);
+    }
+  }, [cargos, cargoId]);
+
+  const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
+
+  const filteredRequisitos = useMemo(() => {
     return requisitos.filter((r) => {
       const matchCat = filterCategoria === 'TODAS' || r.categoria === filterCategoria;
       const q = search.trim().toLowerCase();
@@ -66,7 +43,7 @@ function CatalogoRequisitos({
 
   function flash(msg: string) {
     setToast(msg);
-    setTimeout(() => setToast(null), 2000);
+    setTimeout(() => setToast(null), 1400);
   }
 
   function startAdd() {
@@ -99,60 +76,154 @@ function CatalogoRequisitos({
   }
 
   function handleDelete(r: Requisito) {
-    if (confirm(`¿Eliminar el requisito "${r.descripcion}"? También se quitará de los cargos que lo tengan asignado.`)) {
+    if (confirm(`¿Eliminar el requisito "${r.descripcion}"? Se quitará de los cargos asignados.`)) {
       onDelete(r.id);
       flash('Requisito eliminado');
     }
   }
 
   return (
-    <>
-      <div className="toolbar">
-        <select value={filterCategoria} onChange={(e) => setFilterCategoria(e.target.value)}>
-          <option value="TODAS">Todas las categorías</option>
-          {CATEGORIAS_REQUISITO.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Buscar requisito..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button className="btn-primary" onClick={startAdd}>+ Nuevo requisito</button>
-      </div>
-
-      {toast && <div className="toast">{toast}</div>}
-
-      <div className="item-table requisitos-table">
-        <div className="item-table-head">
-          <span>Categoría</span>
-          <span>Descripción</span>
-          <span></span>
+    <div className="view-2col-container">
+      <div className="view-header-simple view-header-row">
+        <div>
+          <h1>Requisitos del Cargo</h1>
+          <p>Selecciona un cargo de la lista para asignar sus requisitos profesionales, o gestiona el catálogo maestro.</p>
         </div>
-        {filtered.length === 0 && <div className="empty-hint" style={{ padding: 24 }}>No hay resultados.</div>}
-        {filtered.map((r) => (
-          <div className="item-table-row requisitos-row" key={r.id}>
-            <span>
-              <span className="nivel-pill" style={{ background: '#eef1f4', color: '#374151' }}>
-                {r.categoria}
-              </span>
-            </span>
-            <span>{r.descripcion}</span>
-            <span className="row-actions">
-              <button className="icon-btn" onClick={() => startEdit(r)} title="Editar">✏️</button>
-              <button className="icon-btn" onClick={() => handleDelete(r)} title="Eliminar">🗑️</button>
-            </span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="subtabs-pills">
+            <button
+              className={`subtab-pill ${subtab === 'asignar' ? 'active' : ''}`}
+              onClick={() => setSubtab('asignar')}
+            >
+              Asignar por Cargo
+            </button>
+            <button
+              className={`subtab-pill ${subtab === 'catalogo' ? 'active' : ''}`}
+              onClick={() => setSubtab('catalogo')}
+            >
+              Catálogo Maestro ({requisitos.length})
+            </button>
           </div>
-        ))}
+          <button className="btn-primary" onClick={startAdd}>+ Nuevo requisito</button>
+        </div>
       </div>
+
+      {subtab === 'asignar' ? (
+        <div className="layout-2col">
+          {/* Panel Izquierdo: Lista de Cargos */}
+          <CargoListSidebar
+            cargos={cargos}
+            selectedCargoId={cargoId || (cargos[0]?.id ?? null)}
+            onSelectCargo={(id) => setCargoId(id)}
+            countType="requisitos"
+          />
+
+          {/* Panel Derecho: Asignación */}
+          <div className="panel-derecho-asignacion">
+            {cargo ? (
+              <div className="asignar-items-panel">
+                <div className="asignar-items-head">
+                  <div>
+                    <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
+                    <h2>{cargo.nombre}</h2>
+                  </div>
+                  <div className="asignar-progress">
+                    {cargo.requisitoIds.length} de {requisitos.length} requisitos asignados
+                  </div>
+                </div>
+
+                <div className="search-catalog-box">
+                  <input
+                    type="text"
+                    placeholder="Buscar requisito en el catálogo..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="search-catalog-input"
+                  />
+                </div>
+
+                <div className="asignar-item-list">
+                  {filteredRequisitos.length === 0 && (
+                    <div className="empty-hint">No hay requisitos para mostrar.</div>
+                  )}
+                  {filteredRequisitos.map((r) => {
+                    const checked = cargo.requisitoIds.includes(r.id);
+                    return (
+                      <label key={r.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => {
+                            onToggleAssignment(cargo.id, r.id);
+                            flash('Guardado');
+                          }}
+                        />
+                        <div>
+                          <div className="asignar-item-accion">{r.descripcion}</div>
+                          <div className="asignar-item-meta">
+                            <span><strong>Categoría:</strong> {r.categoria}</span>
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="empty-hint">Selecciona un cargo de la lista para gestionar sus requisitos.</div>
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Catálogo Maestro Tab */
+        <div className="catalogo-master-container">
+          <div className="toolbar" style={{ marginBottom: '16px' }}>
+            <select value={filterCategoria} onChange={(e) => setFilterCategoria(e.target.value)}>
+              <option value="TODAS">Todas las categorías ({requisitos.length})</option>
+              {CATEGORIAS_REQUISITO.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Filtrar catálogo..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <div className="item-table requisitos-table">
+            <div className="item-table-head">
+              <span>Categoría</span>
+              <span>Descripción</span>
+              <span style={{ textAlign: 'right' }}>Acciones</span>
+            </div>
+            {filteredRequisitos.length === 0 && (
+              <div className="empty-hint">No se encontraron requisitos en el catálogo.</div>
+            )}
+            {filteredRequisitos.map((r) => (
+              <div className="item-table-row requisitos-row" key={r.id}>
+                <span>
+                  <span className="nivel-pill" style={{ background: '#eef1f4', color: '#374151' }}>
+                    {r.categoria}
+                  </span>
+                </span>
+                <span>{r.descripcion}</span>
+                <span className="row-actions" style={{ textAlign: 'right' }}>
+                  <button className="btn-table-action" onClick={() => startEdit(r)}>Editar</button>
+                  <button className="btn-table-action danger" onClick={() => handleDelete(r)}>Eliminar</button>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <div className="detail-overlay" onClick={closeForm}>
           <div className="detail-panel" onClick={(e) => e.stopPropagation()}>
             <div className="detail-panel-head">
-              <h2>{editingId ? 'Editar requisito' : 'Nuevo requisito'}</h2>
+              <h2>{editingId ? 'Editar Requisito' : 'Nuevo Requisito'}</h2>
               <button className="icon-btn" onClick={closeForm}>✕</button>
             </div>
             <form className="form" onSubmit={submit}>
@@ -165,13 +236,13 @@ function CatalogoRequisitos({
                 </select>
               </label>
               <label>
-                Descripción
+                Descripción del Requisito
                 <textarea
                   required
                   rows={3}
                   value={form.descripcion}
                   onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-                  placeholder="Ej: Título profesional en Ingeniería Comercial o afín"
+                  placeholder="Ej: Título profesional en Ingeniería Comercial, Civil o área afín."
                 />
               </label>
               <div className="form-actions">
@@ -182,94 +253,6 @@ function CatalogoRequisitos({
           </div>
         </div>
       )}
-    </>
-  );
-}
-
-// ---------------------------------------------------------------------
-function AsignarRequisitos({
-  requisitos,
-  cargos,
-  onToggleAssignment,
-}: Pick<Props, 'requisitos' | 'cargos' | 'onToggleAssignment'>) {
-  const [selectedCargoId, setSelectedCargoId] = useState<string | null>(cargos[0]?.id ?? null);
-  const [toast, setToast] = useState<string | null>(null);
-
-  const selectedCargo = useMemo(
-    () => cargos.find((c) => c.id === selectedCargoId) ?? null,
-    [cargos, selectedCargoId]
-  );
-
-  function flash(msg: string) {
-    setToast(msg);
-    setTimeout(() => setToast(null), 1400);
-  }
-
-  function toggle(requisitoId: string) {
-    if (!selectedCargo) return;
-    onToggleAssignment(selectedCargo.id, requisitoId);
-    flash('Guardado');
-  }
-
-  return (
-    <div className="asignar-layout">
-      <div className="asignar-cargos-list">
-        {NIVELES.map((nivel) => {
-          const cargosNivel = cargos.filter((c) => c.nivel === nivel.key);
-          if (cargosNivel.length === 0) return null;
-          return (
-            <div key={nivel.key} className="asignar-nivel-group">
-              <div className="asignar-nivel-label" style={{ color: nivel.color }}>{nivel.label}</div>
-              {cargosNivel.map((c) => (
-                <button
-                  key={c.id}
-                  className={`asignar-cargo-item ${selectedCargoId === c.id ? 'active' : ''}`}
-                  onClick={() => setSelectedCargoId(c.id)}
-                >
-                  <span>{c.nombre}</span>
-                  <span className="cargo-chip-badge">{c.requisitoIds.length}</span>
-                </button>
-              ))}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="asignar-items-panel">
-        {!selectedCargo ? (
-          <div className="empty-state"><p>Selecciona un cargo para comenzar.</p></div>
-        ) : requisitos.length === 0 ? (
-          <div className="empty-state">
-            <p>Todavía no hay requisitos creados.</p>
-            <p className="muted">Ve a la pestaña <strong>Catálogo</strong> para agregar el primero.</p>
-          </div>
-        ) : (
-          <>
-            <div className="asignar-items-head">
-              <h2>{selectedCargo.nombre}</h2>
-              <div className="asignar-progress">
-                {selectedCargo.requisitoIds.length} de {requisitos.length} asignados
-              </div>
-            </div>
-            <div className="asignar-item-list">
-              {requisitos.map((r) => {
-                const checked = selectedCargo.requisitoIds.includes(r.id);
-                return (
-                  <label key={r.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
-                    <input type="checkbox" checked={checked} onChange={() => toggle(r.id)} />
-                    <div>
-                      <div className="asignar-item-accion">{r.descripcion}</div>
-                      <div className="asignar-item-meta">
-                        <span><strong>Categoría:</strong> {r.categoria}</span>
-                      </div>
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
-          </>
-        )}
-      </div>
 
       {toast && <div className="toast">{toast}</div>}
     </div>
