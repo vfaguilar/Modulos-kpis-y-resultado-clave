@@ -47,6 +47,14 @@ export default function App() {
       if (e.data && e.data.type === 'CHANGE_VIEW' && e.data.view) {
         setView(e.data.view as View);
       }
+      if (e.data && e.data.type === 'REFRESH_DATA') {
+        fetchDataFromSupabase().then((data) => {
+          setCargos(data.cargos);
+          setResultados(data.resultadosClave);
+          setAccionesLogros(data.accionesLogros);
+          setRequisitos(data.requisitos);
+        });
+      }
     };
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
