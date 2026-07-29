@@ -13,7 +13,6 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     if (rawCargos && rawCargos.length > 0) {
       dbCargos = rawCargos;
     } else {
-      // Fallback a perfiles_cargo para garantizar que la lista de puestos jamás sea vacía
       const { data: rawPerfiles, error: errPerfiles } = await supabase.from('perfiles_cargo').select('*');
       if (errPerfiles) console.error('Error fetching perfiles_cargo fallback:', errPerfiles);
       if (rawPerfiles && rawPerfiles.length > 0) {
@@ -57,28 +56,30 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       nivel: al.nivel || 'Sin nivel',
     }));
 
-    // Construir mapa de asignaciones reales por cargo_id
+    // Construir mapa de asignaciones reales por cargo_id y nombre_cargo (insensible a Mayúsculas/Minúsculas)
     const asignacionesByCargo = new Map<string, { rcIds: Set<string>; kpiIds: Set<string>; alIds: Set<string> }>();
     (dbAsign || []).forEach((a: any) => {
-      const cargoId = String(a.cargo_id || '');
-      if (!cargoId) return;
-      if (!asignacionesByCargo.has(cargoId)) {
-        asignacionesByCargo.set(cargoId, { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() });
+      const cargoIdKey = String(a.cargo_id || '').trim().toLowerCase();
+      if (!cargoIdKey) return;
+      if (!asignacionesByCargo.has(cargoIdKey)) {
+        asignacionesByCargo.set(cargoIdKey, { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() });
       }
-      const entry = asignacionesByCargo.get(cargoId)!;
+      const entry = asignacionesByCargo.get(cargoIdKey)!;
       if (a.resultado_clave_id) entry.rcIds.add(String(a.resultado_clave_id));
       if (a.kpi_id) entry.kpiIds.add(String(a.kpi_id));
       if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
     });
 
-    // Map Cargos: si no tiene filas en asignacion_resultados_cargos, los arreglos se inicializan estrictamente en VACÍO ([])
+    // Map Cargos: busca coincidencia tanto por id como por nombre
     const sourceCargos = dbCargos.length > 0 ? dbCargos : seedCargos;
     const cargos: Cargo[] = sourceCargos.map((c: any) => {
-      const cargoId = String(c.id || c.idCargo || c.codigo || '');
-      const asign = asignacionesByCargo.get(cargoId);
+      const rawId = String(c.id || c.idCargo || c.codigo || '').trim();
+      const rawName = String(c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || '').trim();
+      
+      const asign = asignacionesByCargo.get(rawId.toLowerCase()) || asignacionesByCargo.get(rawName.toLowerCase());
       return {
-        id: cargoId,
-        nombre: c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || 'Cargo sin nombre',
+        id: rawId,
+        nombre: rawName || 'Cargo sin nombre',
         nivel: normalizeNivel(c.nivel_nuevo || c.nivel_jerarquico || c.nivel || 'INTERMEDIO') as NivelKey,
         clasificacion: c.categoria_antigua || c.clasificacion || c.area || c.gerencia || 'Sin clasificar',
         resultadoClaveIds: asign ? Array.from(asign.rcIds) : [],
@@ -155,14 +156,20 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       if (errAL) console.error('Error upserting acciones_logros:', errAL);
     }
 
-    // 4. Sync Asignaciones por Cargo
-    const cargoIds = data.cargos.map((c) => String(c.id)).filter(Boolean);
-    if (cargoIds.length > 0) {
-      await supabase.from('asignacion_resultados_cargos').delete().in('cargo_id', cargoIds);
+    // 4. Sync Asignaciones por Cargo (Purga por ID y por Nombre de Cargo)
+    const cargoIdsSet = new Set<string>();
+    data.cargos.forEach((c) => {
+      if (c.id) cargoIdsSet.add(String(c.id).trim());
+      if (c.nombre) cargoIdsSet.add(String(c.nombre).trim());
+    });
+    const cargoIdsArr = Array.from(cargoIdsSet).filter(Boolean);
+
+    if (cargoIdsArr.length > 0) {
+      await supabase.from('asignacion_resultados_cargos').delete().in('cargo_id', cargoIdsArr);
 
       const asignRows: any[] = [];
       data.cargos.forEach((c) => {
-        const cId = String(c.id);
+        const cId = String(c.id).trim();
         (c.resultadoClaveIds || []).forEach((rcId) => {
           asignRows.push({
             cargo_id: cId,
