@@ -70,6 +70,22 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
     });
 
+    // Inyectar asignaciones desde la memoria directa (window / parent window) para sincronización instantánea
+    const memCache: Map<string, { rcIds: string[]; alIds: string[] }> | undefined =
+      (window as any).GLOBAL_ASSIGNMENTS_CACHE || (window.parent as any)?.GLOBAL_ASSIGNMENTS_CACHE;
+
+    if (memCache && memCache instanceof Map) {
+      memCache.forEach((val, cargoKey) => {
+        const k = String(cargoKey).trim().toLowerCase();
+        if (!asignacionesByCargo.has(k)) {
+          asignacionesByCargo.set(k, { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() });
+        }
+        const entry = asignacionesByCargo.get(k)!;
+        (val.rcIds || []).forEach((rcId) => entry.rcIds.add(rcId));
+        (val.alIds || []).forEach((alId) => entry.alIds.add(alId));
+      });
+    }
+
     // Map Cargos: busca coincidencia tanto por id como por nombre
     const sourceCargos = dbCargos.length > 0 ? dbCargos : seedCargos;
     const cargos: Cargo[] = sourceCargos.map((c: any) => {
