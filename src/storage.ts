@@ -77,13 +77,24 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       const rawName = String(c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || '').trim();
       
       const asign = asignacionesByCargo.get(rawId.toLowerCase()) || asignacionesByCargo.get(rawName.toLowerCase());
+      const rcIds = asign ? Array.from(asign.rcIds) : [];
+      
+      // Cascading KPIs automáticamente desde los Resultados Clave asignados
+      const kpiSet = new Set<string>(asign ? Array.from(asign.kpiIds) : []);
+      rcIds.forEach((rcId) => {
+        const rcObj = resultadosClave.find((r) => String(r.id) === String(rcId));
+        if (rcObj && rcObj.kpis) {
+          rcObj.kpis.forEach((k) => kpiSet.add(String(k.id)));
+        }
+      });
+
       return {
         id: rawId,
         nombre: rawName || 'Cargo sin nombre',
         nivel: normalizeNivel(c.nivel_nuevo || c.nivel_jerarquico || c.nivel || 'INTERMEDIO') as NivelKey,
         clasificacion: c.categoria_antigua || c.clasificacion || c.area || c.gerencia || 'Sin clasificar',
-        resultadoClaveIds: asign ? Array.from(asign.rcIds) : [],
-        kpiIds: asign ? Array.from(asign.kpiIds) : [],
+        resultadoClaveIds: rcIds,
+        kpiIds: Array.from(kpiSet),
         accionLogroIds: asign ? Array.from(asign.alIds) : [],
         requisitoIds: [],
       };
