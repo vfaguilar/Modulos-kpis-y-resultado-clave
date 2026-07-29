@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, ResultadoClave } from '../types';
 import CargoPicker from './CargoPicker';
 import { normalizeClasificacion } from '../utils';
@@ -14,19 +14,25 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
   const [cargoId, setCargoId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? null, [cargos, cargoId]);
+  // Auto-selección por defecto del primer cargo disponible
+  useEffect(() => {
+    if (!cargoId && cargos.length > 0) {
+      setCargoId(cargos[0].id);
+    }
+  }, [cargos, cargoId]);
 
-  // Solo se listan los resultados clave que pertenecen a la clasificación del
-  // cargo seleccionado. Los que ya estaban asignados se siguen mostrando
-  // aunque su clasificación no calce, para no ocultar asignaciones previas.
+  const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
+
+  // Se muestran primero los resultados clave de la clasificación del cargo; si es nula o vacía, se muestran todos los resultados disponibles.
   const resultadosDisponibles = useMemo(() => {
-    if (!cargo) return [];
+    if (!cargo) return resultados;
     const clasifCargo = normalizeClasificacion(cargo.clasificacion);
-    return resultados.filter(
+    const filtered = resultados.filter(
       (r) =>
         normalizeClasificacion(r.clasificacion) === clasifCargo ||
         cargo.resultadoClaveIds.includes(r.id)
     );
+    return filtered.length > 0 ? filtered : resultados;
   }, [resultados, cargo]);
 
   function flash(msg: string) {
@@ -37,17 +43,17 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
   return (
     <div className="view">
       <header className="view-header">
-        <h1>Asignación</h1>
-        <p>Elige nivel, clasificación y cargo. Luego marca los resultados clave que le correspondan; al asignar uno, se despliegan sus KPIs para elegir cuáles aplican a ese cargo.</p>
+        <h1>Asignación de Resultados Clave y KPIs</h1>
+        <p>Selecciona un cargo para vincular o desvincular Resultados Clave e Indicadores KPI en tiempo real.</p>
       </header>
 
-      <CargoPicker cargos={cargos} selectedCargoId={cargoId} onSelectCargo={setCargoId} />
+      <CargoPicker cargos={cargos} selectedCargoId={cargoId || (cargos[0]?.id ?? null)} onSelectCargo={setCargoId} />
 
       {cargo && (
         <div className="asignar-items-panel" style={{ marginTop: 20 }}>
           <div className="asignar-items-head">
             <div>
-              <div className="detail-panel-nivel">{cargo.clasificacion}</div>
+              <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
               <h2>{cargo.nombre}</h2>
             </div>
             <div className="asignar-progress">
@@ -57,7 +63,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
 
           {resultadosDisponibles.length === 0 && (
             <div className="empty-hint" style={{ padding: 24 }}>
-              No hay resultados clave para la clasificación "{cargo.clasificacion}". Créalos o edítalos en el módulo Resultados Clave.
+              No hay resultados clave creados aún en el catálogo. Créalos en la pestaña Catálogo Maestro.
             </div>
           )}
 
@@ -72,7 +78,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                       checked={checked}
                       onChange={() => {
                         onToggleResultado(cargo.id, r.id);
-                        flash('Guardado');
+                        flash('Guardado en Supabase');
                       }}
                     />
                     <div className="asignar-item-accion">{r.texto}</div>
@@ -89,7 +95,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                               checked={kpiChecked}
                               onChange={() => {
                                 onToggleKpi(cargo.id, k.id);
-                                flash('Guardado');
+                                flash('Guardado en Supabase');
                               }}
                             />
                             <span>{k.texto}</span>

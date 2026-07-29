@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, AccionLogro } from '../types';
 import CargoPicker from './CargoPicker';
 import { CLASIFICACIONES } from '../data/seed';
@@ -20,19 +20,24 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   const [clasificacion, setClasificacion] = useState(CLASIFICACIONES[0]);
   const [toast, setToast] = useState<string | null>(null);
 
-  const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? null, [cargos, cargoId]);
+  // Auto-selección por defecto del primer cargo disponible
+  useEffect(() => {
+    if (!cargoId && cargos.length > 0) {
+      setCargoId(cargos[0].id);
+    }
+  }, [cargos, cargoId]);
 
-  // Solo se listan las acciones/logros que pertenecen a la clasificación del
-  // cargo seleccionado. Las que ya estaban asignadas se siguen mostrando
-  // aunque su clasificación no calce, para no ocultar asignaciones previas.
+  const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
+
   const disponibles = useMemo(() => {
-    if (!cargo) return [];
+    if (!cargo) return accionesLogros;
     const clasifCargo = normalizeClasificacion(cargo.clasificacion);
-    return accionesLogros.filter(
+    const filtered = accionesLogros.filter(
       (al) =>
         normalizeClasificacion(al.clasificacion) === clasifCargo ||
         cargo.accionLogroIds.includes(al.id)
     );
+    return filtered.length > 0 ? filtered : accionesLogros;
   }, [accionesLogros, cargo]);
 
   const filtered = useMemo(() => {
@@ -63,13 +68,13 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     <div className="view">
       <header className="view-header view-header-row">
         <div>
-          <h1>Acciones y Logros</h1>
-          <p>Elige nivel, clasificación y cargo, luego marca las acciones (con su logro esperado) que le correspondan.</p>
+          <h1>Acciones y Logros Esperados</h1>
+          <p>Selecciona un cargo y marca las acciones y logros esperados que le correspondan.</p>
         </div>
         <button className="btn-secondary" onClick={() => setShowForm(true)}>+ Nueva acción y logro</button>
       </header>
 
-      <CargoPicker cargos={cargos} selectedCargoId={cargoId} onSelectCargo={setCargoId} />
+      <CargoPicker cargos={cargos} selectedCargoId={cargoId || (cargos[0]?.id ?? null)} onSelectCargo={setCargoId} />
 
       {toast && <div className="toast">{toast}</div>}
 
@@ -77,7 +82,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
         <div className="asignar-items-panel" style={{ marginTop: 20 }}>
           <div className="asignar-items-head">
             <div>
-              <div className="detail-panel-nivel">{cargo.clasificacion}</div>
+              <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
               <h2>{cargo.nombre}</h2>
             </div>
             <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
@@ -94,14 +99,14 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
           <div className="asignar-item-list">
             {disponibles.length === 0 && (
               <div className="empty-hint" style={{ padding: 24 }}>
-                No hay acciones/logros para la clasificación "{cargo.clasificacion}". Créalas con el botón "+ Nueva acción y logro".
+                No hay acciones/logros en el catálogo. Créalas con el botón "+ Nueva acción y logro".
               </div>
             )}
             {filtered.map((al) => {
               const checked = cargo.accionLogroIds.includes(al.id);
               return (
                 <label key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`}>
-                  <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} />
+                  <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado en Supabase'); }} />
                   <div>
                     <div className="asignar-item-accion">{al.accion}</div>
                     <div className="asignar-item-meta">

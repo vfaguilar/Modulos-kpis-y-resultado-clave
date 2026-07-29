@@ -1,12 +1,25 @@
 import type { Cargo, ResultadoClave, AccionLogro, Requisito, AppData, NivelKey } from './types';
 import { seedCargos, seedResultadosClave, seedAccionesLogros, seedRequisitos } from './data/seed';
 import { supabase } from './lib/supabase';
+import { normalizeNivel } from './utils';
 
 export async function fetchDataFromSupabase(): Promise<AppData> {
   try {
-    // 1. Fetch Cargos
-    const { data: dbCargos, error: errCargos } = await supabase.from('cargos').select('*');
+    // 1. Fetch Cargos con Fallback a perfiles_cargo si public.cargos está vacía
+    let dbCargos: any[] = [];
+    const { data: rawCargos, error: errCargos } = await supabase.from('cargos').select('*');
     if (errCargos) console.error('Error fetching cargos from Supabase:', errCargos);
+
+    if (rawCargos && rawCargos.length > 0) {
+      dbCargos = rawCargos;
+    } else {
+      // Fallback a perfiles_cargo para garantizar que la lista de puestos jamás sea vacía
+      const { data: rawPerfiles, error: errPerfiles } = await supabase.from('perfiles_cargo').select('*');
+      if (errPerfiles) console.error('Error fetching perfiles_cargo fallback:', errPerfiles);
+      if (rawPerfiles && rawPerfiles.length > 0) {
+        dbCargos = rawPerfiles;
+      }
+    }
 
     // 2. Fetch Resultados Clave
     const { data: dbRC, error: errRC } = await supabase.from('resultados_clave').select('*');
@@ -58,16 +71,16 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
     });
 
-    // Map Cargos
-    const sourceCargos = dbCargos && dbCargos.length > 0 ? dbCargos : seedCargos;
+    // Map Cargos adaptando dinámicamente cualquier esquema de columnas (cargos o perfiles_cargo)
+    const sourceCargos = dbCargos.length > 0 ? dbCargos : seedCargos;
     const cargos: Cargo[] = sourceCargos.map((c: any) => {
-      const cargoId = String(c.id || c.idCargo || '');
+      const cargoId = String(c.id || c.idCargo || c.codigo || '');
       const asign = asignacionesByCargo.get(cargoId) || { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() };
       return {
         id: cargoId,
-        nombre: c.nombre_completo_cargo || c.nombre || '',
-        nivel: (c.nivel_nuevo || c.nivel || 'INTERMEDIO') as NivelKey,
-        clasificacion: c.categoria_antigua || c.clasificacion || 'Sin clasificar',
+        nombre: c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || 'Cargo sin nombre',
+        nivel: normalizeNivel(c.nivel_nuevo || c.nivel_jerarquico || c.nivel || 'INTERMEDIO') as NivelKey,
+        clasificacion: c.categoria_antigua || c.clasificacion || c.area || c.gerencia || 'Sin clasificar',
         resultadoClaveIds: Array.from(asign.rcIds),
         kpiIds: Array.from(asign.kpiIds),
         accionLogroIds: Array.from(asign.alIds),
@@ -75,7 +88,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       };
     });
 
-    // Fallback a semillas si las tablas de resultados están vacías (Sembrado inicial)
+    // Fallback a semillas si las tablas de resultados están completamente vacías (Sembrado inicial)
     if (resultadosClave.length === 0 && seedResultadosClave.length > 0) {
       resultadosClave = seedResultadosClave;
       accionesLogros = seedAccionesLogros;
