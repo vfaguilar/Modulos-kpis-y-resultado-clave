@@ -2,6 +2,7 @@ import * as XLSX from 'xlsx';
 import type { Cargo, ResultadoClave, AccionLogro } from './types';
 import { normalizeNivel } from './utils';
 import { NIVELES } from './data/seed';
+import { supabase } from './lib/supabase';
 
 function cellText(cell: unknown): string {
   return String(cell ?? '').trim();

@@ -1,9 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Cargo, ResultadoClave, AccionLogro, Requisito, Kpi } from './types';
-import {
-  loadCargos, loadResultadosClave, loadAccionesLogros, loadRequisitos,
-  saveCargos, saveResultadosClave, saveAccionesLogros, saveRequisitos,
-} from './storage';
+import { fetchDataFromSupabase, saveToSupabase } from './storage';
 import Sidebar from './components/Sidebar';
 import ResultadosClaveView from './components/ResultadosClaveView';
 import AsignacionView from './components/AsignacionView';
@@ -16,15 +13,28 @@ export type View = 'resultados' | 'asignacion' | 'acciones' | 'requisitos' | 'im
 
 export default function App() {
   const [view, setView] = useState<View>('asignacion');
-  const [cargos, setCargos] = useState<Cargo[]>(() => loadCargos());
-  const [resultados, setResultados] = useState<ResultadoClave[]>(() => loadResultadosClave());
-  const [accionesLogros, setAccionesLogros] = useState<AccionLogro[]>(() => loadAccionesLogros());
-  const [requisitos, setRequisitos] = useState<Requisito[]>(() => loadRequisitos());
+  const [cargos, setCargos] = useState<Cargo[]>([]);
+  const [resultados, setResultados] = useState<ResultadoClave[]>([]);
+  const [accionesLogros, setAccionesLogros] = useState<AccionLogro[]>([]);
+  const [requisitos, setRequisitos] = useState<Requisito[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const isLoadedRef = useRef<boolean>(false);
 
-  useEffect(() => saveCargos(cargos), [cargos]);
-  useEffect(() => saveResultadosClave(resultados), [resultados]);
-  useEffect(() => saveAccionesLogros(accionesLogros), [accionesLogros]);
-  useEffect(() => saveRequisitos(requisitos), [requisitos]);
+  useEffect(() => {
+    fetchDataFromSupabase().then((data) => {
+      setCargos(data.cargos);
+      setResultados(data.resultadosClave);
+      setAccionesLogros(data.accionesLogros);
+      setRequisitos(data.requisitos);
+      setLoading(false);
+      isLoadedRef.current = true;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
+  }, [cargos, resultados, accionesLogros, requisitos]);
 
   const norm = (s: string) => s.trim().toLowerCase();
 
@@ -38,7 +48,6 @@ export default function App() {
     setResultados((prev) =>
       prev.map((r) => {
         if (r.id !== id) return r;
-        // conserva ids de KPIs existentes (por texto) para no romper asignaciones ya hechas
         const kpis: Kpi[] = kpisText.map((t, i) => {
           const existing = r.kpis.find((k) => k.texto === t);
           return existing ?? { id: `kpi-${Date.now()}-${i}`, texto: t };
@@ -145,7 +154,6 @@ export default function App() {
           const existing = idx >= 0 ? next[idx].kpis.find((k) => norm(k.texto) === norm(t)) : undefined;
           return existing ?? { id: `kpi-${Date.now()}-${next.length}-${i}`, texto: t };
         });
-        // si el Excel trae clasificación se usa; si no, se conserva la que ya tenía
         const clasificacion = p.clasificacion?.trim() || (idx >= 0 ? next[idx].clasificacion : 'Sin clasificar');
         if (idx >= 0) next[idx] = { ...next[idx], kpis, clasificacion };
         else next.push({ id: `rc-${Date.now()}-${next.length}`, texto: p.texto, clasificacion, kpis });
@@ -205,6 +213,17 @@ export default function App() {
       return next;
     });
     return affected;
+  }
+
+  if (loading) {
+    return (
+      <div className="app-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <div style={{ textAlign: 'center', color: '#1f2f4d', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔄</div>
+          <h3>Cargando módulo de KPIs desde Supabase...</h3>
+        </div>
+      </div>
+    );
   }
 
   return (

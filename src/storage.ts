@@ -1,58 +1,182 @@
-import type { Cargo, ResultadoClave, AccionLogro, Requisito } from './types';
+import type { Cargo, ResultadoClave, AccionLogro, Requisito, AppData, NivelKey } from './types';
 import { seedCargos, seedResultadosClave, seedAccionesLogros, seedRequisitos } from './data/seed';
+import { supabase } from './lib/supabase';
 
-const CARGOS_KEY = 'gc2_cargos_v1';
-const RESULTADOS_KEY = 'gc2_resultados_v1';
-const ACCIONLOGRO_KEY = 'gc2_accionlogro_v1';
-const REQUISITOS_KEY = 'gc2_requisitos_v1';
-
-function loadOrSeed<T>(key: string, seed: T[]): T[] {
+export async function fetchDataFromSupabase(): Promise<AppData> {
   try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return seed;
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    return seed;
-  } catch {
-    return seed;
+    // 1. Fetch Cargos
+    const { data: dbCargos, error: errCargos } = await supabase.from('cargos').select('*');
+    if (errCargos) console.error('Error fetching cargos from Supabase:', errCargos);
+
+    // 2. Fetch Resultados Clave
+    const { data: dbRC, error: errRC } = await supabase.from('resultados_clave').select('*');
+    if (errRC) console.error('Error fetching resultados_clave from Supabase:', errRC);
+
+    // 3. Fetch Indicadores KPI
+    const { data: dbKPI, error: errKPI } = await supabase.from('indicadores_kpi').select('*');
+    if (errKPI) console.error('Error fetching indicadores_kpi from Supabase:', errKPI);
+
+    // 4. Fetch Acciones y Logros
+    const { data: dbAL, error: errAL } = await supabase.from('acciones_logros').select('*');
+    if (errAL) console.error('Error fetching acciones_logros from Supabase:', errAL);
+
+    // 5. Fetch Asignaciones
+    const { data: dbAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').select('*');
+    if (errAsign) console.error('Error fetching asignacion_resultados_cargos from Supabase:', errAsign);
+
+    // Map Resultados Clave + KPIs
+    let resultadosClave: ResultadoClave[] = (dbRC || []).map((rc: any) => ({
+      id: String(rc.id),
+      texto: rc.texto || '',
+      clasificacion: rc.clasificacion || 'Sin clasificar',
+      kpis: (dbKPI || [])
+        .filter((k: any) => String(k.resultado_clave_id) === String(rc.id))
+        .map((k: any) => ({ id: String(k.id), texto: k.texto || '' })),
+    }));
+
+    // Map Acciones y Logros
+    let accionesLogros: AccionLogro[] = (dbAL || []).map((al: any) => ({
+      id: String(al.id),
+      accion: al.accion || '',
+      logro: al.logro || '',
+      clasificacion: al.clasificacion || 'Sin clasificar',
+    }));
+
+    // Build map of asignaciones per cargo_id
+    const asignacionesByCargo = new Map<string, { rcIds: Set<string>; kpiIds: Set<string>; alIds: Set<string> }>();
+    (dbAsign || []).forEach((a: any) => {
+      const cargoId = String(a.cargo_id || '');
+      if (!cargoId) return;
+      if (!asignacionesByCargo.has(cargoId)) {
+        asignacionesByCargo.set(cargoId, { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() });
+      }
+      const entry = asignacionesByCargo.get(cargoId)!;
+      if (a.resultado_clave_id) entry.rcIds.add(String(a.resultado_clave_id));
+      if (a.kpi_id) entry.kpiIds.add(String(a.kpi_id));
+      if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
+    });
+
+    // Map Cargos
+    const sourceCargos = dbCargos && dbCargos.length > 0 ? dbCargos : seedCargos;
+    const cargos: Cargo[] = sourceCargos.map((c: any) => {
+      const cargoId = String(c.id || c.idCargo || '');
+      const asign = asignacionesByCargo.get(cargoId) || { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() };
+      return {
+        id: cargoId,
+        nombre: c.nombre_completo_cargo || c.nombre || '',
+        nivel: (c.nivel_nuevo || c.nivel || 'INTERMEDIO') as NivelKey,
+        clasificacion: c.categoria_antigua || c.clasificacion || 'Sin clasificar',
+        resultadoClaveIds: Array.from(asign.rcIds),
+        kpiIds: Array.from(asign.kpiIds),
+        accionLogroIds: Array.from(asign.alIds),
+        requisitoIds: c.requisitoIds || [],
+      };
+    });
+
+    // Fallback a semillas si las tablas de resultados están vacías (Sembrado inicial)
+    if (resultadosClave.length === 0 && seedResultadosClave.length > 0) {
+      resultadosClave = seedResultadosClave;
+      accionesLogros = seedAccionesLogros;
+      await saveToSupabase({
+        cargos: seedCargos,
+        resultadosClave: seedResultadosClave,
+        accionesLogros: seedAccionesLogros,
+        requisitos: seedRequisitos,
+      });
+    }
+
+    return {
+      cargos,
+      resultadosClave,
+      accionesLogros,
+      requisitos: seedRequisitos,
+    };
+  } catch (error) {
+    console.error('Error al cargar datos desde Supabase (fallback a seed):', error);
+    return {
+      cargos: seedCargos,
+      resultadosClave: seedResultadosClave,
+      accionesLogros: seedAccionesLogros,
+      requisitos: seedRequisitos,
+    };
   }
 }
 
-export function loadCargos(): Cargo[] {
-  return loadOrSeed<Cargo>(CARGOS_KEY, seedCargos).map((c) => ({
-    ...c,
-    resultadoClaveIds: c.resultadoClaveIds ?? [],
-    kpiIds: c.kpiIds ?? [],
-    accionLogroIds: c.accionLogroIds ?? [],
-    requisitoIds: c.requisitoIds ?? [],
-  }));
-}
-export function loadResultadosClave(): ResultadoClave[] {
-  return loadOrSeed<ResultadoClave>(RESULTADOS_KEY, seedResultadosClave);
-}
-export function loadAccionesLogros(): AccionLogro[] {
-  return loadOrSeed<AccionLogro>(ACCIONLOGRO_KEY, seedAccionesLogros);
-}
-export function loadRequisitos(): Requisito[] {
-  return loadOrSeed<Requisito>(REQUISITOS_KEY, seedRequisitos);
-}
+export async function saveToSupabase(data: AppData): Promise<void> {
+  try {
+    // 1. Upsert Resultados Clave
+    if (data.resultadosClave && data.resultadosClave.length > 0) {
+      const rcRows = data.resultadosClave.map((r) => ({
+        id: String(r.id),
+        texto: r.texto,
+        clasificacion: r.clasificacion || 'Sin clasificar',
+      }));
+      const { error: errRC } = await supabase.from('resultados_clave').upsert(rcRows);
+      if (errRC) console.error('Error upserting resultados_clave:', errRC);
 
-export function saveCargos(v: Cargo[]) {
-  localStorage.setItem(CARGOS_KEY, JSON.stringify(v));
-}
-export function saveResultadosClave(v: ResultadoClave[]) {
-  localStorage.setItem(RESULTADOS_KEY, JSON.stringify(v));
-}
-export function saveAccionesLogros(v: AccionLogro[]) {
-  localStorage.setItem(ACCIONLOGRO_KEY, JSON.stringify(v));
-}
-export function saveRequisitos(v: Requisito[]) {
-  localStorage.setItem(REQUISITOS_KEY, JSON.stringify(v));
-}
+      // 2. Upsert KPIs
+      const kpiRows: any[] = [];
+      data.resultadosClave.forEach((r) => {
+        (r.kpis || []).forEach((k) => {
+          kpiRows.push({
+            id: String(k.id),
+            resultado_clave_id: String(r.id),
+            texto: k.texto,
+          });
+        });
+      });
+      if (kpiRows.length > 0) {
+        const { error: errKPI } = await supabase.from('indicadores_kpi').upsert(kpiRows);
+        if (errKPI) console.error('Error upserting indicadores_kpi:', errKPI);
+      }
+    }
 
-export function resetAll() {
-  localStorage.removeItem(CARGOS_KEY);
-  localStorage.removeItem(RESULTADOS_KEY);
-  localStorage.removeItem(ACCIONLOGRO_KEY);
-  localStorage.removeItem(REQUISITOS_KEY);
+    // 3. Upsert Acciones y Logros
+    if (data.accionesLogros && data.accionesLogros.length > 0) {
+      const alRows = data.accionesLogros.map((al) => ({
+        id: String(al.id),
+        accion: al.accion,
+        logro: al.logro,
+        clasificacion: al.clasificacion || 'Sin clasificar',
+      }));
+      const { error: errAL } = await supabase.from('acciones_logros').upsert(alRows);
+      if (errAL) console.error('Error upserting acciones_logros:', errAL);
+    }
+
+    // 4. Sync Asignaciones por Cargo
+    const cargoIds = data.cargos.map((c) => String(c.id)).filter(Boolean);
+    if (cargoIds.length > 0) {
+      await supabase.from('asignacion_resultados_cargos').delete().in('cargo_id', cargoIds);
+
+      const asignRows: any[] = [];
+      data.cargos.forEach((c) => {
+        const cId = String(c.id);
+        (c.resultadoClaveIds || []).forEach((rcId) => {
+          asignRows.push({
+            cargo_id: cId,
+            resultado_clave_id: String(rcId),
+          });
+        });
+        (c.kpiIds || []).forEach((kpiId) => {
+          asignRows.push({
+            cargo_id: cId,
+            kpi_id: String(kpiId),
+          });
+        });
+        (c.accionLogroIds || []).forEach((alId) => {
+          asignRows.push({
+            cargo_id: cId,
+            accion_logro_id: String(alId),
+          });
+        });
+      });
+
+      if (asignRows.length > 0) {
+        const { error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows);
+        if (errAsign) console.error('Error inserting asignacion_resultados_cargos:', errAsign);
+      }
+    }
+  } catch (error) {
+    console.error('Error al guardar datos en Supabase:', error);
+  }
 }
