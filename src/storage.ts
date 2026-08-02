@@ -221,6 +221,36 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         const { error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows);
         if (errAsign) console.error('Error inserting asignacion_resultados_cargos:', errAsign);
       }
+
+      // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
+      for (const c of data.cargos) {
+        const cId = String(c.id).trim();
+        if (!cId) continue;
+        const activeRCs = (data.resultadosClave || [])
+          .filter((r) => (c.resultadoClaveIds || []).includes(r.id))
+          .map((r) => r.texto);
+
+        const activeKPIs = (data.resultadosClave || [])
+          .flatMap((r) => r.kpis || [])
+          .filter((k) => (c.kpiIds || []).includes(k.id))
+          .map((k) => k.texto);
+
+        const activeContribs = (data.accionesLogros || [])
+          .filter((al) => (c.accionLogroIds || []).includes(al.id))
+          .map((al) => ({ accion: al.accion, logro_esperado: al.logro }));
+
+        try {
+          await supabase.from('perfiles_cargo').upsert({
+            id: cId,
+            resultados_clave: activeRCs,
+            kpis: activeKPIs,
+            contribuciones: activeContribs,
+            fecha_actualizacion: new Date().toISOString()
+          }, { onConflict: 'id' });
+        } catch (ePerf) {
+          console.warn('Aviso no crítico al actualizar perfil JSONB bi-direccional:', ePerf);
+        }
+      }
     }
   } catch (error) {
     console.error('Error al guardar datos en Supabase:', error);
