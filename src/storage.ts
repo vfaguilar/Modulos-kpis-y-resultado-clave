@@ -137,6 +137,18 @@ function notifyParentStatus(type: 'success' | 'error' | 'saving', message?: stri
 }
 
 export async function saveToSupabase(data: AppData): Promise<void> {
+  // Auth Guard: Verificar si existe una sesión activa antes de mutar Supabase
+  try {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData || !sessionData.session) {
+      console.warn('[AUTH GUARD] Mutación abortada en iFrame: Usuario no autenticado.');
+      return;
+    }
+  } catch (eAuthCheck) {
+    console.warn('[AUTH GUARD] Error al verificar sesión en iFrame:', eAuthCheck);
+    return;
+  }
+
   try {
     // 1. Upsert Resultados Clave
     if (data.resultadosClave && data.resultadosClave.length > 0) {
