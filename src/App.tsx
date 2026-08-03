@@ -55,6 +55,10 @@ export default function App() {
           setRequisitos(data.requisitos);
         });
       }
+      if (e.data && e.data.type === 'FORCE_SAVE_ALL') {
+        console.log('[POSTMESSAGE IN] Recibida orden FORCE_SAVE_ALL en iFrame React.');
+        saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
+      }
     };
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
