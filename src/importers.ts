@@ -222,16 +222,37 @@ export async function persistParsedResultadosToSupabase(parsed: ParsedResultado[
   });
 
   if (rcRows.length > 0) {
-    const { error: errRC } = await supabase.from('resultados_clave').upsert(rcRows);
-    if (errRC) console.error('Error al persistir resultados_clave:', errRC);
+    const { data: resRC, error: errRC } = await supabase.from('resultados_clave').upsert(rcRows).select();
+    if (errRC || !resRC || (Array.isArray(resRC) && resRC.length === 0)) {
+      console.error('[SUPABASE MUTATION ERROR] Error al persistir resultados_clave:', errRC);
+      if (typeof window !== 'undefined' && (window.parent as any)?.updateStatusWidget) {
+        (window.parent as any).updateStatusWidget('error', 'Error al guardar resultados_clave');
+      }
+    } else {
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en resultados_clave. Filas afectadas:', resRC.length);
+    }
   }
   if (kpiRows.length > 0) {
-    const { error: errKPI } = await supabase.from('indicadores_kpi').upsert(kpiRows);
-    if (errKPI) console.error('Error al persistir indicadores_kpi:', errKPI);
+    const { data: resKPI, error: errKPI } = await supabase.from('indicadores_kpi').upsert(kpiRows).select();
+    if (errKPI || !resKPI || (Array.isArray(resKPI) && resKPI.length === 0)) {
+      console.error('[SUPABASE MUTATION ERROR] Error al persistir indicadores_kpi:', errKPI);
+      if (typeof window !== 'undefined' && (window.parent as any)?.updateStatusWidget) {
+        (window.parent as any).updateStatusWidget('error', 'Error al guardar indicadores_kpi');
+      }
+    } else {
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en indicadores_kpi. Filas afectadas:', resKPI.length);
+    }
   }
   if (asignRows.length > 0) {
-    const { error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows);
-    if (errAsign) console.error('Error al vincular asignacion_resultados_cargos desde import:', errAsign);
+    const { data: resAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows).select();
+    if (errAsign || !resAsign || (Array.isArray(resAsign) && resAsign.length === 0)) {
+      console.error('[SUPABASE MUTATION ERROR] Error al vincular asignacion_resultados_cargos desde import:', errAsign);
+      if (typeof window !== 'undefined' && (window.parent as any)?.updateStatusWidget) {
+        (window.parent as any).updateStatusWidget('error', 'Error al guardar asignaciones');
+      }
+    } else {
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en asignacion_resultados_cargos. Filas afectadas:', resAsign.length);
+    }
   }
 }
 
@@ -263,12 +284,28 @@ export async function persistParsedAccionLogroToSupabase(parsed: ParsedAccionLog
     }
   });
 
-  const { error: errAL } = await supabase.from('acciones_logros').upsert(alRows);
-  if (errAL) console.error('Error al persistir acciones_logros:', errAL);
+  if (alRows.length > 0) {
+    const { data: resAL, error: errAL } = await supabase.from('acciones_logros').upsert(alRows).select();
+    if (errAL || !resAL || (Array.isArray(resAL) && resAL.length === 0)) {
+      console.error('[SUPABASE MUTATION ERROR] Error al persistir acciones_logros:', errAL);
+      if (typeof window !== 'undefined' && (window.parent as any)?.updateStatusWidget) {
+        (window.parent as any).updateStatusWidget('error', 'Error al guardar acciones_logros');
+      }
+    } else {
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en acciones_logros. Filas afectadas:', resAL.length);
+    }
+  }
 
   if (asignRows.length > 0) {
-    const { error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows);
-    if (errAsign) console.error('Error al vincular asignacion_resultados_cargos desde acciones import:', errAsign);
+    const { data: resAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows).select();
+    if (errAsign || !resAsign || (Array.isArray(resAsign) && resAsign.length === 0)) {
+      console.error('[SUPABASE MUTATION ERROR] Error al vincular asignacion_resultados_cargos desde acciones import:', errAsign);
+      if (typeof window !== 'undefined' && (window.parent as any)?.updateStatusWidget) {
+        (window.parent as any).updateStatusWidget('error', 'Error al guardar asignaciones');
+      }
+    } else {
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en asignacion_resultados_cargos. Filas afectadas:', resAsign.length);
+    }
   }
 }
 
