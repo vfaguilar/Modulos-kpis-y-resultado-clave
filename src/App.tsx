@@ -61,12 +61,22 @@ export default function App() {
         saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
       }
       if (e.data && e.data.type === 'AUTH_SESSION_SYNC' && e.data.session) {
-        console.log('[IFRAME AUTH BRIDGING] Sesión síncronizada exitosamente dentro del iFrame React.');
-        if (supabase.auth && e.data.session.access_token && e.data.session.refresh_token) {
-          supabase.auth.setSession({
-            access_token: e.data.session.access_token,
-            refresh_token: e.data.session.refresh_token,
-          }).catch((err: any) => console.warn('[IFRAME AUTH BRIDGING] Error al establecer sesión local:', err));
+        const newAccessToken = e.data.session?.access_token;
+        if (!newAccessToken) return;
+
+        if (supabase.auth) {
+          supabase.auth.getSession().then(({ data: { session: currentSession } }: any) => {
+            if (currentSession?.access_token === newAccessToken) {
+              return; // Token idéntico, ABORTAR para romper bucle infinito
+            }
+            console.log('[IFRAME AUTH BRIDGING] Sesión síncronizada exitosamente dentro del iFrame React.');
+            if (e.data.session.access_token && e.data.session.refresh_token) {
+              supabase.auth.setSession({
+                access_token: e.data.session.access_token,
+                refresh_token: e.data.session.refresh_token,
+              }).catch((err: any) => console.warn('[IFRAME AUTH BRIDGING] Error al establecer sesión local:', err));
+            }
+          }).catch(() => {});
         }
       }
     };
