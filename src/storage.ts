@@ -123,6 +123,19 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
   }
 }
 
+function notifyParentStatus(type: 'success' | 'error' | 'saving', message?: string) {
+  try {
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'STATUS_WIDGET_UPDATE', statusType: type, message }, '*');
+      if ((window.parent as any).updateStatusWidget) {
+        (window.parent as any).updateStatusWidget(type, message);
+      }
+    }
+  } catch (e) {
+    // Ignore cross-origin errors if any
+  }
+}
+
 export async function saveToSupabase(data: AppData): Promise<void> {
   try {
     // 1. Upsert Resultados Clave
@@ -133,8 +146,13 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         clasificacion: r.clasificacion || 'Sin clasificar',
         nivel: r.nivel || 'Sin nivel',
       }));
-      const { error: errRC } = await supabase.from('resultados_clave').upsert(rcRows);
-      if (errRC) console.error('Error upserting resultados_clave:', errRC);
+      const { data: resRC, error: errRC } = await supabase.from('resultados_clave').upsert(rcRows).select();
+      if (errRC || !resRC || (Array.isArray(resRC) && resRC.length === 0)) {
+        console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en resultados_clave:', errRC);
+        notifyParentStatus('error', 'Error al guardar en BBDD (resultados_clave)');
+        throw errRC || new Error('No se confirmaron escrituras en resultados_clave');
+      }
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en resultados_clave. Filas afectadas:', resRC.length);
 
       // 2. Upsert KPIs
       const kpiRows: any[] = [];
@@ -149,8 +167,13 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         });
       });
       if (kpiRows.length > 0) {
-        const { error: errKPI } = await supabase.from('indicadores_kpi').upsert(kpiRows);
-        if (errKPI) console.error('Error upserting indicadores_kpi:', errKPI);
+        const { data: resKPI, error: errKPI } = await supabase.from('indicadores_kpi').upsert(kpiRows).select();
+        if (errKPI || !resKPI || (Array.isArray(resKPI) && resKPI.length === 0)) {
+          console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en indicadores_kpi:', errKPI);
+          notifyParentStatus('error', 'Error al guardar en BBDD (indicadores_kpi)');
+          throw errKPI || new Error('No se confirmaron escrituras en indicadores_kpi');
+        }
+        console.log('[BBDD SUCCESS] Objeto persistido correctamente en indicadores_kpi. Filas afectadas:', resKPI.length);
       }
     }
 
@@ -163,8 +186,13 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         clasificacion: al.clasificacion || 'Sin clasificar',
         nivel: al.nivel || 'Sin nivel',
       }));
-      const { error: errAL } = await supabase.from('acciones_logros').upsert(alRows);
-      if (errAL) console.error('Error upserting acciones_logros:', errAL);
+      const { data: resAL, error: errAL } = await supabase.from('acciones_logros').upsert(alRows).select();
+      if (errAL || !resAL || (Array.isArray(resAL) && resAL.length === 0)) {
+        console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en acciones_logros:', errAL);
+        notifyParentStatus('error', 'Error al guardar en BBDD (acciones_logros)');
+        throw errAL || new Error('No se confirmaron escrituras en acciones_logros');
+      }
+      console.log('[BBDD SUCCESS] Objeto persistido correctamente en acciones_logros. Filas afectadas:', resAL.length);
     }
 
     // 4. Sync Asignaciones por Cargo (Purga por ID y por Nombre de Cargo)
@@ -202,8 +230,13 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       });
 
       if (asignRows.length > 0) {
-        const { error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows);
-        if (errAsign) console.error('Error inserting asignacion_resultados_cargos:', errAsign);
+        const { data: resAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows).select();
+        if (errAsign || !resAsign || (Array.isArray(resAsign) && resAsign.length === 0)) {
+          console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en asignacion_resultados_cargos:', errAsign);
+          notifyParentStatus('error', 'Error al guardar en BBDD (asignacion_resultados_cargos)');
+          throw errAsign || new Error('No se confirmaron escrituras en asignacion_resultados_cargos');
+        }
+        console.log('[BBDD SUCCESS] Objeto persistido correctamente en asignacion_resultados_cargos. Filas afectadas:', resAsign.length);
       }
 
       // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
@@ -224,13 +257,21 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           .map((al) => ({ accion: al.accion, logro_esperado: al.logro }));
 
         try {
-          await supabase.from('perfiles_cargo').upsert({
+          const { data: resPerf, error: errPerf } = await supabase.from('perfiles_cargo').upsert({
             id: cId,
             resultados_clave: activeRCs,
             kpis: activeKPIs,
             contribuciones: activeContribs,
             fecha_actualizacion: new Date().toISOString()
-          }, { onConflict: 'id' });
+          }, { onConflict: 'id' }).select();
+
+          if (errPerf || !resPerf || (Array.isArray(resPerf) && resPerf.length === 0)) {
+            console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en perfiles_cargo:', errPerf);
+            notifyParentStatus('error', 'Error al guardar en BBDD (perfiles_cargo)');
+          } else {
+            console.log('[BBDD SUCCESS] Objeto persistido correctamente en perfiles_cargo. Filas afectadas:', resPerf.length);
+            notifyParentStatus('success', 'Guardado en BBDD ✓');
+          }
         } catch (ePerf) {
           console.warn('Aviso no crítico al actualizar perfil JSONB bi-direccional:', ePerf);
         }
@@ -238,5 +279,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
     }
   } catch (error) {
     console.error('Error al guardar datos en Supabase:', error);
+    notifyParentStatus('error', 'Error al guardar datos en Supabase');
   }
 }
+
