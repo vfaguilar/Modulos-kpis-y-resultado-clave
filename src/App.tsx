@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Cargo, ResultadoClave, AccionLogro, Requisito, Kpi } from './types';
 import { fetchDataFromSupabase, saveToSupabase } from './storage';
+import { supabase } from './lib/supabase';
 import ResultadosClaveView from './components/ResultadosClaveView';
 import AsignacionView from './components/AsignacionView';
 import AccionesLogrosView from './components/AccionesLogrosView';
