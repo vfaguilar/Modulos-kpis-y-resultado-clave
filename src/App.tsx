@@ -59,7 +59,27 @@ export default function App() {
         console.log('[POSTMESSAGE IN] Recibida orden FORCE_SAVE_ALL en iFrame React.');
         saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
       }
+      if (e.data && e.data.type === 'AUTH_SESSION_SYNC' && e.data.session) {
+        console.log('[IFRAME AUTH BRIDGING] Sesión síncronizada exitosamente dentro del iFrame React.');
+        if (supabase.auth && e.data.session.access_token && e.data.session.refresh_token) {
+          supabase.auth.setSession({
+            access_token: e.data.session.access_token,
+            refresh_token: e.data.session.refresh_token,
+          }).catch((err: any) => console.warn('[IFRAME AUTH BRIDGING] Error al establecer sesión local:', err));
+        }
+      }
     };
+
+    try {
+      if (typeof window !== 'undefined' && (window.parent as any)?.supabaseClient) {
+        (window.parent as any).supabaseClient.auth.getSession().then(({ data: { session } }: any) => {
+          if (session) {
+            console.log('[IFRAME AUTH BRIDGING] Sesión síncronizada exitosamente dentro del iFrame React.');
+          }
+        });
+      }
+    } catch (eAuth) {}
+
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('message', handleMessage);

@@ -148,11 +148,11 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       }));
       const { data: resRC, error: errRC } = await supabase.from('resultados_clave').upsert(rcRows).select();
       if (errRC || !resRC || (Array.isArray(resRC) && resRC.length === 0)) {
-        console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en resultados_clave:', errRC);
+        console.error('[RLS / AUTH ERROR] Fallo de permisos en resultados_clave:', errRC?.message, errRC?.details, errRC?.code);
         notifyParentStatus('error', 'Error al guardar en BBDD (resultados_clave)');
         throw errRC || new Error('No se confirmaron escrituras en resultados_clave');
       }
-      console.log('[BBDD SUCCESS] Objeto persistido correctamente en resultados_clave. Filas afectadas:', resRC.length);
+      console.log(`[MUTATION AUDIT] Tabla: resultados_clave | Payload enviado | Filas confirmadas: ${resRC.length}`);
 
       // 2. Upsert KPIs
       const kpiRows: any[] = [];
@@ -169,11 +169,11 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       if (kpiRows.length > 0) {
         const { data: resKPI, error: errKPI } = await supabase.from('indicadores_kpi').upsert(kpiRows).select();
         if (errKPI || !resKPI || (Array.isArray(resKPI) && resKPI.length === 0)) {
-          console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en indicadores_kpi:', errKPI);
+          console.error('[RLS / AUTH ERROR] Fallo de permisos en indicadores_kpi:', errKPI?.message, errKPI?.details, errKPI?.code);
           notifyParentStatus('error', 'Error al guardar en BBDD (indicadores_kpi)');
           throw errKPI || new Error('No se confirmaron escrituras en indicadores_kpi');
         }
-        console.log('[BBDD SUCCESS] Objeto persistido correctamente en indicadores_kpi. Filas afectadas:', resKPI.length);
+        console.log(`[MUTATION AUDIT] Tabla: indicadores_kpi | Payload enviado | Filas confirmadas: ${resKPI.length}`);
       }
     }
 
@@ -188,11 +188,11 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       }));
       const { data: resAL, error: errAL } = await supabase.from('acciones_logros').upsert(alRows).select();
       if (errAL || !resAL || (Array.isArray(resAL) && resAL.length === 0)) {
-        console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en acciones_logros:', errAL);
+        console.error('[RLS / AUTH ERROR] Fallo de permisos en acciones_logros:', errAL?.message, errAL?.details, errAL?.code);
         notifyParentStatus('error', 'Error al guardar en BBDD (acciones_logros)');
         throw errAL || new Error('No se confirmaron escrituras en acciones_logros');
       }
-      console.log('[BBDD SUCCESS] Objeto persistido correctamente en acciones_logros. Filas afectadas:', resAL.length);
+      console.log(`[MUTATION AUDIT] Tabla: acciones_logros | Payload enviado | Filas confirmadas: ${resAL.length}`);
     }
 
     // 4. Sync Asignaciones por Cargo (Purga por ID y por Nombre de Cargo)
@@ -232,11 +232,11 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       if (asignRows.length > 0) {
         const { data: resAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').insert(asignRows).select();
         if (errAsign || !resAsign || (Array.isArray(resAsign) && resAsign.length === 0)) {
-          console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en asignacion_resultados_cargos:', errAsign);
+          console.error('[RLS / AUTH ERROR] Fallo de permisos en asignacion_resultados_cargos:', errAsign?.message, errAsign?.details, errAsign?.code);
           notifyParentStatus('error', 'Error al guardar en BBDD (asignacion_resultados_cargos)');
           throw errAsign || new Error('No se confirmaron escrituras en asignacion_resultados_cargos');
         }
-        console.log('[BBDD SUCCESS] Objeto persistido correctamente en asignacion_resultados_cargos. Filas afectadas:', resAsign.length);
+        console.log(`[MUTATION AUDIT] Tabla: asignacion_resultados_cargos | Payload enviado | Filas confirmadas: ${resAsign.length}`);
       }
 
       // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
@@ -266,10 +266,10 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           }, { onConflict: 'id' }).select();
 
           if (errPerf || !resPerf || (Array.isArray(resPerf) && resPerf.length === 0)) {
-            console.error('[REACT STORAGE ERROR] [BBDD ERROR] Mutación fallida en perfiles_cargo:', errPerf);
+            console.error('[RLS / AUTH ERROR] Fallo de permisos en perfiles_cargo:', errPerf?.message, errPerf?.details, errPerf?.code);
             notifyParentStatus('error', 'Error al guardar en BBDD (perfiles_cargo)');
           } else {
-            console.log('[BBDD SUCCESS] Objeto persistido correctamente en perfiles_cargo. Filas afectadas:', resPerf.length);
+            console.log(`[MUTATION AUDIT] Tabla: perfiles_cargo | Payload enviado | Filas confirmadas: ${resPerf.length}`);
             notifyParentStatus('success', 'Guardado en BBDD ✓');
           }
         } catch (ePerf) {
