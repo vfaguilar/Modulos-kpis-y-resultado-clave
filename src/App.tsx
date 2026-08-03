@@ -60,6 +60,12 @@ export default function App() {
         console.log('[POSTMESSAGE IN] Recibida orden FORCE_SAVE_ALL en iFrame React.');
         saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
       }
+      if (e.data && e.data.type === 'AUTH_SESSION_PURGE') {
+        console.log('[IFRAME AUTH] Purga de sesión solicitada por logout.');
+        if (supabase.auth) {
+          supabase.auth.signOut().catch(() => {});
+        }
+      }
       if (e.data && e.data.type === 'AUTH_SESSION_SYNC' && e.data.session) {
         const newAccessToken = e.data.session?.access_token;
         if (!newAccessToken) return;
