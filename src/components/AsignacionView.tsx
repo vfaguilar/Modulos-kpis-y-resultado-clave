@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, ResultadoClave } from '../types';
 import CargoListSidebar from './CargoListSidebar';
-import { normalizeClasificacion } from '../utils';
+import { CLASIFICACIONES } from '../data/seed';
 
 interface Props {
   cargos: Cargo[];
@@ -13,6 +13,7 @@ interface Props {
 export default function AsignacionView({ cargos, resultados, onToggleResultado, onToggleKpi }: Props) {
   const [cargoId, setCargoId] = useState<string | null>(null);
   const [searchCat, setSearchCat] = useState('');
+  const [filterClasif, setFilterClasif] = useState('TODAS');
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,19 +24,15 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
 
   const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
 
+  // Lista estable: NO se ocultan elementos al marcar/desmarcar checkboxes
   const resultadosDisponibles = useMemo(() => {
-    if (!cargo) return resultados;
-    const clasifCargo = normalizeClasificacion(cargo.clasificacion);
-    const filtered = resultados.filter(
-      (r) =>
-        normalizeClasificacion(r.clasificacion) === clasifCargo ||
-        cargo.resultadoClaveIds.includes(r.id)
-    );
-    const list = filtered.length > 0 ? filtered : resultados;
-    const q = searchCat.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((r) => r.texto.toLowerCase().includes(q) || r.kpis.some((k) => k.texto.toLowerCase().includes(q)));
-  }, [resultados, cargo, searchCat]);
+    return resultados.filter((r) => {
+      const matchClasif = filterClasif === 'TODAS' || (r.clasificacion || 'Sin clasificar') === filterClasif;
+      const q = searchCat.trim().toLowerCase();
+      const matchSearch = !q || r.texto.toLowerCase().includes(q) || r.kpis.some((k) => k.texto.toLowerCase().includes(q));
+      return matchClasif && matchSearch;
+    });
+  }, [resultados, filterClasif, searchCat]);
 
   function flash(msg: string) {
     setToast(msg);
@@ -72,13 +69,24 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                 </div>
               </div>
 
-              <div className="search-catalog-box">
+              <div className="search-catalog-box" style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                <select
+                  value={filterClasif}
+                  onChange={(e) => setFilterClasif(e.target.value)}
+                  style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff' }}
+                >
+                  <option value="TODAS">Todas las clasificaciones</option>
+                  {CLASIFICACIONES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
                 <input
                   type="text"
                   placeholder="Buscar en el catálogo de resultados y KPIs..."
                   value={searchCat}
                   onChange={(e) => setSearchCat(e.target.value)}
                   className="search-catalog-input"
+                  style={{ flex: 1 }}
                 />
               </div>
 
@@ -93,7 +101,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                   const checked = cargo.resultadoClaveIds.includes(r.id);
                   return (
                     <div className={`rc-assign-item ${checked ? 'checked' : ''}`} key={r.id}>
-                      <label className="asignar-item-row" style={{ border: 'none', padding: '10px 4px' }}>
+                      <label className="asignar-item-row" style={{ border: 'none', padding: '10px 4px', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           checked={checked}
@@ -102,7 +110,10 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                             flash('Guardado');
                           }}
                         />
-                        <div className="asignar-item-accion">{r.texto}</div>
+                        <div className="asignar-item-accion">
+                          <span style={{ fontSize: '11px', background: '#e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '4px', marginRight: '6px' }}>{r.clasificacion || 'Sin clasificar'}</span>
+                          {r.texto}
+                        </div>
                       </label>
 
                       {checked && r.kpis.length > 0 && (
@@ -110,7 +121,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                           {r.kpis.map((k) => {
                             const kpiChecked = cargo.kpiIds.includes(k.id);
                             return (
-                              <label key={k.id} className={`kpi-assign-row ${kpiChecked ? 'checked' : ''}`}>
+                              <label key={k.id} className={`kpi-assign-row ${kpiChecked ? 'checked' : ''}`} style={{ cursor: 'pointer' }}>
                                 <input
                                   type="checkbox"
                                   checked={kpiChecked}

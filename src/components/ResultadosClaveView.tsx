@@ -28,19 +28,6 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
     });
   }, [resultados, search, filterClasificacion]);
 
-  const grupos = useMemo(() => {
-    const map = new Map<string, ResultadoClave[]>();
-    for (const r of filtered) {
-      const key = r.clasificacion || 'Sin clasificar';
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(r);
-    }
-    const orden = [...CLASIFICACIONES, 'Sin clasificar'];
-    return Array.from(map.entries()).sort(
-      (a, b) => orden.indexOf(a[0]) - orden.indexOf(b[0])
-    );
-  }, [filtered]);
-
   function flash(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 2000);
@@ -111,8 +98,8 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
         <button className="btn-primary" onClick={startAdd}>+ Nuevo resultado clave</button>
       </header>
 
-      <div className="toolbar" style={{ marginBottom: '16px' }}>
-        <select value={filterClasificacion} onChange={(e) => setFilterClasificacion(e.target.value)}>
+      <div className="toolbar" style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
+        <select value={filterClasificacion} onChange={(e) => setFilterClasificacion(e.target.value)} style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
           <option value="TODAS">Todas las clasificaciones ({resultados.length})</option>
           {CLASIFICACIONES.map((c) => (
             <option key={c} value={c}>{c}</option>
@@ -123,36 +110,35 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
           placeholder="Buscar en el catálogo..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
         />
       </div>
 
       {toast && <div className="toast">{toast}</div>}
 
-      <div className="rc-list">
-        {filtered.length === 0 && <div className="empty-hint" style={{ padding: 24 }}>No hay resultados clave creados.</div>}
-        {grupos.map(([clasif, items]) => (
-          <div key={clasif} className="rc-group">
-            <div className="rc-group-label">{clasif} <span className="cargo-chip-badge">{items.length}</span></div>
-            {items.map((r) => (
-              <div className="rc-card" key={r.id}>
-                <div className="rc-card-head">
-                  <h3>{r.texto}</h3>
-                  <div className="row-actions">
-                    <button className="btn-table-action" onClick={() => startEdit(r)}>Editar</button>
-                    <button className="btn-table-action danger" onClick={() => handleDelete(r)}>Eliminar</button>
-                  </div>
-                </div>
-                {r.kpis.length === 0 ? (
-                  <div className="empty-hint">Sin KPIs asociados.</div>
-                ) : (
-                  <ul className="rc-kpi-list">
-                    {r.kpis.map((k) => (
-                      <li key={k.id}>{k.texto}</li>
-                    ))}
-                  </ul>
-                )}
+      <div className="rc-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {filtered.length === 0 && <div className="empty-hint" style={{ padding: 24 }}>No hay resultados clave que coincidan con la búsqueda.</div>}
+        {filtered.map((r) => (
+          <div className="rc-card" key={r.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px' }}>
+            <div className="rc-card-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+              <div>
+                <span className="cargo-chip-badge" style={{ fontSize: '11px', background: '#e2e8f0', padding: '2px 8px', borderRadius: '4px', marginRight: '8px', color: '#475569' }}>{r.clasificacion || 'Sin clasificar'}</span>
+                <h3 style={{ margin: '4px 0 0 0', fontSize: '16px', color: '#1e293b' }}>{r.texto}</h3>
               </div>
-            ))}
+              <div className="row-actions" style={{ display: 'flex', gap: '6px' }}>
+                <button className="btn-table-action" onClick={() => startEdit(r)}>Editar</button>
+                <button className="btn-table-action danger" onClick={() => handleDelete(r)}>Eliminar</button>
+              </div>
+            </div>
+            {r.kpis.length === 0 ? (
+              <div className="empty-hint" style={{ fontSize: '12px', color: '#94a3b8' }}>Sin KPIs asociados.</div>
+            ) : (
+              <ul className="rc-kpi-list" style={{ margin: '8px 0 0 0', paddingLeft: '20px', fontSize: '13px', color: '#334155' }}>
+                {r.kpis.map((k) => (
+                  <li key={k.id}>{k.texto}</li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>
