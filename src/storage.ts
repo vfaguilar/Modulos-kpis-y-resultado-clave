@@ -317,7 +317,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (asignacion_resultados_cargos): ${resAsign.length}`);
       }
 
-      // 5. Sincronización Bi-Direccional Protegida hacia public.perfiles_cargo (JSONB Merge)
+      // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
       for (const c of data.cargos) {
         const cId = String(c.id).trim();
         if (!cId) continue;
@@ -335,21 +335,14 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           .filter((al) => (c.accionLogroIds || []).includes(al.id))
           .map((al) => ({ accion: al.accion, logro_esperado: al.logro }));
 
-        // EJE 2: PRESERVACIÓN Y MERGE - Evitar sobreescribir con arrays vacíos [] en F5
-        if (activeRCs.length === 0 && activeKPIs.length === 0 && activeContribs.length === 0) {
-          continue;
-        }
-
-        const perfUpdatePayload: any = {
-          id: cId,
-          fecha_actualizacion: new Date().toISOString()
-        };
-        if (activeRCs.length > 0) perfUpdatePayload.resultados_clave = activeRCs;
-        if (activeKPIs.length > 0) perfUpdatePayload.kpis = activeKPIs;
-        if (activeContribs.length > 0) perfUpdatePayload.contribuciones = activeContribs;
-
         try {
-          const { data: resPerf, error: errPerf } = await supabase.from('perfiles_cargo').upsert(perfUpdatePayload, { onConflict: 'id' }).select();
+          const { data: resPerf, error: errPerf } = await supabase.from('perfiles_cargo').upsert({
+            id: cId,
+            resultados_clave: activeRCs,
+            kpis: activeKPIs,
+            contribuciones: activeContribs,
+            fecha_actualizacion: new Date().toISOString()
+          }, { onConflict: 'id' }).select();
 
           if (errPerf || !resPerf || (Array.isArray(resPerf) && resPerf.length === 0)) {
             console.error('[RLS / AUTH ERROR] Fallo de permisos en perfiles_cargo:', errPerf?.message, errPerf?.details, errPerf?.code);
