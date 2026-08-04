@@ -164,7 +164,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         notifyParentStatus('error', 'Error al guardar en BBDD (resultados_clave)');
         throw errRC || new Error('No se confirmaron escrituras en resultados_clave');
       }
-      console.log(`[MUTATION AUDIT] Tabla: resultados_clave | Payload enviado | Filas confirmadas: ${resRC.length}`);
+      console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (resultados_clave): ${resRC.length}`);
 
       // 2. Upsert KPIs
       const kpiRows: any[] = [];
@@ -185,7 +185,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           notifyParentStatus('error', 'Error al guardar en BBDD (indicadores_kpi)');
           throw errKPI || new Error('No se confirmaron escrituras en indicadores_kpi');
         }
-        console.log(`[MUTATION AUDIT] Tabla: indicadores_kpi | Payload enviado | Filas confirmadas: ${resKPI.length}`);
+        console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (indicadores_kpi): ${resKPI.length}`);
       }
     }
 
@@ -204,7 +204,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         notifyParentStatus('error', 'Error al guardar en BBDD (acciones_logros)');
         throw errAL || new Error('No se confirmaron escrituras en acciones_logros');
       }
-      console.log(`[MUTATION AUDIT] Tabla: acciones_logros | Payload enviado | Filas confirmadas: ${resAL.length}`);
+      console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (acciones_logros): ${resAL.length}`);
     }
 
     // 4. Sync Asignaciones por Cargo (Purga por ID y por Nombre de Cargo)
@@ -248,7 +248,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           notifyParentStatus('error', 'Error al guardar en BBDD (asignacion_resultados_cargos)');
           throw errAsign || new Error('No se confirmaron escrituras en asignacion_resultados_cargos');
         }
-        console.log(`[MUTATION AUDIT] Tabla: asignacion_resultados_cargos | Payload enviado | Filas confirmadas: ${resAsign.length}`);
+        console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (asignacion_resultados_cargos): ${resAsign.length}`);
       }
 
       // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
@@ -281,7 +281,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
             console.error('[RLS / AUTH ERROR] Fallo de permisos en perfiles_cargo:', errPerf?.message, errPerf?.details, errPerf?.code);
             notifyParentStatus('error', 'Error al guardar en BBDD (perfiles_cargo)');
           } else {
-            console.log(`[MUTATION AUDIT] Tabla: perfiles_cargo | Payload enviado | Filas confirmadas: ${resPerf.length}`);
+            console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (perfiles_cargo): ${resPerf.length}`);
             notifyParentStatus('success', 'Guardado en BBDD ✓');
           }
         } catch (ePerf) {
