@@ -10,15 +10,21 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     const { data: rawCargos, error: errCargos } = await supabase.from('cargos').select('*');
     if (errCargos) console.error('Error fetching cargos from Supabase:', errCargos);
 
+    const { data: rawPerfiles, error: errPerfiles } = await supabase.from('perfiles_cargo').select('*');
+    if (errPerfiles) console.error('Error fetching perfiles_cargo fallback:', errPerfiles);
+
     if (rawCargos && rawCargos.length > 0) {
       dbCargos = rawCargos;
-    } else {
-      const { data: rawPerfiles, error: errPerfiles } = await supabase.from('perfiles_cargo').select('*');
-      if (errPerfiles) console.error('Error fetching perfiles_cargo fallback:', errPerfiles);
-      if (rawPerfiles && rawPerfiles.length > 0) {
-        dbCargos = rawPerfiles;
-      }
+    } else if (rawPerfiles && rawPerfiles.length > 0) {
+      dbCargos = rawPerfiles;
     }
+
+    // Mapa auxiliar de perfiles_cargo por id (lower)
+    const perfilesMap = new Map<string, any>();
+    (rawPerfiles || []).forEach((p: any) => {
+      const pid = String(p.id || '').trim().toLowerCase();
+      if (pid) perfilesMap.set(pid, p);
+    });
 
     // 2. Fetch Resultados Clave
     const { data: dbRC, error: errRC } = await supabase.from('resultados_clave').select('*');
@@ -56,7 +62,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       nivel: al.nivel || 'Sin nivel',
     }));
 
-    // Construir mapa de asignaciones reales por cargo_id y nombre_cargo (insensible a Mayúsculas/Minúsculas)
+    // Construir mapa de asignaciones reales por cargo_id
     const asignacionesByCargo = new Map<string, { rcIds: Set<string>; kpiIds: Set<string>; alIds: Set<string> }>();
     (dbAsign || []).forEach((a: any) => {
       const cargoIdKey = String(a.cargo_id || '').trim().toLowerCase();
@@ -70,17 +76,77 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
     });
 
-    // Map Cargos: busca coincidencia de asignaciones estrictamente por cargo_id oficial en Supabase
+    // Map Cargos con Hidratación Inteligente Fallback desde perfiles_cargo (JSONB)
     const sourceCargos = dbCargos.length > 0 ? dbCargos : seedCargos;
     const cargos: Cargo[] = sourceCargos.map((c: any) => {
       const rawId = String(c.id || c.idCargo || c.codigo || '').trim();
       const rawName = String(c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || '').trim();
+      const lowerId = rawId.toLowerCase();
       
-      const asign = asignacionesByCargo.get(rawId.toLowerCase());
-      const rcIds = asign ? Array.from(asign.rcIds) : [];
+      let asign = asignacionesByCargo.get(lowerId);
+      const perfilObj = perfilesMap.get(lowerId);
+
+      let rcIds: string[] = asign ? Array.from(asign.rcIds) : [];
+      let alIds: string[] = asign ? Array.from(asign.alIds) : [];
+      const kpiSet = new Set<string>(asign ? Array.from(asign.kpiIds) : []);
+
+      // FALLBACK HYDRATION: Si las asignaciones relacionales están vacías pero perfiles_cargo contiene datos JSONB
+      if (perfilObj) {
+        // Hydrate Resultados Clave desde perfilObj.resultados_clave
+        const rawRCs = Array.isArray(perfilObj.resultados_clave) ? perfilObj.resultados_clave : [];
+        rawRCs.forEach((rcTxt: any) => {
+          const txt = typeof rcTxt === 'string' ? rcTxt.trim() : (rcTxt?.texto || '');
+          if (!txt) return;
+          let matchRC = resultadosClave.find(r => r.texto.trim().toLowerCase() === txt.toLowerCase());
+          if (!matchRC) {
+            matchRC = {
+              id: `rc-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+              texto: txt,
+              clasificacion: c.categoria_antigua || c.clasificacion || 'Sin clasificar',
+              nivel: normalizeNivel(c.nivel_nuevo || c.nivel || 'INTERMEDIO'),
+              kpis: []
+            };
+            resultadosClave.push(matchRC);
+          }
+          if (!rcIds.includes(matchRC.id)) rcIds.push(matchRC.id);
+        });
+
+        // Hydrate KPIs desde perfilObj.kpis
+        const rawKPIs = Array.isArray(perfilObj.kpis) ? perfilObj.kpis : [];
+        rawKPIs.forEach((kpiTxt: any) => {
+          const txt = typeof kpiTxt === 'string' ? kpiTxt.trim() : (kpiTxt?.texto || '');
+          if (!txt) return;
+          // Buscar en todos los KPIs existentes
+          for (const rc of resultadosClave) {
+            const matchK = rc.kpis?.find(k => k.texto.trim().toLowerCase() === txt.toLowerCase());
+            if (matchK) {
+              kpiSet.add(matchK.id);
+            }
+          }
+        });
+
+        // Hydrate Contribuciones / Acciones y Logros desde perfilObj.contribuciones
+        const rawContribs = Array.isArray(perfilObj.contribuciones) ? perfilObj.contribuciones : [];
+        rawContribs.forEach((contrib: any) => {
+          const acc = typeof contrib === 'string' ? contrib.trim() : (contrib?.accion || '');
+          const logro = typeof contrib === 'object' ? (contrib?.logro_esperado || contrib?.logro || '') : '';
+          if (!acc) return;
+          let matchAL = accionesLogros.find(al => al.accion.trim().toLowerCase() === acc.toLowerCase());
+          if (!matchAL) {
+            matchAL = {
+              id: `al-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+              accion: acc,
+              logro: logro,
+              clasificacion: c.categoria_antigua || c.clasificacion || 'Sin clasificar',
+              nivel: normalizeNivel(c.nivel_nuevo || c.nivel || 'INTERMEDIO')
+            };
+            accionesLogros.push(matchAL);
+          }
+          if (!alIds.includes(matchAL.id)) alIds.push(matchAL.id);
+        });
+      }
       
       // Cascading KPIs automáticamente desde los Resultados Clave asignados
-      const kpiSet = new Set<string>(asign ? Array.from(asign.kpiIds) : []);
       rcIds.forEach((rcId) => {
         const rcObj = resultadosClave.find((r) => String(r.id) === String(rcId));
         if (rcObj && rcObj.kpis) {
@@ -95,12 +161,12 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
         clasificacion: c.categoria_antigua || c.clasificacion || c.area || c.gerencia || 'Sin clasificar',
         resultadoClaveIds: rcIds,
         kpiIds: Array.from(kpiSet),
-        accionLogroIds: asign ? Array.from(asign.alIds) : [],
+        accionLogroIds: alIds,
         requisitoIds: [],
       };
     });
 
-    // Cargar semillas de catálogo si las tablas están vacías (sin autoguardar asignaciones ficticias)
+    // Cargar semillas de catálogo únicamente si las tablas están completamente vacías
     if (resultadosClave.length === 0 && seedResultadosClave.length > 0) {
       resultadosClave = seedResultadosClave;
       accionesLogros = seedAccionesLogros;
@@ -251,10 +317,11 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (asignacion_resultados_cargos): ${resAsign.length}`);
       }
 
-      // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
+      // 5. Sincronización Bi-Direccional Protegida hacia public.perfiles_cargo (JSONB Merge)
       for (const c of data.cargos) {
         const cId = String(c.id).trim();
         if (!cId) continue;
+
         const activeRCs = (data.resultadosClave || [])
           .filter((r) => (c.resultadoClaveIds || []).includes(r.id))
           .map((r) => r.texto);
@@ -268,14 +335,21 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           .filter((al) => (c.accionLogroIds || []).includes(al.id))
           .map((al) => ({ accion: al.accion, logro_esperado: al.logro }));
 
+        // EJE 2: PRESERVACIÓN Y MERGE - Evitar sobreescribir con arrays vacíos [] en F5
+        if (activeRCs.length === 0 && activeKPIs.length === 0 && activeContribs.length === 0) {
+          continue;
+        }
+
+        const perfUpdatePayload: any = {
+          id: cId,
+          fecha_actualizacion: new Date().toISOString()
+        };
+        if (activeRCs.length > 0) perfUpdatePayload.resultados_clave = activeRCs;
+        if (activeKPIs.length > 0) perfUpdatePayload.kpis = activeKPIs;
+        if (activeContribs.length > 0) perfUpdatePayload.contribuciones = activeContribs;
+
         try {
-          const { data: resPerf, error: errPerf } = await supabase.from('perfiles_cargo').upsert({
-            id: cId,
-            resultados_clave: activeRCs,
-            kpis: activeKPIs,
-            contribuciones: activeContribs,
-            fecha_actualizacion: new Date().toISOString()
-          }, { onConflict: 'id' }).select();
+          const { data: resPerf, error: errPerf } = await supabase.from('perfiles_cargo').upsert(perfUpdatePayload, { onConflict: 'id' }).select();
 
           if (errPerf || !resPerf || (Array.isArray(resPerf) && resPerf.length === 0)) {
             console.error('[RLS / AUTH ERROR] Fallo de permisos en perfiles_cargo:', errPerf?.message, errPerf?.details, errPerf?.code);
