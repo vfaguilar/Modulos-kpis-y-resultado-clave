@@ -16,6 +16,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
   const [cargoId, setCargoId] = useState<string | null>(null);
   const [searchCat, setSearchCat] = useState('');
   const [filterClasif, setFilterClasif] = useState('TODAS');
+  const [isAuditMode, setIsAuditMode] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,9 +66,43 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
 
   return (
     <div className="view-2col-container">
-      <div className="view-header-simple">
-        <h1>Resultados Clave e Indicadores KPI</h1>
-        <p>Selecciona un cargo de la lista izquierda para asignar Resultados Clave y medir sus métricas de desempeño.</p>
+      <div className="view-header-simple" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1>Resultados Clave e Indicadores KPI</h1>
+          <p>Selecciona un cargo de la lista izquierda para asignar Resultados Clave y medir sus métricas de desempeño.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsAuditMode(!isAuditMode)}
+          style={{
+            padding: '8px 14px',
+            borderRadius: '8px',
+            border: '1px solid',
+            borderColor: isAuditMode ? '#ef4444' : '#cbd5e1',
+            background: isAuditMode ? '#fef2f2' : '#ffffff',
+            color: isAuditMode ? '#dc2626' : '#475569',
+            fontWeight: 600,
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <span>🛡️ Modo Auditoría</span>
+          <span style={{
+            fontSize: '10px',
+            padding: '2px 8px',
+            borderRadius: '9999px',
+            background: isAuditMode ? '#ef4444' : '#e2e8f0',
+            color: isAuditMode ? '#ffffff' : '#64748b',
+            fontWeight: 700
+          }}>
+            {isAuditMode ? 'ACTIVADO' : 'DESACTIVADO'}
+          </span>
+        </button>
       </div>
 
       <div className="layout-2col">
@@ -144,7 +179,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                           <span style={{ fontSize: '11px', background: '#e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '4px', marginRight: '6px' }}>{r.clasificacion || 'Sin clasificar'}</span>
                           {r.texto}
                         </div>
-                        {onDeleteResultado && (
+                        {isAuditMode && onDeleteResultado && (
                           <button
                             type="button"
                             title="Eliminar Resultado Clave en cascada de la BBDD"
@@ -152,15 +187,13 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                               background: 'none',
                               border: 'none',
                               cursor: 'pointer',
-                              color: '#cbd5e1',
-                              padding: '2px 6px',
+                              padding: '4px',
                               marginLeft: '8px',
                               borderRadius: '4px',
-                              fontSize: '13px',
-                              transition: 'color 0.15s ease'
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
@@ -170,7 +203,9 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                               }
                             }}
                           >
-                            🗑️
+                            <svg style={{ width: '16px', height: '16px', color: '#94a3b8' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" onMouseEnter={(e) => (e.currentTarget.style.color = '#dc2626')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                           </button>
                         )}
                       </label>
@@ -192,7 +227,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                                   />
                                   <span>{k.texto}</span>
                                 </div>
-                                {onDeleteKpi && (
+                                {isAuditMode && onDeleteKpi && (
                                   <button
                                     type="button"
                                     title="Eliminar KPI en cascada de la BBDD"
@@ -200,15 +235,13 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                                       background: 'none',
                                       border: 'none',
                                       cursor: 'pointer',
-                                      color: '#cbd5e1',
-                                      padding: '1px 5px',
+                                      padding: '4px',
                                       marginLeft: '8px',
                                       borderRadius: '4px',
-                                      fontSize: '12px',
-                                      transition: 'color 0.15s ease'
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center'
                                     }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                                    onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
@@ -218,7 +251,9 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                                       }
                                     }}
                                   >
-                                    🗑️
+                                    <svg style={{ width: '16px', height: '16px', color: '#94a3b8' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" onMouseEnter={(e) => (e.currentTarget.style.color = '#dc2626')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
                                   </button>
                                 )}
                               </label>
