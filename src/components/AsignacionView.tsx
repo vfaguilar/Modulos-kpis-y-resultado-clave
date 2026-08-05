@@ -8,9 +8,11 @@ interface Props {
   resultados: ResultadoClave[];
   onToggleResultado: (cargoId: string, resultadoId: string) => void;
   onToggleKpi: (cargoId: string, kpiId: string) => void;
+  onDeleteResultado?: (id: string) => void;
+  onDeleteKpi?: (kpiId: string) => void;
 }
 
-export default function AsignacionView({ cargos, resultados, onToggleResultado, onToggleKpi }: Props) {
+export default function AsignacionView({ cargos, resultados, onToggleResultado, onToggleKpi, onDeleteResultado, onDeleteKpi }: Props) {
   const [cargoId, setCargoId] = useState<string | null>(null);
   const [searchCat, setSearchCat] = useState('');
   const [filterClasif, setFilterClasif] = useState('TODAS');
@@ -129,7 +131,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
 
                   return (
                     <div className={`rc-assign-item ${checked ? 'checked' : ''}`} key={r.id}>
-                      <label className="asignar-item-row" style={{ border: 'none', padding: '10px 4px', cursor: 'pointer' }}>
+                      <label className="asignar-item-row" style={{ border: 'none', padding: '10px 4px', cursor: 'pointer', display: 'flex', alignItems: 'center', width: '100%' }}>
                         <input
                           type="checkbox"
                           checked={checked}
@@ -138,10 +140,39 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                             flash('Guardado');
                           }}
                         />
-                        <div className="asignar-item-accion">
+                        <div className="asignar-item-accion" style={{ flex: 1 }}>
                           <span style={{ fontSize: '11px', background: '#e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '4px', marginRight: '6px' }}>{r.clasificacion || 'Sin clasificar'}</span>
                           {r.texto}
                         </div>
+                        {onDeleteResultado && (
+                          <button
+                            type="button"
+                            title="Eliminar Resultado Clave en cascada de la BBDD"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: '#cbd5e1',
+                              padding: '2px 6px',
+                              marginLeft: '8px',
+                              borderRadius: '4px',
+                              fontSize: '13px',
+                              transition: 'color 0.15s ease'
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (confirm(`¿Eliminar en cascada el Resultado Clave "${r.texto}" y sus KPIs asociados de la BBDD?`)) {
+                                onDeleteResultado(r.id);
+                                flash('Resultado Clave eliminado en cascada');
+                              }
+                            }}
+                          >
+                            🗑️
+                          </button>
+                        )}
                       </label>
 
                       {checked && sortedKpis.length > 0 && (
@@ -149,16 +180,47 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                           {sortedKpis.map((k) => {
                             const kpiChecked = cargo.kpiIds.includes(k.id);
                             return (
-                              <label key={k.id} className={`kpi-assign-row ${kpiChecked ? 'checked' : ''}`} style={{ cursor: 'pointer' }}>
-                                <input
-                                  type="checkbox"
-                                  checked={kpiChecked}
-                                  onChange={() => {
-                                    onToggleKpi(cargo.id, k.id);
-                                    flash('Guardado');
-                                  }}
-                                />
-                                <span>{k.texto}</span>
+                              <label key={k.id} className={`kpi-assign-row ${kpiChecked ? 'checked' : ''}`} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={kpiChecked}
+                                    onChange={() => {
+                                      onToggleKpi(cargo.id, k.id);
+                                      flash('Guardado');
+                                    }}
+                                  />
+                                  <span>{k.texto}</span>
+                                </div>
+                                {onDeleteKpi && (
+                                  <button
+                                    type="button"
+                                    title="Eliminar KPI en cascada de la BBDD"
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      color: '#cbd5e1',
+                                      padding: '1px 5px',
+                                      marginLeft: '8px',
+                                      borderRadius: '4px',
+                                      fontSize: '12px',
+                                      transition: 'color 0.15s ease'
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      if (confirm(`¿Eliminar en cascada el indicador KPI "${k.texto}" (ID: ${k.id}) de la BBDD?`)) {
+                                        onDeleteKpi(k.id);
+                                        flash('KPI eliminado en cascada');
+                                      }
+                                    }}
+                                  >
+                                    🗑️
+                                  </button>
+                                )}
                               </label>
                             );
                           })}

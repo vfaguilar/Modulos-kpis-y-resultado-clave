@@ -149,7 +149,7 @@ export default function App() {
       })
     );
   }
-  function handleDeleteResultado(id: string) {
+  async function handleDeleteResultado(id: string) {
     const resultado = resultados.find((r) => r.id === id);
     const kpiIdsToRemove = new Set(resultado?.kpis.map((k) => k.id) ?? []);
     setResultados((prev) => prev.filter((r) => r.id !== id));
@@ -160,8 +160,17 @@ export default function App() {
         kpiIds: c.kpiIds.filter((kid) => !kpiIdsToRemove.has(kid)),
       }))
     );
+    try {
+      await supabase.from('asignacion_resultados_cargos').delete().eq('resultado_clave_id', id);
+      await supabase.from('indicadores_kpi').delete().eq('resultado_clave_id', id);
+      await supabase.from('resultados_clave').delete().eq('id', id);
+      console.log(`[DELETE CASCADE] RC ${id} y sus KPIs eliminados de Supabase.`);
+    } catch (err) {
+      console.error('Error al borrar RC en cascada:', err);
+    }
+    window.dispatchEvent(new CustomEvent('profileDataChanged'));
   }
-  function handleDeleteKpi(kpiId: string) {
+  async function handleDeleteKpi(kpiId: string) {
     setResultados((prev) =>
       prev.map((r) => ({
         ...r,
@@ -174,10 +183,14 @@ export default function App() {
         kpiIds: c.kpiIds.filter((id) => id !== kpiId),
       }))
     );
-    supabase.from('indicadores_kpi').delete().eq('id', kpiId).then(({ error }: { error: any }) => {
-      if (error) console.error('Error al borrar KPI de Supabase:', error);
-      else console.log(`[DELETE SUCCESS] KPI ${kpiId} eliminado de indicadores_kpi.`);
-    });
+    try {
+      await supabase.from('asignacion_resultados_cargos').delete().eq('kpi_id', kpiId);
+      await supabase.from('indicadores_kpi').delete().eq('id', kpiId);
+      console.log(`[DELETE CASCADE] KPI ${kpiId} eliminado de asignaciones e indicadores_kpi.`);
+    } catch (err) {
+      console.error('Error al borrar KPI en cascada:', err);
+    }
+    window.dispatchEvent(new CustomEvent('profileDataChanged'));
   }
 
   // ---------------- Asignación: resultado clave + kpis por cargo ----------------
@@ -313,6 +326,8 @@ export default function App() {
                 resultados={resultados}
                 onToggleResultado={handleToggleResultado}
                 onToggleKpi={handleToggleKpi}
+                onDeleteResultado={handleDeleteResultado}
+                onDeleteKpi={handleDeleteKpi}
               />
             ) : (
               <ResultadosClaveView
