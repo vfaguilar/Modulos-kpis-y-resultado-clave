@@ -137,31 +137,74 @@ export default function App() {
     const kpis: Kpi[] = kpisText.map((t, i) => ({ id: `kpi-${Date.now()}-${i}`, texto: t }));
     setResultados((prev) => [...prev, { id, texto, clasificacion, kpis }]);
   }
-  function handleUpdateResultado(id: string, texto: string, kpisText: string[], clasificacion: string) {
+  async function handleUpdateResultado(id: string, texto: string, kpisText: string[], clasificacion: string) {
+    const existing = resultados.find((r) => r.id === id);
+    const oldKpiMap = new Map((existing?.kpis || []).map((k) => [k.texto.trim().toLowerCase(), k.id]));
+
+    const newTextSet = new Set(kpisText.map((t) => t.trim().toLowerCase()));
+    const removedKpiIds: string[] = [];
+    (existing?.kpis || []).forEach((k) => {
+      if (!newTextSet.has(k.texto.trim().toLowerCase())) {
+        removedKpiIds.push(k.id);
+      }
+    });
+
+    const kpis: Kpi[] = kpisText.map((t, i) => {
+      const existingId = oldKpiMap.get(t.trim().toLowerCase());
+      return existingId ? { id: existingId, texto: t } : { id: `kpi-${Date.now()}-${i}`, texto: t };
+    });
+
     setResultados((prev) =>
-      prev.map((r) => {
-        if (r.id !== id) return r;
-        const kpis: Kpi[] = kpisText.map((t, i) => {
-          const existing = r.kpis.find((k) => k.texto === t);
-          return existing ?? { id: `kpi-${Date.now()}-${i}`, texto: t };
-        });
-        return { ...r, texto, clasificacion, kpis };
-      })
+      prev.map((r) => (r.id === id ? { ...r, texto, clasificacion, kpis } : r))
     );
+
+    // Borrado en cascada para KPIs desvinculados
+    for (const kpiId of removedKpiIds) {
+      try {
+        await supabase.from('asignacion_resultados_cargos').delete().eq('kpi_id', kpiId);
+        await supabase.from('indicadores_kpi').delete().eq('id', kpiId);
+      } catch (err) {
+        console.error(`Error borrando en cascada KPI desvinculado ${kpiId}:`, err);
+      }
+    }
+
+    window.dispatchEvent(new CustomEvent('profileDataChanged'));
+    if (window.parent && window.parent !== window) {
+      window.parent.dispatchEvent(new CustomEvent('profileDataChanged'));
+    }
   }
-  function handleDeleteResultado(id: string) {
+
+  async function handleDeleteResultado(id: string) {
     const resultado = resultados.find((r) => r.id === id);
-    const kpiIdsToRemove = new Set(resultado?.kpis.map((k) => k.id) ?? []);
+    const kpiIdsToRemove = (resultado?.kpis || []).map((k) => k.id);
+
     setResultados((prev) => prev.filter((r) => r.id !== id));
     setCargos((prev) =>
       prev.map((c) => ({
         ...c,
         resultadoClaveIds: c.resultadoClaveIds.filter((rid) => rid !== id),
-        kpiIds: c.kpiIds.filter((kid) => !kpiIdsToRemove.has(kid)),
+        kpiIds: c.kpiIds.filter((kid) => !kpiIdsToRemove.includes(kid)),
       }))
     );
+
+    try {
+      for (const kId of kpiIdsToRemove) {
+        await supabase.from('asignacion_resultados_cargos').delete().eq('kpi_id', kId);
+        await supabase.from('indicadores_kpi').delete().eq('id', kId);
+      }
+      await supabase.from('asignacion_resultados_cargos').delete().eq('resultado_clave_id', id);
+      await supabase.from('resultados_clave').delete().eq('id', id);
+
+      window.dispatchEvent(new CustomEvent('profileDataChanged'));
+      if (window.parent && window.parent !== window) {
+        window.parent.dispatchEvent(new CustomEvent('profileDataChanged'));
+      }
+    } catch (err) {
+      console.error(`Error borrando en cascada Resultado Clave ${id}:`, err);
+    }
   }
-  function handleDeleteKpi(kpiId: string) {
+
+  async function handleDeleteKpi(kpiId: string) {
     setResultados((prev) =>
       prev.map((r) => ({
         ...r,
@@ -174,10 +217,21 @@ export default function App() {
         kpiIds: c.kpiIds.filter((id) => id !== kpiId),
       }))
     );
-    supabase.from('indicadores_kpi').delete().eq('id', kpiId).then(({ error }: { error: any }) => {
-      if (error) console.error('Error al borrar KPI de Supabase:', error);
-      else console.log(`[DELETE SUCCESS] KPI ${kpiId} eliminado de indicadores_kpi.`);
-    });
+
+    try {
+      // 1º PASO: Eliminar de asignacion_resultados_cargos
+      await supabase.from('asignacion_resultados_cargos').delete().eq('kpi_id', kpiId);
+      // 2º PASO: Eliminar de indicadores_kpi
+      await supabase.from('indicadores_kpi').delete().eq('id', kpiId);
+      console.log(`[CASCADE DELETE SUCCESS] KPI ${kpiId} eliminado relacionalmente.`);
+
+      window.dispatchEvent(new CustomEvent('profileDataChanged'));
+      if (window.parent && window.parent !== window) {
+        window.parent.dispatchEvent(new CustomEvent('profileDataChanged'));
+      }
+    } catch (err) {
+      console.error(`Error borrando en cascada KPI ${kpiId}:`, err);
+    }
   }
 
   // ---------------- Asignación: resultado clave + kpis por cargo ----------------
