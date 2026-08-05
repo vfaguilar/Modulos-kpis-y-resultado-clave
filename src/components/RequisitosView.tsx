@@ -18,7 +18,7 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
   const [cargoId, setCargoId] = useState<string | null>(null);
   const [subtab, setSubtab] = useState<'asignar' | 'catalogo'>('asignar');
   const [search, setSearch] = useState('');
-  const [filterCategoria, setFilterCategoria] = useState<string>('TODAS');
+  const [activeCategoryPill, setActiveCategoryPill] = useState<string>('TODAS');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<Omit<Requisito, 'id'>>(emptyForm);
@@ -32,9 +32,25 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
 
   const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
 
+  const reqCountsByCat = useMemo(() => {
+    const map: Record<string, { assigned: number; total: number }> = {};
+    CATEGORIAS_REQUISITO.forEach((cat) => {
+      map[cat] = { assigned: 0, total: 0 };
+    });
+    requisitos.forEach((r) => {
+      const catKey = r.categoria || 'Otros Requisitos';
+      if (!map[catKey]) map[catKey] = { assigned: 0, total: 0 };
+      map[catKey].total += 1;
+      if (cargo && cargo.requisitoIds.includes(r.id)) {
+        map[catKey].assigned += 1;
+      }
+    });
+    return map;
+  }, [requisitos, cargo]);
+
   const filteredRequisitos = useMemo(() => {
     const list = requisitos.filter((r) => {
-      const matchCat = filterCategoria === 'TODAS' || r.categoria === filterCategoria;
+      const matchCat = activeCategoryPill === 'TODAS' || r.categoria === activeCategoryPill;
       const q = search.trim().toLowerCase();
       const matchSearch = q === '' || r.descripcion.toLowerCase().includes(q);
       return matchCat && matchSearch;
@@ -52,7 +68,7 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
       }
       return a.descripcion.localeCompare(b.descripcion, 'es', { sensitivity: 'base' });
     });
-  }, [requisitos, filterCategoria, search, cargo, subtab]);
+  }, [requisitos, activeCategoryPill, search, cargo, subtab]);
 
   function flash(msg: string) {
     setToast(msg);
@@ -145,6 +161,30 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
                   </div>
                 </div>
 
+                {/* Sub-Pestañas Pills de Categoría de Requisito */}
+                <div className="subtabs-pills-bar" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', margin: '12px 0' }}>
+                  <button
+                    type="button"
+                    className={`subtab-pill ${activeCategoryPill === 'TODAS' ? 'active' : ''}`}
+                    onClick={() => setActiveCategoryPill('TODAS')}
+                  >
+                    Todas ({cargo.requisitoIds.length}/{requisitos.length})
+                  </button>
+                  {CATEGORIAS_REQUISITO.map((cat) => {
+                    const counts = reqCountsByCat[cat] || { assigned: 0, total: 0 };
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        className={`subtab-pill ${activeCategoryPill === cat ? 'active' : ''}`}
+                        onClick={() => setActiveCategoryPill(cat)}
+                      >
+                        {cat} ({counts.assigned}/{counts.total})
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <div className="search-catalog-box">
                   <input
                     type="text"
@@ -198,16 +238,33 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
       ) : (
         /* Catálogo Maestro Tab */
         <div className="catalogo-master-container">
+          <div className="subtabs-pills-bar" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
+            <button
+              type="button"
+              className={`subtab-pill ${activeCategoryPill === 'TODAS' ? 'active' : ''}`}
+              onClick={() => setActiveCategoryPill('TODAS')}
+            >
+              Todas ({requisitos.length})
+            </button>
+            {CATEGORIAS_REQUISITO.map((cat) => {
+              const counts = reqCountsByCat[cat] || { assigned: 0, total: 0 };
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`subtab-pill ${activeCategoryPill === cat ? 'active' : ''}`}
+                  onClick={() => setActiveCategoryPill(cat)}
+                >
+                  {cat} ({counts.total})
+                </button>
+              );
+            })}
+          </div>
+
           <div className="toolbar" style={{ marginBottom: '16px' }}>
-            <select value={filterCategoria} onChange={(e) => setFilterCategoria(e.target.value)}>
-              <option value="TODAS">Todas las categorías ({requisitos.length})</option>
-              {CATEGORIAS_REQUISITO.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
             <input
               type="text"
-              placeholder="Filtrar catálogo..."
+              placeholder="Filtrar catálogo por descripción..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
