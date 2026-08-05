@@ -3,8 +3,39 @@ import { seedCargos, seedResultadosClave, seedAccionesLogros, seedRequisitos } f
 import { supabase } from './lib/supabase';
 import { normalizeNivel } from './utils';
 
+export async function checkIframeAuth(): Promise<boolean> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.user) return true;
+
+    // Fallback: Verificar sesión del marco principal parent (window.parent)
+    if (typeof window !== 'undefined' && (window.parent as any)?.supabaseClient) {
+      const { data: { session: parentSession } } = await (window.parent as any).supabaseClient.auth.getSession();
+      if (parentSession && parentSession.user && parentSession.access_token) {
+        await supabase.auth.setSession({
+          access_token: parentSession.access_token,
+          refresh_token: parentSession.refresh_token || '',
+        });
+        return true;
+      }
+    }
+  } catch (e) {}
+  return false;
+}
+
 export async function fetchDataFromSupabase(): Promise<AppData> {
   try {
+    const isAuth = await checkIframeAuth();
+    if (!isAuth) {
+      console.warn('[AUTH GUARD] Carga de datos abortada en iFrame: Usuario no autenticado.');
+      return {
+        cargos: [],
+        resultadosClave: [],
+        accionesLogros: [],
+        requisitos: []
+      };
+    }
+
     // 1. Fetch Cargos con Fallback a perfiles_cargo si public.cargos está vacía
     let dbCargos: any[] = [];
     const { data: rawCargos, error: errCargos } = await supabase.from('cargos').select('*');

@@ -18,23 +18,37 @@ export default function App() {
   const [accionesLogros, setAccionesLogros] = useState<AccionLogro[]>([]);
   const [requisitos, setRequisitos] = useState<Requisito[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const isLoadedRef = useRef<boolean>(false);
 
-  useEffect(() => {
-    fetchDataFromSupabase().then((data) => {
+  const loadData = async () => {
+    setLoading(true);
+    const data = await fetchDataFromSupabase();
+    if (data.cargos.length === 0 && data.resultadosClave.length === 0) {
+      setIsAuthenticated(false);
+      setCargos([]);
+      setResultados([]);
+      setAccionesLogros([]);
+      setRequisitos([]);
+    } else {
+      setIsAuthenticated(true);
       setCargos(data.cargos);
       setResultados(data.resultadosClave);
       setAccionesLogros(data.accionesLogros);
       setRequisitos(data.requisitos);
-      setLoading(false);
       isLoadedRef.current = true;
-    });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   useEffect(() => {
-    if (!isLoadedRef.current) return;
+    if (!isLoadedRef.current || !isAuthenticated) return;
     saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
-  }, [cargos, resultados, accionesLogros, requisitos]);
+  }, [cargos, resultados, accionesLogros, requisitos, isAuthenticated]);
 
   // Escuchar cambio de vista desde el sidebar de la Plataforma DO (hash o postMessage)
   useEffect(() => {
@@ -49,19 +63,22 @@ export default function App() {
         setView(e.data.view as View);
       }
       if (e.data && e.data.type === 'REFRESH_DATA') {
-        fetchDataFromSupabase().then((data) => {
-          setCargos(data.cargos);
-          setResultados(data.resultadosClave);
-          setAccionesLogros(data.accionesLogros);
-          setRequisitos(data.requisitos);
-        });
+        loadData();
       }
       if (e.data && e.data.type === 'FORCE_SAVE_ALL') {
-        console.log('[POSTMESSAGE IN] Recibida orden FORCE_SAVE_ALL en iFrame React.');
-        saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
+        if (isAuthenticated) {
+          console.log('[POSTMESSAGE IN] Recibida orden FORCE_SAVE_ALL en iFrame React.');
+          saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
+        }
       }
       if (e.data && e.data.type === 'AUTH_SESSION_PURGE') {
         console.log('[IFRAME AUTH] Purga de sesión solicitada por logout.');
+        setIsAuthenticated(false);
+        setCargos([]);
+        setResultados([]);
+        setAccionesLogros([]);
+        setRequisitos([]);
+        isLoadedRef.current = false;
         if (supabase.auth) {
           supabase.auth.signOut().catch(() => {});
         }
@@ -72,7 +89,7 @@ export default function App() {
 
         if (supabase.auth) {
           supabase.auth.getSession().then(({ data: { session: currentSession } }: any) => {
-            if (currentSession?.access_token === newAccessToken) {
+            if (currentSession?.access_token === newAccessToken && isAuthenticated) {
               return; // Token idéntico, ABORTAR para romper bucle infinito
             }
             console.log('[IFRAME AUTH BRIDGING] Sesión síncronizada exitosamente dentro del iFrame React.');
@@ -80,6 +97,8 @@ export default function App() {
               supabase.auth.setSession({
                 access_token: e.data.session.access_token,
                 refresh_token: e.data.session.refresh_token,
+              }).then(() => {
+                loadData();
               }).catch((err: any) => console.warn('[IFRAME AUTH BRIDGING] Error al establecer sesión local:', err));
             }
           }).catch(() => {});
@@ -104,7 +123,7 @@ export default function App() {
       window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener('message', handleMessage);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   // ---------------- Resultados Clave (catálogo) ----------------
   function handleAddResultado(texto: string, kpisText: string[], clasificacion: string) {
@@ -216,6 +235,25 @@ export default function App() {
       <div className="app-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
         <div style={{ textAlign: 'center', color: '#0f1c33', fontFamily: 'sans-serif' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem', fontWeight: 600 }}>Cargando datos desde Supabase...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="app-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#0f172a', color: '#f8fafc', padding: '24px' }}>
+        <div style={{ textAlign: 'center', maxWidth: '440px', background: 'rgba(30, 41, 59, 0.8)', padding: '32px 24px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+          <div style={{ width: '56px', height: '56px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: '#ef4444' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>Acceso Restringido</h2>
+          <p style={{ fontSize: '13.5px', color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+            Inicie sesión en la plataforma principal de Desarrollo Organizacional para acceder a los Resultados Clave, KPIs y Requisitos.
+          </p>
         </div>
       </div>
     );
