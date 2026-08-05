@@ -88,6 +88,14 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
     setKpis((prev) => prev.filter((_, i) => i !== idx));
   }
 
+  const clasificacionesDisponibles = useMemo(() => {
+    const set = new Set<string>();
+    (resultados || []).forEach((r) => {
+      if (r.clasificacion) set.add(r.clasificacion);
+    });
+    return Array.from(set).sort();
+  }, [resultados]);
+
   return (
     <div className="view">
       <header className="view-header view-header-row">
@@ -101,7 +109,7 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
       <div className="toolbar" style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
         <select value={filterClasificacion} onChange={(e) => setFilterClasificacion(e.target.value)} style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
           <option value="TODAS">Todas las clasificaciones ({resultados.length})</option>
-          {CLASIFICACIONES.map((c) => (
+          {clasificacionesDisponibles.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>

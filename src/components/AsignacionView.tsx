@@ -46,14 +46,10 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
   const clasificacionesDisponibles = useMemo(() => {
     const set = new Set<string>();
     (resultados || []).forEach((r) => {
-      if (r.clasificacion && r.clasificacion !== 'Sin clasificar') set.add(r.clasificacion);
+      if (r.clasificacion) set.add(r.clasificacion);
     });
-    (cargos || []).forEach((c) => {
-      if (c.clasificacion && c.clasificacion !== 'Sin clasificar') set.add(c.clasificacion);
-    });
-    CLASIFICACIONES.forEach((c) => set.add(c));
     return Array.from(set).sort();
-  }, [resultados, cargos]);
+  }, [resultados]);
 
   function flash(msg: string) {
     setToast(msg);
