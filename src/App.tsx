@@ -20,6 +20,7 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const isLoadedRef = useRef<boolean>(false);
+  const skipNextSaveRef = useRef<boolean>(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -32,6 +33,7 @@ export default function App() {
       setRequisitos([]);
     } else {
       setIsAuthenticated(true);
+      skipNextSaveRef.current = true;
       setCargos(data.cargos);
       setResultados(data.resultadosClave);
       setAccionesLogros(data.accionesLogros);
@@ -47,6 +49,10 @@ export default function App() {
 
   useEffect(() => {
     if (!isLoadedRef.current || !isAuthenticated) return;
+    if (skipNextSaveRef.current) {
+      skipNextSaveRef.current = false;
+      return;
+    }
     saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
   }, [cargos, resultados, accionesLogros, requisitos, isAuthenticated]);
 

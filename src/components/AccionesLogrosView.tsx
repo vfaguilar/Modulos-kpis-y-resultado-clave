@@ -17,7 +17,8 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   const [showForm, setShowForm] = useState(false);
   const [accion, setAccion] = useState('');
   const [logro, setLogro] = useState('');
-  const [clasificacion, setClasificacion] = useState(CLASIFICACIONES[0]);
+  const [newClasificacion, setNewClasificacion] = useState(CLASIFICACIONES[0]);
+  const [filterClasificacion, setFilterClasificacion] = useState<string>('TODAS');
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,8 +43,14 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     let list = disponibles;
+
+    if (filterClasificacion !== 'TODAS') {
+      const normSel = normalizeClasificacion(filterClasificacion);
+      list = list.filter((al) => normalizeClasificacion(al.clasificacion) === normSel || al.clasificacion === filterClasificacion);
+    }
+
     if (q !== '') {
-      list = disponibles.filter(
+      list = list.filter(
         (al) => al.accion.toLowerCase().includes(q) || al.logro.toLowerCase().includes(q)
       );
     }
@@ -55,7 +62,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
       }
       return a.accion.localeCompare(b.accion, 'es', { sensitivity: 'base' });
     });
-  }, [disponibles, search, cargo]);
+  }, [disponibles, filterClasificacion, search, cargo]);
 
   function flash(msg: string) {
     setToast(msg);
@@ -65,10 +72,10 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   function submitNew(e: React.FormEvent) {
     e.preventDefault();
     if (!accion.trim()) return;
-    onAdd(accion.trim(), logro.trim(), clasificacion);
+    onAdd(accion.trim(), logro.trim(), newClasificacion);
     setAccion('');
     setLogro('');
-    setClasificacion(CLASIFICACIONES[0]);
+    setNewClasificacion(CLASIFICACIONES[0]);
     setShowForm(false);
     flash('Acción y logro agregados');
   }
@@ -104,14 +111,26 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                 <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
               </div>
 
-              <div className="search-catalog-box">
+              <div className="search-catalog-box" style={{ display: 'flex', gap: '10px' }}>
                 <input
                   type="text"
                   placeholder="Buscar en el catálogo de acciones y logros..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="search-catalog-input"
+                  style={{ flex: 1 }}
                 />
+                <select
+                  value={filterClasificacion}
+                  onChange={(e) => setFilterClasificacion(e.target.value)}
+                  className="search-catalog-input"
+                  style={{ width: '220px', cursor: 'pointer' }}
+                >
+                  <option value="TODAS">Todas las clasificaciones</option>
+                  {CLASIFICACIONES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="asignar-item-list">
@@ -160,7 +179,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
               </label>
               <label>
                 Clasificación
-                <select value={clasificacion} onChange={(e) => setClasificacion(e.target.value)}>
+                <select value={newClasificacion} onChange={(e) => setNewClasificacion(e.target.value)}>
                   {CLASIFICACIONES.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}

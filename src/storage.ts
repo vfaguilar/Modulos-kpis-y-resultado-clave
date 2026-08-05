@@ -207,14 +207,19 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
           }
         });
 
-        // Hydrate Contribuciones / Acciones y Logros desde perfilObj.contribuciones
+        // Hydrate Contribuciones / Acciones y Logros desde perfilObj.contribuciones (Paired matching: accion + logro)
         const rawContribs = Array.isArray(perfilObj.contribuciones) ? perfilObj.contribuciones : [];
         rawContribs.forEach((contrib: any) => {
           const acc = typeof contrib === 'string' ? contrib.trim() : (contrib?.accion || '');
           const logro = typeof contrib === 'object' ? (contrib?.logro_esperado || contrib?.logro || '') : '';
           if (!acc) return;
-          let matchAL = accionesLogros.find(al => al.accion.trim().toLowerCase() === acc.toLowerCase());
-          if (!matchAL) {
+          const normAcc = acc.toLowerCase();
+          const normLogro = logro.trim().toLowerCase();
+          let matchAL = accionesLogros.find(al => 
+            al.accion.trim().toLowerCase() === normAcc && 
+            (al.logro || '').trim().toLowerCase() === normLogro
+          );
+          if (!matchAL && !dbAL?.length) {
             matchAL = {
               id: `al-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
               accion: acc,
@@ -224,17 +229,18 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
             };
             accionesLogros.push(matchAL);
           }
-          if (!alIds.includes(matchAL.id)) alIds.push(matchAL.id);
+          if (matchAL && !alIds.includes(matchAL.id)) alIds.push(matchAL.id);
         });
 
-        // Hydrate Requisitos desde perfilObj (5 campos)
+        // Hydrate Requisitos desde perfilObj (5 campos) solo si no hay asignación relacional previa
         const hydrateReqField = (fieldVal: any, cat: string) => {
           const rawArr = Array.isArray(fieldVal) ? fieldVal : (typeof fieldVal === 'string' && fieldVal.trim() ? [fieldVal.trim()] : []);
           rawArr.forEach((itemTxt: any) => {
             const txt = typeof itemTxt === 'string' ? itemTxt.trim() : (itemTxt?.descripcion || itemTxt?.texto || '');
             if (!txt) return;
-            let matchReq = requisitos.find(r => r.categoria === cat && r.descripcion.trim().toLowerCase() === txt.toLowerCase());
-            if (!matchReq) {
+            const normTxt = txt.toLowerCase();
+            let matchReq = requisitos.find(r => r.categoria === cat && r.descripcion.trim().toLowerCase() === normTxt);
+            if (!matchReq && !dbReqs?.length) {
               matchReq = {
                 id: `req-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
                 categoria: cat,
@@ -242,7 +248,9 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
               };
               requisitos.push(matchReq);
             }
-            reqSet.add(matchReq.id);
+            if (matchReq) {
+              reqSet.add(matchReq.id);
+            }
           });
         };
 
