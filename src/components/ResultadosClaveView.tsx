@@ -105,13 +105,29 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
-        <input
-          type="text"
-          placeholder="Buscar en el catálogo..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-        />
+        <div style={{ position: 'relative', flex: 1 }}>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', pointerEvents: 'none' }}
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Buscar en el catálogo..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: '100%', padding: '8px 12px 8px 32px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+          />
+        </div>
       </div>
 
       {toast && <div className="toast">{toast}</div>}
