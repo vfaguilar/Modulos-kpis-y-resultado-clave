@@ -6,17 +6,24 @@ import { normalizeNivel } from './utils';
 export async function checkIframeAuth(): Promise<boolean> {
   try {
     const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) return true;
+    if (session && session.user && session.access_token) return true;
 
     // Fallback: Verificar sesión del marco principal parent (window.parent)
     if (typeof window !== 'undefined' && (window.parent as any)?.supabaseClient) {
       const { data: { session: parentSession } } = await (window.parent as any).supabaseClient.auth.getSession();
       if (parentSession && parentSession.user && parentSession.access_token) {
-        await supabase.auth.setSession({
+        const { error: setErr } = await supabase.auth.setSession({
           access_token: parentSession.access_token,
           refresh_token: parentSession.refresh_token || '',
         });
-        return true;
+        if (!setErr) {
+          try {
+            if ((supabase as any).realtime) {
+              (supabase as any).realtime.setAuth(parentSession.access_token);
+            }
+          } catch (eRt) {}
+          return true;
+        }
       }
     }
   } catch (e) {}
@@ -34,6 +41,12 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
         accionesLogros: [],
         requisitos: []
       };
+    }
+
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    if (!currentSession || !currentSession.access_token) {
+      console.warn('[AUTH GUARD 401 PREVENT] No se encontró access_token en el cliente iFrame. Abortando consulta.');
+      return { cargos: [], resultadosClave: [], accionesLogros: [], requisitos: [] };
     }
 
     // 1. Fetch Cargos con Fallback a perfiles_cargo si public.cargos está vacía
