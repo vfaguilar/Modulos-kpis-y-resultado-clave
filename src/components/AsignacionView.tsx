@@ -34,12 +34,17 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
       return matchClasif && matchSearch;
     });
 
-    if (!cargo) return list;
+    if (!cargo) {
+      return [...list].sort((a, b) => a.texto.localeCompare(b.texto, 'es', { sensitivity: 'base' }));
+    }
 
     return [...list].sort((a, b) => {
-      const aAssigned = cargo.resultadoClaveIds.includes(a.id) ? 1 : 0;
-      const bAssigned = cargo.resultadoClaveIds.includes(b.id) ? 1 : 0;
-      return bAssigned - aAssigned;
+      const aAssigned = (cargo.resultadoClaveIds.includes(a.id) || (a.kpis || []).some((k) => cargo.kpiIds.includes(k.id))) ? 1 : 0;
+      const bAssigned = (cargo.resultadoClaveIds.includes(b.id) || (b.kpis || []).some((k) => cargo.kpiIds.includes(k.id))) ? 1 : 0;
+      if (aAssigned !== bAssigned) {
+        return bAssigned - aAssigned;
+      }
+      return a.texto.localeCompare(b.texto, 'es', { sensitivity: 'base' });
     });
   }, [resultados, filterClasif, searchCat, cargo]);
 

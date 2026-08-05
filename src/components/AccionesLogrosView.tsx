@@ -41,11 +41,21 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (q === '') return disponibles;
-    return disponibles.filter(
-      (al) => al.accion.toLowerCase().includes(q) || al.logro.toLowerCase().includes(q)
-    );
-  }, [disponibles, search]);
+    let list = disponibles;
+    if (q !== '') {
+      list = disponibles.filter(
+        (al) => al.accion.toLowerCase().includes(q) || al.logro.toLowerCase().includes(q)
+      );
+    }
+    return [...list].sort((a, b) => {
+      const aAssigned = cargo ? (cargo.accionLogroIds.includes(a.id) ? 1 : 0) : 0;
+      const bAssigned = cargo ? (cargo.accionLogroIds.includes(b.id) ? 1 : 0) : 0;
+      if (aAssigned !== bAssigned) {
+        return bAssigned - aAssigned;
+      }
+      return a.accion.localeCompare(b.accion, 'es', { sensitivity: 'base' });
+    });
+  }, [disponibles, search, cargo]);
 
   function flash(msg: string) {
     setToast(msg);

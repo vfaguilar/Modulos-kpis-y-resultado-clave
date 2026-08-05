@@ -33,13 +33,26 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
   const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
 
   const filteredRequisitos = useMemo(() => {
-    return requisitos.filter((r) => {
+    const list = requisitos.filter((r) => {
       const matchCat = filterCategoria === 'TODAS' || r.categoria === filterCategoria;
       const q = search.trim().toLowerCase();
       const matchSearch = q === '' || r.descripcion.toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
-  }, [requisitos, filterCategoria, search]);
+
+    if (!cargo || subtab !== 'asignar') {
+      return [...list].sort((a, b) => a.descripcion.localeCompare(b.descripcion, 'es', { sensitivity: 'base' }));
+    }
+
+    return [...list].sort((a, b) => {
+      const aAssigned = cargo.requisitoIds.includes(a.id) ? 1 : 0;
+      const bAssigned = cargo.requisitoIds.includes(b.id) ? 1 : 0;
+      if (aAssigned !== bAssigned) {
+        return bAssigned - aAssigned;
+      }
+      return a.descripcion.localeCompare(b.descripcion, 'es', { sensitivity: 'base' });
+    });
+  }, [requisitos, filterCategoria, search, cargo, subtab]);
 
   function flash(msg: string) {
     setToast(msg);

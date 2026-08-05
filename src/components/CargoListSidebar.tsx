@@ -13,13 +13,16 @@ export default function CargoListSidebar({ cargos, selectedCargoId, onSelectCarg
 
   const filteredCargos = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return cargos;
-    return cargos.filter(
-      (c) =>
-        c.nombre.toLowerCase().includes(q) ||
-        (c.clasificacion && c.clasificacion.toLowerCase().includes(q)) ||
-        (c.nivel && c.nivel.toLowerCase().includes(q))
-    );
+    let list = cargos;
+    if (q) {
+      list = cargos.filter(
+        (c) =>
+          c.nombre.toLowerCase().includes(q) ||
+          (c.clasificacion && c.clasificacion.toLowerCase().includes(q)) ||
+          (c.nivel && c.nivel.toLowerCase().includes(q))
+      );
+    }
+    return [...list].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
   }, [cargos, search]);
 
   const getNivelStyle = (nivel?: string) => {

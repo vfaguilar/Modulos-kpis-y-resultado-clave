@@ -21,11 +21,12 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return resultados.filter((r) => {
+    const list = resultados.filter((r) => {
       const matchClasif = filterClasificacion === 'TODAS' || (r.clasificacion || 'Sin clasificar') === filterClasificacion;
       const matchSearch = q === '' || r.texto.toLowerCase().includes(q) || r.kpis.some((k) => k.texto.toLowerCase().includes(q));
       return matchClasif && matchSearch;
     });
+    return [...list].sort((a, b) => a.texto.localeCompare(b.texto, 'es', { sensitivity: 'base' }));
   }, [resultados, search, filterClasificacion]);
 
   function flash(msg: string) {
