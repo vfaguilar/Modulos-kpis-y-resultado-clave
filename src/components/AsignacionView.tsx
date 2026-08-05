@@ -25,14 +25,23 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
   const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
 
   // Lista estable: NO se ocultan elementos al marcar/desmarcar checkboxes
+  // Lista con ordenamiento dinámico: Ítems asignados ('checked') al INICIO de la lista
   const resultadosDisponibles = useMemo(() => {
-    return resultados.filter((r) => {
+    const list = resultados.filter((r) => {
       const matchClasif = filterClasif === 'TODAS' || (r.clasificacion || 'Sin clasificar') === filterClasif;
       const q = searchCat.trim().toLowerCase();
       const matchSearch = !q || r.texto.toLowerCase().includes(q) || r.kpis.some((k) => k.texto.toLowerCase().includes(q));
       return matchClasif && matchSearch;
     });
-  }, [resultados, filterClasif, searchCat]);
+
+    if (!cargo) return list;
+
+    return [...list].sort((a, b) => {
+      const aAssigned = cargo.resultadoClaveIds.includes(a.id) ? 1 : 0;
+      const bAssigned = cargo.resultadoClaveIds.includes(b.id) ? 1 : 0;
+      return bAssigned - aAssigned;
+    });
+  }, [resultados, filterClasif, searchCat, cargo]);
 
   function flash(msg: string) {
     setToast(msg);
@@ -99,6 +108,12 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
               <div className="rc-assign-list">
                 {resultadosDisponibles.map((r) => {
                   const checked = cargo.resultadoClaveIds.includes(r.id);
+                  const sortedKpis = [...(r.kpis || [])].sort((a, b) => {
+                    const aKpiChecked = cargo.kpiIds.includes(a.id) ? 1 : 0;
+                    const bKpiChecked = cargo.kpiIds.includes(b.id) ? 1 : 0;
+                    return bKpiChecked - aKpiChecked;
+                  });
+
                   return (
                     <div className={`rc-assign-item ${checked ? 'checked' : ''}`} key={r.id}>
                       <label className="asignar-item-row" style={{ border: 'none', padding: '10px 4px', cursor: 'pointer' }}>
@@ -116,9 +131,9 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                         </div>
                       </label>
 
-                      {checked && r.kpis.length > 0 && (
+                      {checked && sortedKpis.length > 0 && (
                         <div className="rc-kpi-assign-list">
-                          {r.kpis.map((k) => {
+                          {sortedKpis.map((k) => {
                             const kpiChecked = cargo.kpiIds.includes(k.id);
                             return (
                               <label key={k.id} className={`kpi-assign-row ${kpiChecked ? 'checked' : ''}`} style={{ cursor: 'pointer' }}>
