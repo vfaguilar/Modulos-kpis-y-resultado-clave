@@ -24,13 +24,11 @@ export function nivelInfo(key: NivelKeyLike) {
 type NivelKeyLike = Cargo['nivel'];
 
 export const CATEGORIAS_REQUISITO = [
-  'Educación',
+  'Formación',
   'Experiencia',
-  'Conocimientos Técnicos',
-  'Habilidades',
-  'Certificaciones',
-  'Idiomas',
-  'Otro',
+  'Otros Conocimientos',
+  'Condiciones Físicas',
+  'Otros Requisitos',
 ];
 
 // Clasificaciones de cargo conocidas (mismas que ya existen en el catálogo

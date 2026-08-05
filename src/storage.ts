@@ -82,7 +82,14 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     const { data: dbAL, error: errAL } = await supabase.from('acciones_logros').select('*');
     if (errAL) console.error('Error fetching acciones_logros from Supabase:', errAL);
 
-    // 5. Fetch Asignaciones relacionales activas
+    // 5. Fetch Requisitos Maestro y Asignaciones
+    const { data: dbReqs, error: errReqs } = await supabase.from('requisitos_maestro').select('*');
+    if (errReqs) console.error('Error fetching requisitos_maestro from Supabase:', errReqs);
+
+    const { data: dbAsignReqs, error: errAsignReqs } = await supabase.from('asignacion_requisitos_cargos').select('*');
+    if (errAsignReqs) console.error('Error fetching asignacion_requisitos_cargos from Supabase:', errAsignReqs);
+
+    // 6. Fetch Asignaciones relacionales activas
     const { data: dbAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').select('*');
     if (errAsign) console.error('Error fetching asignacion_resultados_cargos from Supabase:', errAsign);
 
@@ -106,6 +113,13 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       nivel: al.nivel || 'Sin nivel',
     }));
 
+    // Map Requisitos Maestro
+    let requisitos: Requisito[] = (dbReqs || []).map((r: any) => ({
+      id: String(r.id),
+      categoria: r.tipo || 'Otros Requisitos',
+      descripcion: r.descripcion || '',
+    }));
+
     // Construir mapa de asignaciones reales por cargo_id
     const asignacionesByCargo = new Map<string, { rcIds: Set<string>; kpiIds: Set<string>; alIds: Set<string> }>();
     (dbAsign || []).forEach((a: any) => {
@@ -118,6 +132,14 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       if (a.resultado_clave_id) entry.rcIds.add(String(a.resultado_clave_id));
       if (a.kpi_id) entry.kpiIds.add(String(a.kpi_id));
       if (a.accion_logro_id) entry.alIds.add(String(a.accion_logro_id));
+    });
+
+    const asignReqsByCargo = new Map<string, Set<string>>();
+    (dbAsignReqs || []).forEach((a: any) => {
+      const cKey = String(a.cargo_id || '').trim().toLowerCase();
+      if (!cKey) return;
+      if (!asignReqsByCargo.has(cKey)) asignReqsByCargo.set(cKey, new Set());
+      if (a.requisito_id) asignReqsByCargo.get(cKey)!.add(String(a.requisito_id));
     });
 
     // Map Cargos con Hidratación Inteligente Fallback desde perfiles_cargo (JSONB)
@@ -133,8 +155,9 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
       let rcIds: string[] = asign ? Array.from(asign.rcIds) : [];
       let alIds: string[] = asign ? Array.from(asign.alIds) : [];
       const kpiSet = new Set<string>(asign ? Array.from(asign.kpiIds) : []);
+      let reqSet = new Set<string>(asignReqsByCargo.has(lowerId) ? Array.from(asignReqsByCargo.get(lowerId)!) : []);
 
-      // FALLBACK HYDRATION: Si las asignaciones relacionales están vacías pero perfiles_cargo contiene datos JSONB
+      // FALLBACK HYDRATION: Si las asignaciones relacionales están vacías pero perfiles_cargo contiene datos JSONB/Text
       if (perfilObj) {
         // Hydrate Resultados Clave desde perfilObj.resultados_clave
         const rawRCs = Array.isArray(perfilObj.resultados_clave) ? perfilObj.resultados_clave : [];
@@ -160,7 +183,6 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
         rawKPIs.forEach((kpiTxt: any) => {
           const txt = typeof kpiTxt === 'string' ? kpiTxt.trim() : (kpiTxt?.texto || '');
           if (!txt) return;
-          // Buscar en todos los KPIs existentes
           for (const rc of resultadosClave) {
             const matchK = rc.kpis?.find(k => k.texto.trim().toLowerCase() === txt.toLowerCase());
             if (matchK) {
@@ -188,6 +210,31 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
           }
           if (!alIds.includes(matchAL.id)) alIds.push(matchAL.id);
         });
+
+        // Hydrate Requisitos desde perfilObj (5 campos)
+        const hydrateReqField = (fieldVal: any, cat: string) => {
+          const rawArr = Array.isArray(fieldVal) ? fieldVal : (typeof fieldVal === 'string' && fieldVal.trim() ? [fieldVal.trim()] : []);
+          rawArr.forEach((itemTxt: any) => {
+            const txt = typeof itemTxt === 'string' ? itemTxt.trim() : (itemTxt?.descripcion || itemTxt?.texto || '');
+            if (!txt) return;
+            let matchReq = requisitos.find(r => r.categoria === cat && r.descripcion.trim().toLowerCase() === txt.toLowerCase());
+            if (!matchReq) {
+              matchReq = {
+                id: `req-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+                categoria: cat,
+                descripcion: txt
+              };
+              requisitos.push(matchReq);
+            }
+            reqSet.add(matchReq.id);
+          });
+        };
+
+        hydrateReqField(perfilObj.formacion, 'Formación');
+        hydrateReqField(perfilObj.experiencia, 'Experiencia');
+        hydrateReqField(perfilObj.otros_conocimientos, 'Otros Conocimientos');
+        hydrateReqField(perfilObj.condiciones_fisicas, 'Condiciones Físicas');
+        hydrateReqField(perfilObj.otros_requisitos, 'Otros Requisitos');
       }
       
       // Cascading KPIs automáticamente desde los Resultados Clave asignados
@@ -206,21 +253,24 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
         resultadoClaveIds: rcIds,
         kpiIds: Array.from(kpiSet),
         accionLogroIds: alIds,
-        requisitoIds: [],
+        requisitoIds: Array.from(reqSet),
       };
     });
 
-    // Cargar semillas de catálogo únicamente si las tablas están completamente vacías
+    // Cargar semillas únicamente si las tablas están vacías
     if (resultadosClave.length === 0 && seedResultadosClave.length > 0) {
       resultadosClave = seedResultadosClave;
       accionesLogros = seedAccionesLogros;
+    }
+    if (requisitos.length === 0 && seedRequisitos.length > 0) {
+      requisitos = seedRequisitos;
     }
 
     return {
       cargos,
       resultadosClave,
       accionesLogros,
-      requisitos: seedRequisitos,
+      requisitos,
     };
   } catch (error) {
     console.error('Error al cargar datos desde Supabase (fallback seguro):', error);
@@ -317,7 +367,19 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (acciones_logros): ${resAL.length}`);
     }
 
-    // 4. Sync Asignaciones por Cargo (Purga por ID y por Nombre de Cargo)
+    // 4. Upsert Requisitos Maestro
+    if (data.requisitos && data.requisitos.length > 0) {
+      const reqRows = data.requisitos.map((r) => ({
+        id: String(r.id),
+        tipo: r.categoria || 'Otros Requisitos',
+        descripcion: r.descripcion || '',
+      }));
+      const { data: resReqs, error: errReqs } = await supabase.from('requisitos_maestro').upsert(reqRows).select();
+      if (errReqs) console.error('[RLS / AUTH ERROR] Fallo de permisos en requisitos_maestro:', errReqs);
+      else console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (requisitos_maestro): ${resReqs?.length || 0}`);
+    }
+
+    // 5. Sync Asignaciones por Cargo (Purga por ID y por Nombre de Cargo)
     const cargoIdsSet = new Set<string>();
     data.cargos.forEach((c) => {
       if (c.id) cargoIdsSet.add(String(c.id).trim());
@@ -327,27 +389,24 @@ export async function saveToSupabase(data: AppData): Promise<void> {
 
     if (cargoIdsArr.length > 0) {
       await supabase.from('asignacion_resultados_cargos').delete().in('cargo_id', cargoIdsArr);
+      await supabase.from('asignacion_requisitos_cargos').delete().in('cargo_id', cargoIdsArr);
 
       const asignRows: any[] = [];
+      const asignReqRows: any[] = [];
+
       data.cargos.forEach((c) => {
         const cId = String(c.id).trim();
         (c.resultadoClaveIds || []).forEach((rcId) => {
-          asignRows.push({
-            cargo_id: cId,
-            resultado_clave_id: String(rcId),
-          });
+          asignRows.push({ cargo_id: cId, resultado_clave_id: String(rcId) });
         });
         (c.kpiIds || []).forEach((kpiId) => {
-          asignRows.push({
-            cargo_id: cId,
-            kpi_id: String(kpiId),
-          });
+          asignRows.push({ cargo_id: cId, kpi_id: String(kpiId) });
         });
         (c.accionLogroIds || []).forEach((alId) => {
-          asignRows.push({
-            cargo_id: cId,
-            accion_logro_id: String(alId),
-          });
+          asignRows.push({ cargo_id: cId, accion_logro_id: String(alId) });
+        });
+        (c.requisitoIds || []).forEach((reqId) => {
+          asignReqRows.push({ cargo_id: cId, requisito_id: String(reqId) });
         });
       });
 
@@ -361,7 +420,13 @@ export async function saveToSupabase(data: AppData): Promise<void> {
         console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (asignacion_resultados_cargos): ${resAsign.length}`);
       }
 
-      // 5. Sincronización Bi-Direccional hacia public.perfiles_cargo (JSONB)
+      if (asignReqRows.length > 0) {
+        const { data: resAsignReq, error: errAsignReq } = await supabase.from('asignacion_requisitos_cargos').insert(asignReqRows).select();
+        if (errAsignReq) console.error('[RLS / AUTH ERROR] Fallo de permisos en asignacion_requisitos_cargos:', errAsignReq);
+        else console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (asignacion_requisitos_cargos): ${resAsignReq?.length || 0}`);
+      }
+
+      // 6. Sincronización Bi-Direccional hacia public.perfiles_cargo (5 columnas de requisitos + RCs/KPIs/Contribs)
       for (const c of data.cargos) {
         const cId = String(c.id).trim();
         if (!cId) continue;
@@ -379,12 +444,24 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           .filter((al) => (c.accionLogroIds || []).includes(al.id))
           .map((al) => ({ accion: al.accion, logro_esperado: al.logro }));
 
+        const assignedReqs = (data.requisitos || []).filter(r => (c.requisitoIds || []).includes(r.id));
+        const formacionText = assignedReqs.filter(r => r.categoria === 'Formación').map(r => r.descripcion).join('. ');
+        const experienciaText = assignedReqs.filter(r => r.categoria === 'Experiencia').map(r => r.descripcion).join('. ');
+        const otrosConocimientosArr = assignedReqs.filter(r => r.categoria === 'Otros Conocimientos').map(r => r.descripcion);
+        const condicionesFisicasArr = assignedReqs.filter(r => r.categoria === 'Condiciones Físicas').map(r => r.descripcion);
+        const otrosRequisitosArr = assignedReqs.filter(r => r.categoria === 'Otros Requisitos').map(r => r.descripcion);
+
         try {
           const { data: resPerf, error: errPerf } = await supabase.from('perfiles_cargo').upsert({
             id: cId,
             resultados_clave: activeRCs,
             kpis: activeKPIs,
             contribuciones: activeContribs,
+            formacion: formacionText,
+            experiencia: experienciaText,
+            otros_conocimientos: otrosConocimientosArr,
+            condiciones_fisicas: condicionesFisicasArr,
+            otros_requisitos: otrosRequisitosArr,
             fecha_actualizacion: new Date().toISOString()
           }, { onConflict: 'id' }).select();
 

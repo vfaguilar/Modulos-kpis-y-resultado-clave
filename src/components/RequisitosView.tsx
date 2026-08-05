@@ -169,6 +169,14 @@ export default function RequisitosView({ requisitos, cargos, onAdd, onUpdate, on
                           onChange={() => {
                             onToggleAssignment(cargo.id, r.id);
                             flash('Guardado');
+                            try {
+                              if (typeof window !== 'undefined') {
+                                window.dispatchEvent(new CustomEvent('profileDataChanged'));
+                                if (window.parent && window.parent !== window) {
+                                  window.parent.dispatchEvent(new CustomEvent('profileDataChanged'));
+                                }
+                              }
+                            } catch (e) {}
                           }}
                         />
                         <div>
