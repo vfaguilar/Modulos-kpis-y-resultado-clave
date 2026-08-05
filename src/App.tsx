@@ -161,6 +161,24 @@ export default function App() {
       }))
     );
   }
+  function handleDeleteKpi(kpiId: string) {
+    setResultados((prev) =>
+      prev.map((r) => ({
+        ...r,
+        kpis: r.kpis.filter((k) => k.id !== kpiId),
+      }))
+    );
+    setCargos((prev) =>
+      prev.map((c) => ({
+        ...c,
+        kpiIds: c.kpiIds.filter((id) => id !== kpiId),
+      }))
+    );
+    supabase.from('indicadores_kpi').delete().eq('id', kpiId).then(({ error }: { error: any }) => {
+      if (error) console.error('Error al borrar KPI de Supabase:', error);
+      else console.log(`[DELETE SUCCESS] KPI ${kpiId} eliminado de indicadores_kpi.`);
+    });
+  }
 
   // ---------------- Asignación: resultado clave + kpis por cargo ----------------
   function handleToggleResultado(cargoId: string, resultadoId: string) {
@@ -302,6 +320,7 @@ export default function App() {
                 onAdd={handleAddResultado}
                 onUpdate={handleUpdateResultado}
                 onDelete={handleDeleteResultado}
+                onDeleteKpi={handleDeleteKpi}
               />
             )}
           </div>

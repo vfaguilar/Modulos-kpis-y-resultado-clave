@@ -7,9 +7,10 @@ interface Props {
   onAdd: (texto: string, kpis: string[], clasificacion: string) => void;
   onUpdate: (id: string, texto: string, kpis: string[], clasificacion: string) => void;
   onDelete: (id: string) => void;
+  onDeleteKpi?: (kpiId: string) => void;
 }
 
-export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDelete }: Props) {
+export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDelete, onDeleteKpi }: Props) {
   const [search, setSearch] = useState('');
   const [filterClasificacion, setFilterClasificacion] = useState('TODAS');
   const [showForm, setShowForm] = useState(false);
@@ -158,9 +159,30 @@ export default function ResultadosClaveView({ resultados, onAdd, onUpdate, onDel
             {r.kpis.length === 0 ? (
               <div className="empty-hint" style={{ fontSize: '12px', color: '#94a3b8' }}>Sin KPIs asociados.</div>
             ) : (
-              <ul className="rc-kpi-list" style={{ margin: '8px 0 0 0', paddingLeft: '20px', fontSize: '13px', color: '#334155' }}>
+              <ul className="rc-kpi-list" style={{ margin: '8px 0 0 0', paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {r.kpis.map((k) => (
-                  <li key={k.id}>{k.texto}</li>
+                  <li key={k.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '6px 12px', borderRadius: '6px', border: '1px solid #f1f5f9', fontSize: '13px', color: '#334155' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ color: '#64748b' }}>•</span>
+                      <span>{k.texto}</span>
+                      <span style={{ fontSize: '10px', color: '#94a3b8', background: '#e2e8f0', padding: '1px 6px', borderRadius: '4px' }}>ID: {k.id}</span>
+                    </div>
+                    {onDeleteKpi && (
+                      <button
+                        type="button"
+                        className="btn-table-action danger"
+                        style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px' }}
+                        onClick={() => {
+                          if (confirm(`¿Eliminar el indicador KPI "${k.texto}" (ID: ${k.id}) de la base de datos?`)) {
+                            onDeleteKpi(k.id);
+                            flash('KPI eliminado');
+                          }
+                        }}
+                      >
+                        Eliminar KPI
+                      </button>
+                    )}
+                  </li>
                 ))}
               </ul>
             )}
