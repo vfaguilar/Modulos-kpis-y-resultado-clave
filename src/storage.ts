@@ -122,9 +122,12 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
 
     // Construir mapa de asignaciones reales por cargo_id
     const asignacionesByCargo = new Map<string, { rcIds: Set<string>; kpiIds: Set<string>; alIds: Set<string> }>();
+    const invalidCargoKeys = new Set(['null', 'undefined', '', 'superior_tactico', 'superior_estrategico', 'intermedio', 'inicial', 'cardinal']);
+
     (dbAsign || []).forEach((a: any) => {
       const cargoIdKey = String(a.cargo_id || '').trim().toLowerCase();
-      if (!cargoIdKey) return;
+      if (invalidCargoKeys.has(cargoIdKey)) return;
+
       if (!asignacionesByCargo.has(cargoIdKey)) {
         asignacionesByCargo.set(cargoIdKey, { rcIds: new Set(), kpiIds: new Set(), alIds: new Set() });
       }
@@ -137,137 +140,24 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     const asignReqsByCargo = new Map<string, Set<string>>();
     (dbAsignReqs || []).forEach((a: any) => {
       const cKey = String(a.cargo_id || '').trim().toLowerCase();
-      if (!cKey) return;
+      if (invalidCargoKeys.has(cKey)) return;
       if (!asignReqsByCargo.has(cKey)) asignReqsByCargo.set(cKey, new Set());
       if (a.requisito_id) asignReqsByCargo.get(cKey)!.add(String(a.requisito_id));
     });
 
-    // Map Cargos con Hidratación Inteligente Fallback desde perfiles_cargo (JSONB)
-    const sourceCargos = dbCargos.length > 0 ? dbCargos : seedCargos;
+    // Map Cargos exclusivamente desde la BBDD relacional (SIN fallbacks a JSONB)
+    const sourceCargos = dbCargos.length > 0 ? dbCargos : [];
     const cargos: Cargo[] = sourceCargos.map((c: any) => {
       const rawId = String(c.id || c.idCargo || c.codigo || '').trim();
       const rawName = String(c.nombre_completo_cargo || c.nombre_cargo || c.nombre || c.cargo || '').trim();
       const lowerId = rawId.toLowerCase();
       
       let asign = asignacionesByCargo.get(lowerId);
-      const perfilObj = perfilesMap.get(lowerId);
 
       let rcIds: string[] = asign ? Array.from(asign.rcIds) : [];
       let alIds: string[] = asign ? Array.from(asign.alIds) : [];
       const kpiSet = new Set<string>(asign ? Array.from(asign.kpiIds) : []);
       let reqSet = new Set<string>(asignReqsByCargo.has(lowerId) ? Array.from(asignReqsByCargo.get(lowerId)!) : []);
-
-      // FALLBACK HYDRATION: Si las asignaciones relacionales están vacías pero perfiles_cargo contiene datos JSONB/Text
-      if (perfilObj) {
-        // Hydrate Resultados Clave desde perfilObj.resultados_clave
-        const rawRCs = Array.isArray(perfilObj.resultados_clave) ? perfilObj.resultados_clave : [];
-        rawRCs.forEach((rcTxt: any) => {
-          const txt = typeof rcTxt === 'string' ? rcTxt.trim() : (rcTxt?.texto || '');
-          if (!txt) return;
-          let matchRC = resultadosClave.find(r => r.texto.trim().toLowerCase() === txt.toLowerCase());
-          if (!matchRC) {
-            matchRC = {
-              id: `rc-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-              texto: txt,
-              clasificacion: c.categoria_antigua || c.clasificacion || 'Sin clasificar',
-              nivel: normalizeNivel(c.nivel_nuevo || c.nivel || 'INTERMEDIO'),
-              kpis: []
-            };
-            resultadosClave.push(matchRC);
-          }
-          if (!rcIds.includes(matchRC.id)) rcIds.push(matchRC.id);
-        });
-
-        // Hydrate KPIs desde perfilObj.kpis (JSONB)
-        // REGLA: No buscamos en todo el catálogo global de KPIs porque puede devolver
-        // KPIs de otros cargos con el mismo texto. En su lugar, creamos KPIs en memoria
-        // vinculados a los RCs de ESTE cargo por posición (primero al primer RC, etc.)
-        const rawKPIs = Array.isArray(perfilObj.kpis) ? perfilObj.kpis : [];
-        rawKPIs.forEach((kpiTxt: any, kpiIdx: number) => {
-          const txt = typeof kpiTxt === 'string' ? kpiTxt.trim() : (kpiTxt?.texto || '');
-          if (!txt) return;
-          // Vincular al RC correspondiente por índice (o al primero si hay asimetría)
-          const targetRcId = rcIds.length > 0 ? rcIds[Math.min(kpiIdx, rcIds.length - 1)] : null;
-          const targetRC = targetRcId ? resultadosClave.find(r => r.id === targetRcId) : null;
-
-          if (targetRC) {
-            // Buscar si ya existe un KPI con este texto en los KPIs de ESTE RC específico
-            let matchK = targetRC.kpis?.find(k => k.texto.trim().toLowerCase() === txt.toLowerCase());
-            if (!matchK) {
-              // Solo si no existe, crear uno en memoria
-              matchK = {
-                id: `kpi-jsonb-${Date.now()}-${kpiIdx}-${Math.random().toString(36).substr(2, 4)}`,
-                texto: txt,
-                nivel: targetRC.nivel || 'Sin nivel'
-              };
-              if (!targetRC.kpis) targetRC.kpis = [];
-              targetRC.kpis.push(matchK);
-            }
-            kpiSet.add(matchK.id);
-          }
-        });
-
-        // Hydrate Contribuciones / Acciones y Logros desde perfilObj.contribuciones (Paired matching: accion + logro)
-        const rawContribs = Array.isArray(perfilObj.contribuciones) ? perfilObj.contribuciones : [];
-        rawContribs.forEach((contrib: any) => {
-          const acc = typeof contrib === 'string' ? contrib.trim() : (contrib?.accion || '');
-          const logro = typeof contrib === 'object' ? (contrib?.logro_esperado || contrib?.logro || '') : '';
-          if (!acc) return;
-          const normAcc = acc.toLowerCase();
-          const normLogro = logro.trim().toLowerCase();
-          let matchAL = accionesLogros.find(al => 
-            al.accion.trim().toLowerCase() === normAcc && 
-            (al.logro || '').trim().toLowerCase() === normLogro
-          );
-          if (!matchAL && !dbAL?.length) {
-            matchAL = {
-              id: `al-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-              accion: acc,
-              logro: logro,
-              clasificacion: c.categoria_antigua || c.clasificacion || 'Sin clasificar',
-              nivel: normalizeNivel(c.nivel_nuevo || c.nivel || 'INTERMEDIO')
-            };
-            accionesLogros.push(matchAL);
-          }
-          if (matchAL && !alIds.includes(matchAL.id)) alIds.push(matchAL.id);
-        });
-
-        // Hydrate Requisitos desde perfilObj (5 campos) solo si no hay asignación relacional previa
-        const hydrateReqField = (fieldVal: any, cat: string) => {
-          const rawArr = Array.isArray(fieldVal) ? fieldVal : (typeof fieldVal === 'string' && fieldVal.trim() ? [fieldVal.trim()] : []);
-          rawArr.forEach((itemTxt: any) => {
-            const txt = typeof itemTxt === 'string' ? itemTxt.trim() : (itemTxt?.descripcion || itemTxt?.texto || '');
-            if (!txt) return;
-            const normTxt = txt.toLowerCase();
-            let matchReq = requisitos.find(r => r.categoria === cat && r.descripcion.trim().toLowerCase() === normTxt);
-            if (!matchReq && !dbReqs?.length) {
-              matchReq = {
-                id: `req-jsonb-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-                categoria: cat,
-                descripcion: txt
-              };
-              requisitos.push(matchReq);
-            }
-            if (matchReq) {
-              reqSet.add(matchReq.id);
-            }
-          });
-        };
-
-        hydrateReqField(perfilObj.formacion, 'Formación');
-        hydrateReqField(perfilObj.experiencia, 'Experiencia');
-        hydrateReqField(perfilObj.otros_conocimientos, 'Otros Conocimientos');
-        hydrateReqField(perfilObj.condiciones_fisicas, 'Condiciones Físicas');
-        hydrateReqField(perfilObj.otros_requisitos, 'Otros Requisitos');
-      }
-      
-      // Cascading KPIs automáticamente desde los Resultados Clave asignados
-      rcIds.forEach((rcId) => {
-        const rcObj = resultadosClave.find((r) => String(r.id) === String(rcId));
-        if (rcObj && rcObj.kpis) {
-          rcObj.kpis.forEach((k) => kpiSet.add(String(k.id)));
-        }
-      });
 
       return {
         id: rawId,
