@@ -249,9 +249,6 @@ function notifyParentStatus(type: 'success' | 'error' | 'saving', message?: stri
   try {
     if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
       window.parent.postMessage({ type: 'STATUS_WIDGET_UPDATE', statusType: type, message }, '*');
-      if (type === 'success') {
-        window.parent.postMessage({ type: 'PROFILE_DATA_CHANGED' }, '*');
-      }
       if ((window.parent as any).updateStatusWidget) {
         (window.parent as any).updateStatusWidget(type, message);
       }
