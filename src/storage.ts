@@ -178,16 +178,32 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
           if (!rcIds.includes(matchRC.id)) rcIds.push(matchRC.id);
         });
 
-        // Hydrate KPIs desde perfilObj.kpis
+        // Hydrate KPIs desde perfilObj.kpis (JSONB)
+        // REGLA: No buscamos en todo el catálogo global de KPIs porque puede devolver
+        // KPIs de otros cargos con el mismo texto. En su lugar, creamos KPIs en memoria
+        // vinculados a los RCs de ESTE cargo por posición (primero al primer RC, etc.)
         const rawKPIs = Array.isArray(perfilObj.kpis) ? perfilObj.kpis : [];
-        rawKPIs.forEach((kpiTxt: any) => {
+        rawKPIs.forEach((kpiTxt: any, kpiIdx: number) => {
           const txt = typeof kpiTxt === 'string' ? kpiTxt.trim() : (kpiTxt?.texto || '');
           if (!txt) return;
-          for (const rc of resultadosClave) {
-            const matchK = rc.kpis?.find(k => k.texto.trim().toLowerCase() === txt.toLowerCase());
-            if (matchK) {
-              kpiSet.add(matchK.id);
+          // Vincular al RC correspondiente por índice (o al primero si hay asimetría)
+          const targetRcId = rcIds.length > 0 ? rcIds[Math.min(kpiIdx, rcIds.length - 1)] : null;
+          const targetRC = targetRcId ? resultadosClave.find(r => r.id === targetRcId) : null;
+
+          if (targetRC) {
+            // Buscar si ya existe un KPI con este texto en los KPIs de ESTE RC específico
+            let matchK = targetRC.kpis?.find(k => k.texto.trim().toLowerCase() === txt.toLowerCase());
+            if (!matchK) {
+              // Solo si no existe, crear uno en memoria
+              matchK = {
+                id: `kpi-jsonb-${Date.now()}-${kpiIdx}-${Math.random().toString(36).substr(2, 4)}`,
+                texto: txt,
+                nivel: targetRC.nivel || 'Sin nivel'
+              };
+              if (!targetRC.kpis) targetRC.kpis = [];
+              targetRC.kpis.push(matchK);
             }
+            kpiSet.add(matchK.id);
           }
         });
 
