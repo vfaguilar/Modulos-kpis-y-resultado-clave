@@ -90,7 +90,7 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     let resultadosClave: ResultadoClave[] = (dbRC || []).map((rc: any) => ({
       id: String(rc.id),
       texto: rc.texto || '',
-      clasificacion: rc.clasificacion || 'Sin clasificar',
+      clasificacion: rc.clasificacion || rc.categoria || rc.area || rc.gerencia || 'Sin clasificar',
       nivel: rc.nivel || 'Sin nivel',
       kpis: (dbKPI || [])
         .filter((k: any) => String(k.resultado_clave_id) === String(rc.id))
@@ -208,6 +208,18 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
         accionLogroIds: alIds,
         requisitoIds: [],
       };
+    });
+
+    // Retroalimentar clasificación real para RCs 'Sin clasificar' según el cargo asignado
+    cargos.forEach((c) => {
+      const cargoClasif = c.clasificacion && c.clasificacion !== 'Sin clasificar' ? c.clasificacion : '';
+      if (!cargoClasif) return;
+      (c.resultadoClaveIds || []).forEach((rcId) => {
+        const rcObj = resultadosClave.find((r) => String(r.id) === String(rcId));
+        if (rcObj && (!rcObj.clasificacion || rcObj.clasificacion === 'Sin clasificar')) {
+          rcObj.clasificacion = cargoClasif;
+        }
+      });
     });
 
     // Cargar semillas de catálogo únicamente si las tablas están completamente vacías

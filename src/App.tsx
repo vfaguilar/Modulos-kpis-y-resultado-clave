@@ -162,16 +162,21 @@ export default function App() {
       prev.map((c) => {
         if (c.id !== cargoId) return c;
         const has = c.resultadoClaveIds.includes(resultadoId);
+        const resultado = resultados.find((r) => r.id === resultadoId);
+        const kpiIdsOf = new Set(resultado?.kpis?.map((k) => k.id) ?? []);
         if (has) {
-          const resultado = resultados.find((r) => r.id === resultadoId);
-          const kpiIdsOf = new Set(resultado?.kpis.map((k) => k.id) ?? []);
           return {
             ...c,
             resultadoClaveIds: c.resultadoClaveIds.filter((id) => id !== resultadoId),
             kpiIds: c.kpiIds.filter((kid) => !kpiIdsOf.has(kid)),
           };
         }
-        return { ...c, resultadoClaveIds: [...c.resultadoClaveIds, resultadoId] };
+        const combinedKpis = new Set([...c.kpiIds, ...Array.from(kpiIdsOf)]);
+        return {
+          ...c,
+          resultadoClaveIds: [...c.resultadoClaveIds, resultadoId],
+          kpiIds: Array.from(combinedKpis),
+        };
       })
     );
   }

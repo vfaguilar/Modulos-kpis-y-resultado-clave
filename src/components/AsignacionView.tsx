@@ -43,6 +43,18 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
     });
   }, [resultados, filterClasif, searchCat, cargo]);
 
+  const clasificacionesDisponibles = useMemo(() => {
+    const set = new Set<string>();
+    (resultados || []).forEach((r) => {
+      if (r.clasificacion && r.clasificacion !== 'Sin clasificar') set.add(r.clasificacion);
+    });
+    (cargos || []).forEach((c) => {
+      if (c.clasificacion && c.clasificacion !== 'Sin clasificar') set.add(c.clasificacion);
+    });
+    CLASIFICACIONES.forEach((c) => set.add(c));
+    return Array.from(set).sort();
+  }, [resultados, cargos]);
+
   function flash(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 1200);
@@ -85,7 +97,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                   style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff' }}
                 >
                   <option value="TODAS">Todas las clasificaciones</option>
-                  {CLASIFICACIONES.map((c) => (
+                  {clasificacionesDisponibles.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
