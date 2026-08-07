@@ -460,3 +460,62 @@ export async function saveToSupabase(data: AppData): Promise<void> {
   }
 }
 
+export async function deleteAccionLogroCascade(
+  alId: string,
+  affectedCargoIds: string[],
+  deletedAL?: { accion: string; logro: string }
+): Promise<void> {
+  try {
+    const idStr = String(alId).trim();
+    console.log(`[DELETE CASCADE & JSONB CLEANUP] Iniciando borrado de Acción/Logro ID "${idStr}"...`);
+
+    // 1. Borrar de asignacion_resultados_cargos
+    await supabase.from('asignacion_resultados_cargos').delete().eq('accion_logro_id', idStr);
+
+    // 2. Borrar de acciones_logros
+    const { error: errDel } = await supabase.from('acciones_logros').delete().eq('id', idStr);
+    if (errDel) {
+      console.error('[DELETE ERROR] Error eliminando en acciones_logros:', errDel);
+    }
+
+    // 3. Limpieza en cascada de la columna JSONB contribuciones en perfiles_cargo para cada cargo afectado
+    if (affectedCargoIds && affectedCargoIds.length > 0) {
+      for (const rawCargoId of affectedCargoIds) {
+        const cargoId = String(rawCargoId).trim();
+        if (!cargoId) continue;
+
+        const { data: perfilData } = await supabase
+          .from('perfiles_cargo')
+          .select('contribuciones')
+          .eq('id', cargoId)
+          .maybeSingle();
+
+        if (perfilData && Array.isArray(perfilData.contribuciones)) {
+          let updatedContribs = perfilData.contribuciones;
+          if (deletedAL) {
+            const normAcc = (deletedAL.accion || '').trim().toLowerCase();
+            const normLogro = (deletedAL.logro || '').trim().toLowerCase();
+            updatedContribs = perfilData.contribuciones.filter((item: any) => {
+              const itemAcc = String(item.accion || item.contribucion || '').trim().toLowerCase();
+              const itemLogro = String(item.logro_esperado || item.logro || '').trim().toLowerCase();
+              return !(itemAcc === normAcc && (itemLogro === normLogro || !normLogro));
+            });
+          }
+
+          await supabase.from('perfiles_cargo').upsert({
+            id: cargoId,
+            contribuciones: updatedContribs,
+            fecha_actualizacion: new Date().toISOString()
+          }, { onConflict: 'id' });
+          console.log(`[JSONB CLEANUP OK] perfiles_cargo.contribuciones actualizado para cargo ID "${cargoId}".`);
+        }
+      }
+    }
+    console.log(`[DELETE CASCADE & JSONB CLEANUP] Acción/Logro ${idStr} eliminada de asignaciones, catálogo y perfiles_cargo.contribuciones.`);
+    notifyParentStatus('success', 'Acción/Logro eliminada y perfiles resincronizados');
+  } catch (err) {
+    console.error('Error al borrar Acción/Logro en cascada:', err);
+    notifyParentStatus('error', 'Error al eliminar Acción/Logro');
+  }
+}
+

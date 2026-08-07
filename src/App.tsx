@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Cargo, ResultadoClave, AccionLogro, Requisito, Kpi } from './types';
-import { fetchDataFromSupabase, saveToSupabase } from './storage';
+import { fetchDataFromSupabase, saveToSupabase, deleteAccionLogroCascade } from './storage';
 import { supabase } from './lib/supabase';
 import ResultadosClaveView from './components/ResultadosClaveView';
 import AsignacionView from './components/AsignacionView';
@@ -264,6 +264,21 @@ export default function App() {
       })
     );
   }
+  async function handleDeleteAccionLogro(id: string) {
+    const deletedAL = accionesLogros.find((al) => String(al.id) === String(id));
+    const affectedCargoIds = cargos.filter((c) => c.accionLogroIds.includes(id)).map((c) => c.id);
+
+    setAccionesLogros((prev) => prev.filter((al) => String(al.id) !== String(id)));
+    setCargos((prev) =>
+      prev.map((c) => ({
+        ...c,
+        accionLogroIds: c.accionLogroIds.filter((alId) => String(alId) !== String(id)),
+      }))
+    );
+
+    await deleteAccionLogroCascade(id, affectedCargoIds, deletedAL);
+    window.dispatchEvent(new CustomEvent('profileDataChanged'));
+  }
 
   // ---------------- Requisitos ----------------
   function handleAddRequisito(newRequisito: Omit<Requisito, 'id'>) {
@@ -379,6 +394,7 @@ export default function App() {
             accionesLogros={accionesLogros}
             onToggle={handleToggleAccionLogro}
             onAdd={handleAddAccionLogro}
+            onDelete={handleDeleteAccionLogro}
           />
         )}
         {view === 'requisitos' && (
