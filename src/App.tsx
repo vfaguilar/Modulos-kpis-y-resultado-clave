@@ -267,9 +267,17 @@ export default function App() {
   function handleUpdateRequisito(id: string, updated: Omit<Requisito, 'id'>) {
     setRequisitos((prev) => prev.map((r) => (r.id === id ? { id, ...updated } : r)));
   }
-  function handleDeleteRequisito(id: string) {
+  async function handleDeleteRequisito(id: string) {
     setRequisitos((prev) => prev.filter((r) => r.id !== id));
     setCargos((prev) => prev.map((c) => ({ ...c, requisitoIds: c.requisitoIds.filter((rid) => rid !== id) })));
+    try {
+      await supabase.from('asignacion_requisitos_cargos').delete().eq('requisito_id', id);
+      await supabase.from('requisitos_maestro').delete().eq('id', id);
+      console.log(`[DELETE CASCADE] Requisito ${id} eliminado de asignaciones y requisitos_maestro.`);
+    } catch (err) {
+      console.error('Error al borrar requisito en cascada:', err);
+    }
+    window.dispatchEvent(new CustomEvent('profileDataChanged'));
   }
   function handleToggleRequisitoAssignment(cargoId: string, requisitoId: string) {
     setCargos((prev) =>
