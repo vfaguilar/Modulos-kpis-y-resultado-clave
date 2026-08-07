@@ -30,6 +30,29 @@ export async function checkIframeAuth(): Promise<boolean> {
   return false;
 }
 
+export async function fetchAllPaginated(client: any, tableName: string): Promise<any[]> {
+  let allData: any[] = [];
+  let page = 0;
+  const pageSize = 1000;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data, error } = await client
+      .from(tableName)
+      .select('*')
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (error || !data) {
+      if (error) console.error(`Error paginando ${tableName} (página ${page}):`, error);
+      break;
+    }
+    allData = [...allData, ...data];
+    hasMore = data.length === pageSize;
+    page++;
+  }
+  return allData;
+}
+
 export async function fetchDataFromSupabase(): Promise<AppData> {
   try {
     const isAuth = await checkIframeAuth();
@@ -51,11 +74,8 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
 
     // 1. Fetch Cargos con Fallback a perfiles_cargo si public.cargos está vacía
     let dbCargos: any[] = [];
-    const { data: rawCargos, error: errCargos } = await supabase.from('cargos').select('*');
-    if (errCargos) console.error('Error fetching cargos from Supabase:', errCargos);
-
-    const { data: rawPerfiles, error: errPerfiles } = await supabase.from('perfiles_cargo').select('*');
-    if (errPerfiles) console.error('Error fetching perfiles_cargo fallback:', errPerfiles);
+    const rawCargos = await fetchAllPaginated(supabase, 'cargos');
+    const rawPerfiles = await fetchAllPaginated(supabase, 'perfiles_cargo');
 
     if (rawCargos && rawCargos.length > 0) {
       dbCargos = rawCargos;
@@ -71,27 +91,20 @@ export async function fetchDataFromSupabase(): Promise<AppData> {
     });
 
     // 2. Fetch Resultados Clave
-    const { data: dbRC, error: errRC } = await supabase.from('resultados_clave').select('*');
-    if (errRC) console.error('Error fetching resultados_clave from Supabase:', errRC);
+    const dbRC = await fetchAllPaginated(supabase, 'resultados_clave');
 
     // 3. Fetch Indicadores KPI
-    const { data: dbKPI, error: errKPI } = await supabase.from('indicadores_kpi').select('*');
-    if (errKPI) console.error('Error fetching indicadores_kpi from Supabase:', errKPI);
+    const dbKPI = await fetchAllPaginated(supabase, 'indicadores_kpi');
 
     // 4. Fetch Acciones y Logros
-    const { data: dbAL, error: errAL } = await supabase.from('acciones_logros').select('*');
-    if (errAL) console.error('Error fetching acciones_logros from Supabase:', errAL);
+    const dbAL = await fetchAllPaginated(supabase, 'acciones_logros');
 
     // 5. Fetch Requisitos Maestro y Asignaciones
-    const { data: dbReqs, error: errReqs } = await supabase.from('requisitos_maestro').select('*');
-    if (errReqs) console.error('Error fetching requisitos_maestro from Supabase:', errReqs);
-
-    const { data: dbAsignReqs, error: errAsignReqs } = await supabase.from('asignacion_requisitos_cargos').select('*');
-    if (errAsignReqs) console.error('Error fetching asignacion_requisitos_cargos from Supabase:', errAsignReqs);
+    const dbReqs = await fetchAllPaginated(supabase, 'requisitos_maestro');
+    const dbAsignReqs = await fetchAllPaginated(supabase, 'asignacion_requisitos_cargos');
 
     // 6. Fetch Asignaciones relacionales activas
-    const { data: dbAsign, error: errAsign } = await supabase.from('asignacion_resultados_cargos').select('*');
-    if (errAsign) console.error('Error fetching asignacion_resultados_cargos from Supabase:', errAsign);
+    const dbAsign = await fetchAllPaginated(supabase, 'asignacion_resultados_cargos');
 
     // Map Resultados Clave + KPIs
     let resultadosClave: ResultadoClave[] = (dbRC || []).map((rc: any) => ({
