@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, AccionLogro } from '../types';
 import CargoListSidebar from './CargoListSidebar';
 import { CLASIFICACIONES } from '../data/seed';
-import { normalizeClasificacion } from '../utils';
 
 interface Props {
   cargos: Cargo[];
@@ -12,6 +11,16 @@ interface Props {
   onUpdate?: (id: string, accion: string, logro: string, clasificacion: string) => void;
   onDelete?: (id: string) => void;
 }
+
+const normalizeCategory = (cat?: string): string => {
+  if (!cat || !cat.trim()) return 'SIN CLASIFICAR';
+  return cat
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .trim();
+};
 
 export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, onAdd, onUpdate, onDelete }: Props) {
   const [cargoId, setCargoId] = useState<string | null>(null);
@@ -37,14 +46,18 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   const alCountsByCat = useMemo(() => {
     const map: Record<string, { assigned: number; total: number }> = {};
     CLASIFICACIONES.forEach((cat) => {
-      map[cat] = { assigned: 0, total: 0 };
+      map[normalizeCategory(cat)] = { assigned: 0, total: 0 };
     });
+    map['SIN CLASIFICAR'] = map['SIN CLASIFICAR'] || { assigned: 0, total: 0 };
+
     accionesLogros.forEach((al) => {
-      const catKey = al.clasificacion || 'Sin clasificar';
-      if (!map[catKey]) map[catKey] = { assigned: 0, total: 0 };
-      map[catKey].total += 1;
-      if (cargo && cargo.accionLogroIds.includes(al.id)) {
-        map[catKey].assigned += 1;
+      const normCat = normalizeCategory(al.clasificacion);
+      if (!map[normCat]) {
+        map[normCat] = { assigned: 0, total: 0 };
+      }
+      map[normCat].total += 1;
+      if (cargo && cargo.accionLogroIds.map(String).includes(String(al.id))) {
+        map[normCat].assigned += 1;
       }
     });
     return map;
@@ -52,11 +65,13 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
 
   const disponibles = useMemo(() => {
     if (!cargo || subtab === 'catalogo') return accionesLogros;
-    const clasifCargo = normalizeClasificacion(cargo.clasificacion);
+    const clasifCargo = normalizeCategory(cargo.clasificacion);
+    const cargoAlIds = new Set((cargo.accionLogroIds || []).map(String));
+
     const filtered = accionesLogros.filter(
       (al) =>
-        normalizeClasificacion(al.clasificacion) === clasifCargo ||
-        cargo.accionLogroIds.includes(al.id)
+        normalizeCategory(al.clasificacion) === clasifCargo ||
+        cargoAlIds.has(String(al.id))
     );
     return filtered.length > 0 ? filtered : accionesLogros;
   }, [accionesLogros, cargo, subtab]);
@@ -66,8 +81,8 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     let list = disponibles;
 
     if (filterClasificacion !== 'TODAS') {
-      const normSel = normalizeClasificacion(filterClasificacion);
-      list = list.filter((al) => normalizeClasificacion(al.clasificacion) === normSel || al.clasificacion === filterClasificacion);
+      const normSel = normalizeCategory(filterClasificacion);
+      list = list.filter((al) => normalizeCategory(al.clasificacion) === normSel);
     }
 
     if (q !== '') {
@@ -80,9 +95,10 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
       return [...list].sort((a, b) => a.accion.localeCompare(b.accion, 'es', { sensitivity: 'base' }));
     }
 
+    const cargoAlIds = new Set((cargo.accionLogroIds || []).map(String));
     return [...list].sort((a, b) => {
-      const aAssigned = cargo ? (cargo.accionLogroIds.includes(a.id) ? 1 : 0) : 0;
-      const bAssigned = cargo ? (cargo.accionLogroIds.includes(b.id) ? 1 : 0) : 0;
+      const aAssigned = cargoAlIds.has(String(a.id)) ? 1 : 0;
+      const bAssigned = cargoAlIds.has(String(b.id)) ? 1 : 0;
       if (aAssigned !== bAssigned) {
         return bAssigned - aAssigned;
       }
@@ -201,12 +217,13 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                     Todas ({cargo.accionLogroIds.length}/{accionesLogros.length})
                   </button>
                   {CLASIFICACIONES.map((cat) => {
-                    const counts = alCountsByCat[cat] || { assigned: 0, total: 0 };
+                    const normCat = normalizeCategory(cat);
+                    const counts = alCountsByCat[normCat] || { assigned: 0, total: 0 };
                     return (
                       <button
                         key={cat}
                         type="button"
-                        className={`subtab-pill ${filterClasificacion === cat ? 'active' : ''}`}
+                        className={`subtab-pill ${normalizeCategory(filterClasificacion) === normCat ? 'active' : ''}`}
                         onClick={() => setFilterClasificacion(cat)}
                       >
                         {cat} ({counts.assigned}/{counts.total})
@@ -232,7 +249,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                     </div>
                   )}
                   {filtered.map((al) => {
-                    const checked = cargo.accionLogroIds.includes(al.id);
+                    const checked = cargo.accionLogroIds.map(String).includes(String(al.id));
                     return (
                       <div key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, cursor: 'pointer' }}>
@@ -296,12 +313,13 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
               Todas ({accionesLogros.length})
             </button>
             {CLASIFICACIONES.map((cat) => {
-              const counts = alCountsByCat[cat] || { assigned: 0, total: 0 };
+              const normCat = normalizeCategory(cat);
+              const counts = alCountsByCat[normCat] || { assigned: 0, total: 0 };
               return (
                 <button
                   key={cat}
                   type="button"
-                  className={`subtab-pill ${filterClasificacion === cat ? 'active' : ''}`}
+                  className={`subtab-pill ${normalizeCategory(filterClasificacion) === normCat ? 'active' : ''}`}
                   onClick={() => setFilterClasificacion(cat)}
                 >
                   {cat} ({counts.total})
