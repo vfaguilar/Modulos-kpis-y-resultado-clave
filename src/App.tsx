@@ -21,6 +21,7 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const isLoadedRef = useRef<boolean>(false);
   const skipNextSaveRef = useRef<boolean>(false);
+  const saveTimeoutRef = useRef<any>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -53,7 +54,18 @@ export default function App() {
       skipNextSaveRef.current = false;
       return;
     }
-    saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      saveToSupabase({ cargos, resultadosClave: resultados, accionesLogros, requisitos });
+    }, 400);
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, [cargos, resultados, accionesLogros, requisitos, isAuthenticated]);
 
   // Escuchar cambio de vista desde el sidebar de la Plataforma DO (hash o postMessage)
