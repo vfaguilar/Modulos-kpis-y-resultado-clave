@@ -314,7 +314,18 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           asignRows.push({ cargo_id: cId, resultado_clave_id: String(rcId) });
         });
         (c.kpiIds || []).forEach((kpiId) => {
-          asignRows.push({ cargo_id: cId, kpi_id: String(kpiId) });
+          let parentRcId: string | undefined;
+          for (const rc of data.resultadosClave || []) {
+            if ((rc.kpis || []).some((k) => String(k.id) === String(kpiId))) {
+              parentRcId = String(rc.id);
+              break;
+            }
+          }
+          if (parentRcId) {
+            asignRows.push({ cargo_id: cId, resultado_clave_id: parentRcId, kpi_id: String(kpiId) });
+          } else {
+            asignRows.push({ cargo_id: cId, kpi_id: String(kpiId) });
+          }
         });
         (c.accionLogroIds || []).forEach((alId) => {
           asignRows.push({ cargo_id: cId, accion_logro_id: String(alId) });
