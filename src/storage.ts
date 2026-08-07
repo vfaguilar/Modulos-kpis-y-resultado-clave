@@ -402,7 +402,14 @@ export async function saveToSupabase(data: AppData): Promise<void> {
             notifyParentStatus('success', 'Guardado en BBDD ✓');
           }
         } catch (ePerf) {
-          console.warn('Aviso no crítico al actualizar perfil JSONB bi-direccional:', ePerf);
+          console.error('[JSONB SYNC ERROR] Fallo al actualizar el perfil digital para PDF:', ePerf);
+          if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+            window.parent.postMessage({
+              type: 'SHOW_TOAST',
+              message: 'Advertencia: Los cambios se guardaron relacionalmente pero hubo un retraso al actualizar la vista PDF.',
+              level: 'warning'
+            }, '*');
+          }
         }
       }
     }

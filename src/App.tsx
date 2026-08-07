@@ -145,6 +145,12 @@ export default function App() {
 
   // ---------------- Resultados Clave (catálogo) ----------------
   function handleAddResultado(texto: string, kpisText: string[], clasificacion: string) {
+    const cleanText = texto.trim().toLowerCase();
+    const exists = resultados.some(r => r.texto.trim().toLowerCase() === cleanText);
+    if (exists) {
+      alert('Ya existe un Resultado Clave con esta misma descripción en el catálogo.');
+      return;
+    }
     const id = `rc-${Date.now()}`;
     const kpis: Kpi[] = kpisText.map((t, i) => ({ id: `kpi-${Date.now()}-${i}`, texto: t }));
     setResultados((prev) => [...prev, { id, texto, clasificacion, kpis }]);
@@ -261,6 +267,13 @@ export default function App() {
 
   // ---------------- Requisitos ----------------
   function handleAddRequisito(newRequisito: Omit<Requisito, 'id'>) {
+    const cleanDesc = (newRequisito.descripcion || '').trim().toLowerCase();
+    const cleanCat = (newRequisito.categoria || '').trim().toLowerCase();
+    const exists = requisitos.some(r => r.descripcion.trim().toLowerCase() === cleanDesc && (r.categoria || '').trim().toLowerCase() === cleanCat);
+    if (exists) {
+      alert('Ya existe un Requisito con esta misma categoría y descripción en el catálogo.');
+      return;
+    }
     const id = `req-${Date.now()}`;
     setRequisitos((prev) => [...prev, { id, ...newRequisito }]);
   }
