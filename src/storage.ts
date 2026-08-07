@@ -322,11 +322,17 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       await supabase.from('asignacion_resultados_cargos').delete().in('cargo_id', cargoIdsArr);
       await supabase.from('asignacion_requisitos_cargos').delete().in('cargo_id', cargoIdsArr);
 
+      const activeCargoIds = new Set(data.cargos.map((c) => String(c.id).trim()).filter(Boolean));
+
       const asignRows: any[] = [];
       const asignReqRows: any[] = [];
 
       data.cargos.forEach((c) => {
         const cId = String(c.id).trim();
+        if (!cId || !activeCargoIds.has(cId)) {
+          console.warn(`[STALE GUARD] Omitiendo asignaciones para cargo inexistente o stale: "${cId}"`);
+          return;
+        }
         (c.resultadoClaveIds || []).forEach((rcId) => {
           asignRows.push({ cargo_id: cId, resultado_clave_id: String(rcId) });
         });
@@ -371,7 +377,10 @@ export async function saveToSupabase(data: AppData): Promise<void> {
       // 6. Sincronización Bi-Direccional hacia public.perfiles_cargo (5 columnas de requisitos + RCs/KPIs/Contribs)
       for (const c of data.cargos) {
         const cId = String(c.id).trim();
-        if (!cId) continue;
+        if (!cId || !activeCargoIds.has(cId)) {
+          console.warn(`[STALE GUARD] Omitiendo sync perfiles_cargo para cargo inexistente o stale: "${cId}"`);
+          continue;
+        }
 
         const activeRCs = (data.resultadosClave || [])
           .filter((r) => (c.resultadoClaveIds || []).includes(r.id))
