@@ -216,6 +216,10 @@ export async function saveToSupabase(data: AppData): Promise<void> {
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData || !sessionData.session) {
       console.warn('[AUTH GUARD] Mutación abortada en iFrame: Usuario no autenticado.');
+      notifyParentStatus('error', 'Sesión expirada');
+      if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'AUTH_EXPIRED' }, '*');
+      }
       return;
     }
   } catch (eAuthCheck) {
