@@ -9,17 +9,21 @@ interface Props {
   accionesLogros: AccionLogro[];
   onToggle: (cargoId: string, accionLogroId: string) => void;
   onAdd: (accion: string, logro: string, clasificacion: string) => void;
+  onUpdate?: (id: string, accion: string, logro: string, clasificacion: string) => void;
   onDelete?: (id: string) => void;
 }
 
-export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, onAdd, onDelete }: Props) {
+export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, onAdd, onUpdate, onDelete }: Props) {
   const [cargoId, setCargoId] = useState<string | null>(null);
+  const [subtab, setSubtab] = useState<'asignar' | 'catalogo'>('asignar');
   const [search, setSearch] = useState('');
+  const [filterClasificacion, setFilterClasificacion] = useState<string>('TODAS');
+  
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [accion, setAccion] = useState('');
   const [logro, setLogro] = useState('');
   const [newClasificacion, setNewClasificacion] = useState(CLASIFICACIONES[0]);
-  const [filterClasificacion, setFilterClasificacion] = useState<string>('TODAS');
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,8 +34,24 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
 
   const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
 
+  const alCountsByCat = useMemo(() => {
+    const map: Record<string, { assigned: number; total: number }> = {};
+    CLASIFICACIONES.forEach((cat) => {
+      map[cat] = { assigned: 0, total: 0 };
+    });
+    accionesLogros.forEach((al) => {
+      const catKey = al.clasificacion || 'Sin clasificar';
+      if (!map[catKey]) map[catKey] = { assigned: 0, total: 0 };
+      map[catKey].total += 1;
+      if (cargo && cargo.accionLogroIds.includes(al.id)) {
+        map[catKey].assigned += 1;
+      }
+    });
+    return map;
+  }, [accionesLogros, cargo]);
+
   const disponibles = useMemo(() => {
-    if (!cargo) return accionesLogros;
+    if (!cargo || subtab === 'catalogo') return accionesLogros;
     const clasifCargo = normalizeClasificacion(cargo.clasificacion);
     const filtered = accionesLogros.filter(
       (al) =>
@@ -39,7 +59,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
         cargo.accionLogroIds.includes(al.id)
     );
     return filtered.length > 0 ? filtered : accionesLogros;
-  }, [accionesLogros, cargo]);
+  }, [accionesLogros, cargo, subtab]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -55,6 +75,11 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
         (al) => al.accion.toLowerCase().includes(q) || al.logro.toLowerCase().includes(q)
       );
     }
+
+    if (subtab === 'catalogo' || !cargo) {
+      return [...list].sort((a, b) => a.accion.localeCompare(b.accion, 'es', { sensitivity: 'base' }));
+    }
+
     return [...list].sort((a, b) => {
       const aAssigned = cargo ? (cargo.accionLogroIds.includes(a.id) ? 1 : 0) : 0;
       const bAssigned = cargo ? (cargo.accionLogroIds.includes(b.id) ? 1 : 0) : 0;
@@ -63,22 +88,57 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
       }
       return a.accion.localeCompare(b.accion, 'es', { sensitivity: 'base' });
     });
-  }, [disponibles, filterClasificacion, search, cargo]);
+  }, [disponibles, filterClasificacion, search, cargo, subtab]);
 
   function flash(msg: string) {
     setToast(msg);
     setTimeout(() => setToast(null), 1400);
   }
 
-  function submitNew(e: React.FormEvent) {
-    e.preventDefault();
-    if (!accion.trim()) return;
-    onAdd(accion.trim(), logro.trim(), newClasificacion);
+  function startAdd() {
+    setEditingId(null);
     setAccion('');
     setLogro('');
     setNewClasificacion(CLASIFICACIONES[0]);
+    setShowForm(true);
+  }
+
+  function startEdit(al: AccionLogro) {
+    setEditingId(al.id);
+    setAccion(al.accion);
+    setLogro(al.logro);
+    setNewClasificacion(al.clasificacion || CLASIFICACIONES[0]);
+    setShowForm(true);
+  }
+
+  function closeForm() {
     setShowForm(false);
-    flash('Acción y logro agregados');
+    setEditingId(null);
+    setAccion('');
+    setLogro('');
+  }
+
+  function submitForm(e: React.FormEvent) {
+    e.preventDefault();
+    if (!accion.trim()) return;
+
+    if (editingId && onUpdate) {
+      onUpdate(editingId, accion.trim(), logro.trim(), newClasificacion);
+      flash('Acción y logro actualizados');
+    } else {
+      onAdd(accion.trim(), logro.trim(), newClasificacion);
+      flash('Acción y logro agregados');
+    }
+    closeForm();
+  }
+
+  function handleDelete(al: AccionLogro) {
+    if (confirm(`¿Estás seguro de eliminar "${al.accion}" del catálogo maestro y desasociarlo de todos los perfiles?`)) {
+      if (onDelete) {
+        onDelete(al.id);
+        flash('Acción eliminada del catálogo');
+      }
+    }
   }
 
   return (
@@ -86,132 +146,223 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
       <div className="view-header-simple view-header-row">
         <div>
           <h1>Acciones y Logros Esperados</h1>
-          <p>Selecciona un cargo de la lista izquierda para marcar las acciones y sus logros esperados.</p>
+          <p>Selecciona un cargo de la lista para asignar sus acciones y logros esperados, o gestiona el catálogo maestro.</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowForm(true)}>+ Nueva acción y logro</button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="subtabs-pills">
+            <button
+              className={`subtab-pill ${subtab === 'asignar' ? 'active' : ''}`}
+              onClick={() => setSubtab('asignar')}
+            >
+              Asignar por Cargo
+            </button>
+            <button
+              className={`subtab-pill ${subtab === 'catalogo' ? 'active' : ''}`}
+              onClick={() => setSubtab('catalogo')}
+            >
+              Catálogo Maestro ({accionesLogros.length})
+            </button>
+          </div>
+          <button className="btn-primary" onClick={startAdd}>+ Nueva acción y logro</button>
+        </div>
       </div>
 
-      <div className="layout-2col">
-        {/* Panel Izquierdo: Lista de Cargos */}
-        <CargoListSidebar
-          cargos={cargos}
-          selectedCargoId={cargoId || (cargos[0]?.id ?? null)}
-          onSelectCargo={(id) => setCargoId(id)}
-          countType="acciones"
-        />
+      {subtab === 'asignar' ? (
+        <div className="layout-2col">
+          {/* Panel Izquierdo: Lista de Cargos */}
+          <CargoListSidebar
+            cargos={cargos}
+            selectedCargoId={cargoId || (cargos[0]?.id ?? null)}
+            onSelectCargo={(id) => setCargoId(id)}
+            countType="acciones"
+          />
 
-        {/* Panel Derecho: Área de Asignación */}
-        <div className="panel-derecho-asignacion">
-          {cargo ? (
-            <div className="asignar-items-panel">
-              <div className="asignar-items-head">
-                <div>
-                  <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
-                  <h2>{cargo.nombre}</h2>
-                </div>
-                <div className="asignar-progress">{cargo.accionLogroIds.length} acciones asignadas</div>
-              </div>
-
-              <div className="search-catalog-box" style={{ display: 'flex', gap: '10px' }}>
-                <input
-                  type="text"
-                  placeholder="Buscar en el catálogo de acciones y logros..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="search-catalog-input"
-                  style={{ flex: 1 }}
-                />
-                <select
-                  value={filterClasificacion}
-                  onChange={(e) => setFilterClasificacion(e.target.value)}
-                  className="search-catalog-input"
-                  style={{ width: '220px', cursor: 'pointer' }}
-                >
-                  <option value="TODAS">Todas las clasificaciones</option>
-                  {CLASIFICACIONES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="asignar-item-list">
-                {disponibles.length === 0 && (
-                  <div className="empty-hint">
-                    No hay acciones creadas aún. Haz clic en "+ Nueva acción y logro" para agregar.
+          {/* Panel Derecho: Área de Asignación */}
+          <div className="panel-derecho-asignacion">
+            {cargo ? (
+              <div className="asignar-items-panel">
+                <div className="asignar-items-head">
+                  <div>
+                    <div className="detail-panel-nivel">{cargo.clasificacion || 'Sin clasificar'}</div>
+                    <h2>{cargo.nombre}</h2>
                   </div>
-                )}
-                {filtered.map((al) => {
-                  const checked = cargo.accionLogroIds.includes(al.id);
-                  return (
-                    <div key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, cursor: 'pointer' }}>
-                        <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} style={{ marginTop: '3px' }} />
-                        <div>
-                          <div className="asignar-item-accion">{al.accion}</div>
-                          <div className="asignar-item-meta">
-                            <span><strong>Logro esperado:</strong> {al.logro || '—'}</span>
-                          </div>
-                        </div>
-                      </label>
-                      {onDelete && (
-                        <button
-                          type="button"
-                          className="icon-btn-delete"
-                          title="Eliminar del catálogo maestro"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (confirm(`¿Estás seguro de eliminar "${al.accion}" del catálogo maestro y desasociarlo de todos los perfiles?`)) {
-                              onDelete(al.id);
-                              flash('Acción eliminada');
-                            }
-                          }}
-                          style={{
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#94a3b8',
-                            cursor: 'pointer',
-                            padding: '6px 8px',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ef4444'; }}
-                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#94a3b8'; }}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                          </svg>
-                        </button>
-                      )}
+                  <div className="asignar-progress">
+                    {cargo.accionLogroIds.length} de {accionesLogros.length} acciones asignadas
+                  </div>
+                </div>
+
+                {/* Pills de Clasificación */}
+                <div className="subtabs-pills-bar" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', margin: '12px 0' }}>
+                  <button
+                    type="button"
+                    className={`subtab-pill ${filterClasificacion === 'TODAS' ? 'active' : ''}`}
+                    onClick={() => setFilterClasificacion('TODAS')}
+                  >
+                    Todas ({cargo.accionLogroIds.length}/{accionesLogros.length})
+                  </button>
+                  {CLASIFICACIONES.map((cat) => {
+                    const counts = alCountsByCat[cat] || { assigned: 0, total: 0 };
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        className={`subtab-pill ${filterClasificacion === cat ? 'active' : ''}`}
+                        onClick={() => setFilterClasificacion(cat)}
+                      >
+                        {cat} ({counts.assigned}/{counts.total})
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="search-catalog-box">
+                  <input
+                    type="text"
+                    placeholder="Buscar en el catálogo de acciones y logros..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="search-catalog-input"
+                  />
+                </div>
+
+                <div className="asignar-item-list">
+                  {disponibles.length === 0 && (
+                    <div className="empty-hint">
+                      No hay acciones creadas aún. Haz clic en "+ Nueva acción y logro" para agregar.
                     </div>
-                  );
-                })}
+                  )}
+                  {filtered.map((al) => {
+                    const checked = cargo.accionLogroIds.includes(al.id);
+                    return (
+                      <div key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, cursor: 'pointer' }}>
+                          <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} style={{ marginTop: '3px' }} />
+                          <div>
+                            <div className="asignar-item-accion">{al.accion}</div>
+                            <div className="asignar-item-meta">
+                              <span><strong>Logro esperado:</strong> {al.logro || '—'}</span>
+                            </div>
+                          </div>
+                        </label>
+                        {onDelete && (
+                          <button
+                            type="button"
+                            className="icon-btn-delete"
+                            title="Eliminar del catálogo maestro"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(al);
+                            }}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#94a3b8',
+                              cursor: 'pointer',
+                              padding: '6px 8px',
+                              borderRadius: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ef4444'; }}
+                            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#94a3b8'; }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="empty-hint">Selecciona un cargo de la lista para gestionar sus asignaciones.</div>
-          )}
+            ) : (
+              <div className="empty-hint">Selecciona un cargo de la lista para gestionar sus asignaciones.</div>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Catálogo Maestro Tab */
+        <div className="catalogo-master-container">
+          <div className="subtabs-pills-bar" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '16px' }}>
+            <button
+              type="button"
+              className={`subtab-pill ${filterClasificacion === 'TODAS' ? 'active' : ''}`}
+              onClick={() => setFilterClasificacion('TODAS')}
+            >
+              Todas ({accionesLogros.length})
+            </button>
+            {CLASIFICACIONES.map((cat) => {
+              const counts = alCountsByCat[cat] || { assigned: 0, total: 0 };
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`subtab-pill ${filterClasificacion === cat ? 'active' : ''}`}
+                  onClick={() => setFilterClasificacion(cat)}
+                >
+                  {cat} ({counts.total})
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="toolbar" style={{ marginBottom: '16px' }}>
+            <input
+              type="text"
+              placeholder="Filtrar catálogo por acción o logro..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <div className="item-table requisitos-table">
+            <div className="item-table-head" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 1fr 140px', gap: '12px', padding: '10px 16px', background: '#f8fafc', fontWeight: 700, fontSize: '12px', color: '#475569' }}>
+              <span>Clasificación</span>
+              <span>Acción (Qué hace)</span>
+              <span>Logro Esperado (Para qué lo hace)</span>
+              <span style={{ textAlign: 'right' }}>Acciones</span>
+            </div>
+            {filtered.length === 0 && (
+              <div className="empty-hint">No se encontraron acciones ni logros en el catálogo.</div>
+            )}
+            {filtered.map((al) => (
+              <div className="item-table-row requisitos-row" key={al.id} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 1fr 140px', gap: '12px', padding: '12px 16px', alignItems: 'center', borderBottom: '1px solid #f1f5f9' }}>
+                <span>
+                  <span className="nivel-pill" style={{ background: '#eef1f4', color: '#374151', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>
+                    {al.clasificacion || 'Sin clasificar'}
+                  </span>
+                </span>
+                <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '13px' }}>{al.accion}</span>
+                <span style={{ color: '#475569', fontSize: '13px' }}>{al.logro || '—'}</span>
+                <span className="row-actions" style={{ textAlign: 'right', display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                  <button className="btn-table-action" onClick={() => startEdit(al)} style={{ padding: '4px 10px', fontSize: '12px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer' }}>Editar</button>
+                  <button className="btn-table-action danger" onClick={() => handleDelete(al)} style={{ padding: '4px 10px', fontSize: '12px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fca5a5', borderRadius: '6px', cursor: 'pointer' }}>Eliminar</button>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showForm && (
-        <div className="detail-overlay" onClick={() => setShowForm(false)}>
+        <div className="detail-overlay" onClick={closeForm}>
           <div className="detail-panel" onClick={(e) => e.stopPropagation()}>
             <div className="detail-panel-head">
-              <h2>Nueva acción y logro</h2>
-              <button className="icon-btn" onClick={() => setShowForm(false)}>✕</button>
+              <h2>{editingId ? 'Editar acción y logro' : 'Nueva acción y logro'}</h2>
+              <button className="icon-btn" onClick={closeForm}>✕</button>
             </div>
-            <form className="form" onSubmit={submitNew}>
+            <form className="form" onSubmit={submitForm}>
               <label>
                 Acción (Qué hace)
-                <textarea required rows={2} value={accion} onChange={(e) => setAccion(e.target.value)} />
+                <textarea required rows={2} value={accion} onChange={(e) => setAccion(e.target.value)} placeholder="Ej: Implementar estrategias de retención de talento..." />
               </label>
               <label>
                 Logro Esperado (Para qué lo hace)
-                <textarea rows={2} value={logro} onChange={(e) => setLogro(e.target.value)} />
+                <textarea rows={2} value={logro} onChange={(e) => setLogro(e.target.value)} placeholder="Ej: Para reducir la rotación voluntaria en un 15% anual." />
               </label>
               <label>
                 Clasificación
@@ -222,8 +373,8 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                 </select>
               </label>
               <div className="form-actions">
-                <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancelar</button>
-                <button type="submit" className="btn-primary">Guardar</button>
+                <button type="button" className="btn-secondary" onClick={closeForm}>Cancelar</button>
+                <button type="submit" className="btn-primary">{editingId ? 'Guardar Cambios' : 'Guardar'}</button>
               </div>
             </form>
           </div>

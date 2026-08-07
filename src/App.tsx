@@ -264,6 +264,21 @@ export default function App() {
       })
     );
   }
+  async function handleUpdateAccionLogro(id: string, accion: string, logro: string, clasificacion: string) {
+    setAccionesLogros((prev) => prev.map((al) => (al.id === id ? { id, accion, logro, clasificacion } : al)));
+    try {
+      await supabase.from('acciones_logros').upsert({
+        id,
+        accion,
+        logro,
+        clasificacion
+      });
+      console.log(`[UPDATE MAESTRO] Acción/Logro ${id} actualizada.`);
+    } catch (err) {
+      console.error('Error actualizando Acción/Logro:', err);
+    }
+    window.dispatchEvent(new CustomEvent('profileDataChanged'));
+  }
   async function handleDeleteAccionLogro(id: string) {
     const deletedAL = accionesLogros.find((al) => String(al.id) === String(id));
     const affectedCargoIds = cargos.filter((c) => c.accionLogroIds.includes(id)).map((c) => c.id);
@@ -394,6 +409,7 @@ export default function App() {
             accionesLogros={accionesLogros}
             onToggle={handleToggleAccionLogro}
             onAdd={handleAddAccionLogro}
+            onUpdate={handleUpdateAccionLogro}
             onDelete={handleDeleteAccionLogro}
           />
         )}
