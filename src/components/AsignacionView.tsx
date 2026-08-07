@@ -91,7 +91,12 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
             transition: 'all 0.2s ease'
           }}
         >
-          <span>🛡️ Modo Auditoría</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Modo Auditoría
+          </span>
           <span style={{
             fontSize: '10px',
             padding: '2px 8px',

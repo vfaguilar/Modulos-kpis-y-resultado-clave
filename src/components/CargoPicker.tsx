@@ -47,7 +47,7 @@ export default function CargoPicker({ cargos, selectedCargoId, onSelectCargo }: 
   return (
     <div className="cargo-picker" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
       <label style={{ gridColumn: 'span 1' }}>
-        📌 Puesto Seleccionado ({cargos.length})
+        Puesto Seleccionado ({cargos.length})
         <select
           value={selectedCargoId ?? ''}
           onChange={(e) => onSelectCargo(e.target.value || null)}

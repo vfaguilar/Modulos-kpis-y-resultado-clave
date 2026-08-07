@@ -421,7 +421,7 @@ export async function saveToSupabase(data: AppData): Promise<void> {
             notifyParentStatus('error', 'Error al guardar en BBDD (perfiles_cargo)');
           } else {
             console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (perfiles_cargo): ${resPerf.length}`);
-            notifyParentStatus('success', 'Guardado en BBDD ✓');
+            notifyParentStatus('success', 'Guardado en BBDD');
           }
         } catch (ePerf) {
           console.error('[JSONB SYNC ERROR] Fallo al actualizar el perfil digital para PDF:', ePerf);
