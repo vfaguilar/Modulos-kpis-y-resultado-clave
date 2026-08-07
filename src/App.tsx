@@ -247,8 +247,21 @@ export default function App() {
 
   // ---------------- Acciones y Logros ----------------
   function handleAddAccionLogro(accion: string, logro: string, clasificacion: string) {
+    const cleanAcc = (accion || '').trim().replace(/\.$/, '').toLowerCase();
+    const cleanLog = (logro || '').trim().replace(/\.$/, '').toLowerCase();
+
+    const existingAL = accionesLogros.find(
+      (al) => (al.accion || '').trim().replace(/\.$/, '').toLowerCase() === cleanAcc && 
+              (al.logro || (al as any).logro_esperado || '').trim().replace(/\.$/, '').toLowerCase() === cleanLog
+    );
+
+    if (existingAL) {
+      alert(`La Acción y Logro Esperado ya existe en el catálogo maestro bajo la categoría "${existingAL.clasificacion || 'Sin clasificar'}".`);
+      return;
+    }
+
     const id = `al-${Date.now()}`;
-    setAccionesLogros((prev) => [...prev, { id, accion, logro, clasificacion }]);
+    setAccionesLogros((prev) => [...prev, { id, accion: accion.trim(), logro: logro.trim(), clasificacion }]);
   }
   function handleToggleAccionLogro(cargoId: string, accionLogroId: string) {
     setCargos((prev) =>
@@ -265,12 +278,26 @@ export default function App() {
     );
   }
   async function handleUpdateAccionLogro(id: string, accion: string, logro: string, clasificacion: string) {
-    setAccionesLogros((prev) => prev.map((al) => (al.id === id ? { id, accion, logro, clasificacion } : al)));
+    const cleanAcc = (accion || '').trim().replace(/\.$/, '').toLowerCase();
+    const cleanLog = (logro || '').trim().replace(/\.$/, '').toLowerCase();
+
+    const existingOther = accionesLogros.find(
+      (al) => al.id !== id &&
+              (al.accion || '').trim().replace(/\.$/, '').toLowerCase() === cleanAcc && 
+              (al.logro || (al as any).logro_esperado || '').trim().replace(/\.$/, '').toLowerCase() === cleanLog
+    );
+
+    if (existingOther) {
+      alert(`Ya existe otra Acción y Logro Esperado idéntica en el catálogo maestro bajo la categoría "${existingOther.clasificacion || 'Sin clasificar'}".`);
+      return;
+    }
+
+    setAccionesLogros((prev) => prev.map((al) => (al.id === id ? { id, accion: accion.trim(), logro: logro.trim(), clasificacion } : al)));
     try {
       await supabase.from('acciones_logros').upsert({
         id,
-        accion,
-        logro,
+        accion: accion.trim(),
+        logro: logro.trim(),
         clasificacion
       });
       console.log(`[UPDATE MAESTRO] Acción/Logro ${id} actualizada.`);
