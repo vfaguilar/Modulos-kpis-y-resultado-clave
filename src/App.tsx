@@ -247,12 +247,12 @@ export default function App() {
 
   // ---------------- Acciones y Logros ----------------
   function handleAddAccionLogro(accion: string, logro: string, clasificacion: string) {
-    const cleanAcc = (accion || '').trim().replace(/\.$/, '').toLowerCase();
-    const cleanLog = (logro || '').trim().replace(/\.$/, '').toLowerCase();
+    const cleanAcc = (accion || '').trim().toLowerCase();
+    const cleanLog = (logro || '').trim().toLowerCase();
 
     const existingAL = accionesLogros.find(
-      (al) => (al.accion || '').trim().replace(/\.$/, '').toLowerCase() === cleanAcc && 
-              (al.logro || (al as any).logro_esperado || '').trim().replace(/\.$/, '').toLowerCase() === cleanLog
+      (al) => (al.accion || '').trim().toLowerCase() === cleanAcc && 
+              (al.logro || (al as any).logro_esperado || '').trim().toLowerCase() === cleanLog
     );
 
     if (existingAL) {
@@ -278,13 +278,13 @@ export default function App() {
     );
   }
   async function handleUpdateAccionLogro(id: string, accion: string, logro: string, clasificacion: string) {
-    const cleanAcc = (accion || '').trim().replace(/\.$/, '').toLowerCase();
-    const cleanLog = (logro || '').trim().replace(/\.$/, '').toLowerCase();
+    const cleanAcc = (accion || '').trim().toLowerCase();
+    const cleanLog = (logro || '').trim().toLowerCase();
 
     const existingOther = accionesLogros.find(
       (al) => al.id !== id &&
-              (al.accion || '').trim().replace(/\.$/, '').toLowerCase() === cleanAcc && 
-              (al.logro || (al as any).logro_esperado || '').trim().replace(/\.$/, '').toLowerCase() === cleanLog
+              (al.accion || '').trim().toLowerCase() === cleanAcc && 
+              (al.logro || (al as any).logro_esperado || '').trim().toLowerCase() === cleanLog
     );
 
     if (existingOther) {

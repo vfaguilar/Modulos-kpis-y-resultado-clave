@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Cargo, AccionLogro } from '../types';
 import CargoListSidebar from './CargoListSidebar';
-import { CLASIFICACIONES } from '../data/seed';
 
 interface Props {
   cargos: Cargo[];
@@ -12,14 +11,9 @@ interface Props {
   onDelete?: (id: string) => void;
 }
 
-const normalizeCategory = (cat?: string): string => {
-  if (!cat || !cat.trim()) return 'SIN CLASIFICAR';
-  return cat
-    .toString()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase()
-    .trim();
+const getCategoryKey = (rawCat?: string): string => {
+  if (!rawCat || !rawCat.trim()) return 'SIN CLASIFICAR';
+  return rawCat.trim().toUpperCase();
 };
 
 export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, onAdd, onUpdate, onDelete }: Props) {
@@ -32,7 +26,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
   const [editingId, setEditingId] = useState<string | null>(null);
   const [accion, setAccion] = useState('');
   const [logro, setLogro] = useState('');
-  const [newClasificacion, setNewClasificacion] = useState(CLASIFICACIONES[0]);
+  const [newClasificacion, setNewClasificacion] = useState('Sin clasificar');
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,34 +37,50 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
 
   const cargo = useMemo(() => cargos.find((c) => c.id === cargoId) ?? (cargos[0] || null), [cargos, cargoId]);
 
+  // Generación 100% dinámica de categorías basadas en la tabla acciones_logros
+  const dynamicCategories = useMemo(() => {
+    const map = new Map<string, string>();
+    accionesLogros.forEach((al) => {
+      const key = getCategoryKey(al.clasificacion);
+      if (!map.has(key)) {
+        const label = (al.clasificacion && al.clasificacion.trim()) ? al.clasificacion.trim() : 'Sin clasificar';
+        map.set(key, label);
+      }
+    });
+    const list = Array.from(map.entries()).map(([key, label]) => ({ key, label }));
+    list.sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
+    return list;
+  }, [accionesLogros]);
+
   const alCountsByCat = useMemo(() => {
     const map: Record<string, { assigned: number; total: number }> = {};
-    CLASIFICACIONES.forEach((cat) => {
-      map[normalizeCategory(cat)] = { assigned: 0, total: 0 };
+    dynamicCategories.forEach((cat) => {
+      map[cat.key] = { assigned: 0, total: 0 };
     });
-    map['SIN CLASIFICAR'] = map['SIN CLASIFICAR'] || { assigned: 0, total: 0 };
+
+    const cargoAssignedIds = new Set((cargo?.accionLogroIds || []).map(String));
 
     accionesLogros.forEach((al) => {
-      const normCat = normalizeCategory(al.clasificacion);
-      if (!map[normCat]) {
-        map[normCat] = { assigned: 0, total: 0 };
+      const key = getCategoryKey(al.clasificacion);
+      if (!map[key]) {
+        map[key] = { assigned: 0, total: 0 };
       }
-      map[normCat].total += 1;
-      if (cargo && cargo.accionLogroIds.map(String).includes(String(al.id))) {
-        map[normCat].assigned += 1;
+      map[key].total += 1;
+      if (cargoAssignedIds.has(String(al.id))) {
+        map[key].assigned += 1;
       }
     });
     return map;
-  }, [accionesLogros, cargo]);
+  }, [accionesLogros, cargo, dynamicCategories]);
 
   const disponibles = useMemo(() => {
     if (!cargo || subtab === 'catalogo') return accionesLogros;
-    const clasifCargo = normalizeCategory(cargo.clasificacion);
+    const clasifCargoKey = getCategoryKey(cargo.clasificacion);
     const cargoAlIds = new Set((cargo.accionLogroIds || []).map(String));
 
     const filtered = accionesLogros.filter(
       (al) =>
-        normalizeCategory(al.clasificacion) === clasifCargo ||
+        getCategoryKey(al.clasificacion) === clasifCargoKey ||
         cargoAlIds.has(String(al.id))
     );
     return filtered.length > 0 ? filtered : accionesLogros;
@@ -81,8 +91,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     let list = disponibles;
 
     if (filterClasificacion !== 'TODAS') {
-      const normSel = normalizeCategory(filterClasificacion);
-      list = list.filter((al) => normalizeCategory(al.clasificacion) === normSel);
+      list = list.filter((al) => getCategoryKey(al.clasificacion) === filterClasificacion);
     }
 
     if (q !== '') {
@@ -115,7 +124,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     setEditingId(null);
     setAccion('');
     setLogro('');
-    setNewClasificacion(CLASIFICACIONES[0]);
+    setNewClasificacion(dynamicCategories[0]?.label || 'Sin clasificar');
     setShowForm(true);
   }
 
@@ -123,7 +132,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     setEditingId(al.id);
     setAccion(al.accion);
     setLogro(al.logro);
-    setNewClasificacion(al.clasificacion || CLASIFICACIONES[0]);
+    setNewClasificacion(al.clasificacion || 'Sin clasificar');
     setShowForm(true);
   }
 
@@ -207,7 +216,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                   </div>
                 </div>
 
-                {/* Pills de Clasificación */}
+                {/* Pills de Clasificación 100% Dinámicas */}
                 <div className="subtabs-pills-bar" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', margin: '12px 0' }}>
                   <button
                     type="button"
@@ -216,17 +225,16 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                   >
                     Todas ({cargo.accionLogroIds.length}/{accionesLogros.length})
                   </button>
-                  {CLASIFICACIONES.map((cat) => {
-                    const normCat = normalizeCategory(cat);
-                    const counts = alCountsByCat[normCat] || { assigned: 0, total: 0 };
+                  {dynamicCategories.map((cat) => {
+                    const counts = alCountsByCat[cat.key] || { assigned: 0, total: 0 };
                     return (
                       <button
-                        key={cat}
+                        key={cat.key}
                         type="button"
-                        className={`subtab-pill ${normalizeCategory(filterClasificacion) === normCat ? 'active' : ''}`}
-                        onClick={() => setFilterClasificacion(cat)}
+                        className={`subtab-pill ${filterClasificacion === cat.key ? 'active' : ''}`}
+                        onClick={() => setFilterClasificacion(cat.key)}
                       >
-                        {cat} ({counts.assigned}/{counts.total})
+                        {cat.label} ({counts.assigned}/{counts.total})
                       </button>
                     );
                   })}
@@ -249,7 +257,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                     </div>
                   )}
                   {filtered.map((al) => {
-                    const checked = cargo.accionLogroIds.map(String).includes(String(al.id));
+                    const checked = (cargo.accionLogroIds || []).map(String).includes(String(al.id));
                     return (
                       <div key={al.id} className={`asignar-item-row ${checked ? 'checked' : ''}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, cursor: 'pointer' }}>
@@ -312,17 +320,16 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
             >
               Todas ({accionesLogros.length})
             </button>
-            {CLASIFICACIONES.map((cat) => {
-              const normCat = normalizeCategory(cat);
-              const counts = alCountsByCat[normCat] || { assigned: 0, total: 0 };
+            {dynamicCategories.map((cat) => {
+              const counts = alCountsByCat[cat.key] || { assigned: 0, total: 0 };
               return (
                 <button
-                  key={cat}
+                  key={cat.key}
                   type="button"
-                  className={`subtab-pill ${normalizeCategory(filterClasificacion) === normCat ? 'active' : ''}`}
-                  onClick={() => setFilterClasificacion(cat)}
+                  className={`subtab-pill ${filterClasificacion === cat.key ? 'active' : ''}`}
+                  onClick={() => setFilterClasificacion(cat.key)}
                 >
-                  {cat} ({counts.total})
+                  {cat.label} ({counts.total})
                 </button>
               );
             })}
@@ -385,9 +392,13 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
               <label>
                 Clasificación
                 <select value={newClasificacion} onChange={(e) => setNewClasificacion(e.target.value)}>
-                  {CLASIFICACIONES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
+                  {dynamicCategories.length > 0 ? (
+                    dynamicCategories.map((c) => (
+                      <option key={c.key} value={c.label}>{c.label}</option>
+                    ))
+                  ) : (
+                    <option value="Sin clasificar">Sin clasificar</option>
+                  )}
                 </select>
               </label>
               <div className="form-actions">
