@@ -73,22 +73,9 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
     return map;
   }, [accionesLogros, cargo, dynamicCategories]);
 
-  const disponibles = useMemo(() => {
-    if (!cargo || subtab === 'catalogo') return accionesLogros;
-    const clasifCargoKey = getCategoryKey(cargo.clasificacion);
-    const cargoAlIds = new Set((cargo.accionLogroIds || []).map(String));
-
-    const filtered = accionesLogros.filter(
-      (al) =>
-        getCategoryKey(al.clasificacion) === clasifCargoKey ||
-        cargoAlIds.has(String(al.id))
-    );
-    return filtered.length > 0 ? filtered : accionesLogros;
-  }, [accionesLogros, cargo, subtab]);
-
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let list = disponibles;
+    let list = accionesLogros;
 
     if (filterClasificacion !== 'TODAS') {
       list = list.filter((al) => getCategoryKey(al.clasificacion) === filterClasificacion);
@@ -113,7 +100,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
       }
       return a.accion.localeCompare(b.accion, 'es', { sensitivity: 'base' });
     });
-  }, [disponibles, filterClasificacion, search, cargo, subtab]);
+  }, [accionesLogros, filterClasificacion, search, cargo, subtab]);
 
   function flash(msg: string) {
     setToast(msg);
@@ -251,9 +238,9 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                 </div>
 
                 <div className="asignar-item-list">
-                  {disponibles.length === 0 && (
+                  {filtered.length === 0 && (
                     <div className="empty-hint">
-                      No hay acciones creadas aún. Haz clic en "+ Nueva acción y logro" para agregar.
+                      No se encontraron acciones y logros para esta categoría o búsqueda.
                     </div>
                   )}
                   {filtered.map((al) => {
@@ -263,7 +250,12 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                         <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, cursor: 'pointer' }}>
                           <input type="checkbox" checked={checked} onChange={() => { onToggle(cargo.id, al.id); flash('Guardado'); }} style={{ marginTop: '3px' }} />
                           <div>
-                            <div className="asignar-item-accion">{al.accion}</div>
+                            <div className="asignar-item-accion">
+                              {al.accion}
+                              <span className="nivel-pill" style={{ background: '#eef1f4', color: '#374151', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 600, marginLeft: '8px', display: 'inline-block' }}>
+                                {al.clasificacion || 'Sin clasificar'}
+                              </span>
+                            </div>
                             <div className="asignar-item-meta">
                               <span><strong>Logro esperado:</strong> {al.logro || '—'}</span>
                             </div>
@@ -305,7 +297,7 @@ export default function AccionesLogrosView({ cargos, accionesLogros, onToggle, o
                 </div>
               </div>
             ) : (
-              <div className="empty-hint">Selecciona un cargo de la lista para gestionar sus asignaciones.</div>
+              <div className="empty-hint">Selecciona un cargo de la lista izquierda para gestionar sus asignaciones.</div>
             )}
           </div>
         </div>
