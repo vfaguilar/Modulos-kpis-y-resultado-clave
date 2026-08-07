@@ -43,7 +43,26 @@ export async function fetchAllPaginated(client: any, tableName: string): Promise
       .range(page * pageSize, (page + 1) * pageSize - 1);
 
     if (error || !data) {
-      if (error) console.error(`Error paginando ${tableName} (página ${page}):`, error);
+      if (error) {
+        console.error(`Error paginando ${tableName} (página ${page}):`, error);
+        const is401 = error.status === 401 || String(error.code) === '401' || error.code === 'PGRST301' || (error.message && (error.message.includes('401') || error.message.includes('JWT') || error.message.includes('session') || error.message.includes('Unauthorized')));
+        if (is401 && page === 0) {
+          console.warn(`[AUTH RECOVERY 401] Detectado HTTP 401 en ${tableName} (iFrame). Re-verificando sesión con parent...`);
+          const isAuth = await checkIframeAuth();
+          if (isAuth) {
+            const { data: retryData, error: retryErr } = await client
+              .from(tableName)
+              .select('*')
+              .range(0, pageSize - 1);
+            if (!retryErr && retryData) {
+              allData = [...allData, ...retryData];
+              hasMore = retryData.length === pageSize;
+              page++;
+              continue;
+            }
+          }
+        }
+      }
       break;
     }
     allData = [...allData, ...data];
