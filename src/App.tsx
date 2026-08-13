@@ -240,7 +240,20 @@ export default function App() {
       prev.map((c) => {
         if (c.id !== cargoId) return c;
         const has = c.kpiIds.includes(kpiId);
-        return { ...c, kpiIds: has ? c.kpiIds.filter((id) => id !== kpiId) : [...c.kpiIds, kpiId] };
+        if (has) {
+          return { ...c, kpiIds: c.kpiIds.filter((id) => id !== kpiId) };
+        } else {
+          const parentRc = resultados.find((r) => (r.kpis || []).some((k) => k.id === kpiId));
+          const parentRcId = parentRc?.id;
+          const newRcIds = parentRcId && !c.resultadoClaveIds.includes(parentRcId)
+            ? [...c.resultadoClaveIds, parentRcId]
+            : c.resultadoClaveIds;
+          return {
+            ...c,
+            resultadoClaveIds: newRcIds,
+            kpiIds: [...c.kpiIds, kpiId],
+          };
+        }
       })
     );
   }

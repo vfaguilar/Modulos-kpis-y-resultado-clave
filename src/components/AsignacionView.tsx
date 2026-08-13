@@ -215,7 +215,7 @@ export default function AsignacionView({ cargos, resultados, onToggleResultado, 
                         )}
                       </label>
 
-                      {checked && sortedKpis.length > 0 && (
+                      {sortedKpis.length > 0 && (
                         <div className="rc-kpi-assign-list">
                           {sortedKpis.map((k) => {
                             const kpiChecked = cargo.kpiIds.includes(k.id);
