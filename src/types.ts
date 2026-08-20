@@ -15,6 +15,7 @@ export interface NivelInfo {
 export interface Kpi {
   id: string;
   texto: string;
+  nivel?: string;
 }
 
 // Catálogo: un Resultado Clave con sus KPIs asociados.
@@ -22,6 +23,7 @@ export interface ResultadoClave {
   id: string;
   texto: string;
   clasificacion: string;
+  nivel?: string;
   kpis: Kpi[];
 }
 
@@ -31,6 +33,7 @@ export interface AccionLogro {
   accion: string;
   logro: string;
   clasificacion: string;
+  nivel?: string;
 }
 
 export interface Requisito {

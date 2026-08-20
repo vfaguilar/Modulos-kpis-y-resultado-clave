@@ -4,30 +4,8 @@
     "nombre": "Subgerente de Finanzas",
     "nivel": "SUPERIOR_ESTRATEGICO",
     "clasificacion": "GERENTE CORPORATIVO",
-    "resultadoClaveIds": [
-      "rc-108",
-      "rc-82",
-      "rc-42",
-      "rc-109",
-      "rc-32"
-    ],
-    "kpiIds": [
-      "kpi-309",
-      "kpi-310",
-      "kpi-311",
-      "kpi-235",
-      "kpi-236",
-      "kpi-237",
-      "kpi-118",
-      "kpi-119",
-      "kpi-120",
-      "kpi-312",
-      "kpi-313",
-      "kpi-314",
-      "kpi-90",
-      "kpi-91",
-      "kpi-92"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -36,30 +14,8 @@
     "nombre": "Jefe Taller de Servicios",
     "nivel": "SUPERIOR_TACTICO",
     "clasificacion": "JEFE SUCURSAL",
-    "resultadoClaveIds": [
-      "rc-7",
-      "rc-74",
-      "rc-43",
-      "rc-5",
-      "rc-1"
-    ],
-    "kpiIds": [
-      "kpi-18",
-      "kpi-19",
-      "kpi-20",
-      "kpi-211",
-      "kpi-212",
-      "kpi-213",
-      "kpi-121",
-      "kpi-122",
-      "kpi-123",
-      "kpi-12",
-      "kpi-13",
-      "kpi-14",
-      "kpi-1",
-      "kpi-2",
-      "kpi-3"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -68,30 +24,8 @@
     "nombre": "Jefe Flotas y Camiones",
     "nivel": "SUPERIOR_TACTICO",
     "clasificacion": "JEFE NEGOCIO",
-    "resultadoClaveIds": [
-      "rc-45",
-      "rc-68",
-      "rc-17",
-      "rc-86",
-      "rc-60"
-    ],
-    "kpiIds": [
-      "kpi-127",
-      "kpi-128",
-      "kpi-129",
-      "kpi-194",
-      "kpi-195",
-      "kpi-196",
-      "kpi-48",
-      "kpi-49",
-      "kpi-50",
-      "kpi-245",
-      "kpi-246",
-      "kpi-247",
-      "kpi-170",
-      "kpi-171",
-      "kpi-172"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -100,28 +34,8 @@
     "nombre": "Jefe División Usados",
     "nivel": "SUPERIOR_TACTICO",
     "clasificacion": "JEFE NEGOCIO",
-    "resultadoClaveIds": [
-      "rc-47",
-      "rc-88",
-      "rc-21",
-      "rc-102",
-      "rc-94"
-    ],
-    "kpiIds": [
-      "kpi-133",
-      "kpi-134",
-      "kpi-135",
-      "kpi-251",
-      "kpi-252",
-      "kpi-60",
-      "kpi-61",
-      "kpi-291",
-      "kpi-292",
-      "kpi-293",
-      "kpi-267",
-      "kpi-268",
-      "kpi-269"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -130,28 +44,8 @@
     "nombre": "Jefe de Productos y Financiamiento Automotriz",
     "nivel": "SUPERIOR_TACTICO",
     "clasificacion": "JEFE NEGOCIO",
-    "resultadoClaveIds": [
-      "rc-99",
-      "rc-113",
-      "rc-63",
-      "rc-103",
-      "rc-23"
-    ],
-    "kpiIds": [
-      "kpi-282",
-      "kpi-283",
-      "kpi-284",
-      "kpi-324",
-      "kpi-325",
-      "kpi-326",
-      "kpi-179",
-      "kpi-180",
-      "kpi-181",
-      "kpi-294",
-      "kpi-295",
-      "kpi-296",
-      "kpi-65"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -160,28 +54,8 @@
     "nombre": "Facilitador (Desabolladura y Pintura)",
     "nivel": "INTERMEDIO",
     "clasificacion": "ENCARGADOS",
-    "resultadoClaveIds": [
-      "rc-19",
-      "rc-74",
-      "rc-56",
-      "rc-43",
-      "rc-75"
-    ],
-    "kpiIds": [
-      "kpi-54",
-      "kpi-55",
-      "kpi-56",
-      "kpi-211",
-      "kpi-212",
-      "kpi-213",
-      "kpi-160",
-      "kpi-121",
-      "kpi-122",
-      "kpi-123",
-      "kpi-214",
-      "kpi-215",
-      "kpi-216"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -190,26 +64,8 @@
     "nombre": "Encargado Flotas y Camiones",
     "nivel": "INTERMEDIO",
     "clasificacion": "ENCARGADOS",
-    "resultadoClaveIds": [
-      "rc-68",
-      "rc-12",
-      "rc-52",
-      "rc-16"
-    ],
-    "kpiIds": [
-      "kpi-194",
-      "kpi-195",
-      "kpi-196",
-      "kpi-33",
-      "kpi-34",
-      "kpi-35",
-      "kpi-148",
-      "kpi-149",
-      "kpi-150",
-      "kpi-45",
-      "kpi-46",
-      "kpi-47"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -218,30 +74,8 @@
     "nombre": "Encargado de Operaciones",
     "nivel": "INTERMEDIO",
     "clasificacion": "ENCARGADOS",
-    "resultadoClaveIds": [
-      "rc-31",
-      "rc-62",
-      "rc-40",
-      "rc-111",
-      "rc-96"
-    ],
-    "kpiIds": [
-      "kpi-87",
-      "kpi-88",
-      "kpi-89",
-      "kpi-176",
-      "kpi-177",
-      "kpi-178",
-      "kpi-112",
-      "kpi-113",
-      "kpi-114",
-      "kpi-318",
-      "kpi-319",
-      "kpi-320",
-      "kpi-273",
-      "kpi-274",
-      "kpi-275"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -250,26 +84,8 @@
     "nombre": "Vendedor de Flotas Zona Sur",
     "nivel": "INTERMEDIO",
     "clasificacion": "VENDEDOR",
-    "resultadoClaveIds": [
-      "rc-27",
-      "rc-60",
-      "rc-78",
-      "rc-37"
-    ],
-    "kpiIds": [
-      "kpi-75",
-      "kpi-76",
-      "kpi-77",
-      "kpi-170",
-      "kpi-171",
-      "kpi-172",
-      "kpi-223",
-      "kpi-224",
-      "kpi-225",
-      "kpi-103",
-      "kpi-104",
-      "kpi-105"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -278,30 +94,8 @@
     "nombre": "Coordinador de Marketing",
     "nivel": "INTERMEDIO",
     "clasificacion": "ANALISTA",
-    "resultadoClaveIds": [
-      "rc-24",
-      "rc-84",
-      "rc-2",
-      "rc-14",
-      "rc-34"
-    ],
-    "kpiIds": [
-      "kpi-66",
-      "kpi-67",
-      "kpi-68",
-      "kpi-240",
-      "kpi-241",
-      "kpi-242",
-      "kpi-4",
-      "kpi-5",
-      "kpi-6",
-      "kpi-39",
-      "kpi-40",
-      "kpi-41",
-      "kpi-96",
-      "kpi-97",
-      "kpi-98"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -310,24 +104,8 @@
     "nombre": "Asistente Comercial Rent a Car",
     "nivel": "INTERMEDIO",
     "clasificacion": "ADMINISTRATIVO",
-    "resultadoClaveIds": [
-      "rc-100",
-      "rc-35",
-      "rc-1",
-      "rc-17"
-    ],
-    "kpiIds": [
-      "kpi-285",
-      "kpi-286",
-      "kpi-287",
-      "kpi-99",
-      "kpi-1",
-      "kpi-2",
-      "kpi-3",
-      "kpi-48",
-      "kpi-49",
-      "kpi-50"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -336,30 +114,8 @@
     "nombre": "Jefe de Ventas Retail (Vehículos Nuevos)",
     "nivel": "INTERMEDIO",
     "clasificacion": "JEFE NEGOCIO",
-    "resultadoClaveIds": [
-      "rc-38",
-      "rc-54",
-      "rc-64",
-      "rc-66",
-      "rc-44"
-    ],
-    "kpiIds": [
-      "kpi-106",
-      "kpi-107",
-      "kpi-108",
-      "kpi-154",
-      "kpi-155",
-      "kpi-156",
-      "kpi-182",
-      "kpi-183",
-      "kpi-184",
-      "kpi-188",
-      "kpi-189",
-      "kpi-190",
-      "kpi-124",
-      "kpi-125",
-      "kpi-126"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -368,26 +124,8 @@
     "nombre": "Encargado Marcas Emergentes",
     "nivel": "INTERMEDIO",
     "clasificacion": "ENCARGADOS",
-    "resultadoClaveIds": [
-      "rc-29",
-      "rc-81",
-      "rc-9",
-      "rc-24"
-    ],
-    "kpiIds": [
-      "kpi-81",
-      "kpi-82",
-      "kpi-83",
-      "kpi-232",
-      "kpi-233",
-      "kpi-234",
-      "kpi-24",
-      "kpi-25",
-      "kpi-26",
-      "kpi-66",
-      "kpi-67",
-      "kpi-68"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -396,26 +134,8 @@
     "nombre": "Supervisor División Usados",
     "nivel": "INTERMEDIO",
     "clasificacion": "SUPERVISOR",
-    "resultadoClaveIds": [
-      "rc-110",
-      "rc-25",
-      "rc-59",
-      "rc-98"
-    ],
-    "kpiIds": [
-      "kpi-315",
-      "kpi-316",
-      "kpi-317",
-      "kpi-69",
-      "kpi-70",
-      "kpi-71",
-      "kpi-167",
-      "kpi-168",
-      "kpi-169",
-      "kpi-279",
-      "kpi-280",
-      "kpi-281"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -424,26 +144,8 @@
     "nombre": "Supervisor de Operaciones y Logística",
     "nivel": "INTERMEDIO",
     "clasificacion": "SUPERVISOR",
-    "resultadoClaveIds": [
-      "rc-71",
-      "rc-20",
-      "rc-101",
-      "rc-94"
-    ],
-    "kpiIds": [
-      "kpi-203",
-      "kpi-204",
-      "kpi-205",
-      "kpi-57",
-      "kpi-58",
-      "kpi-59",
-      "kpi-288",
-      "kpi-289",
-      "kpi-290",
-      "kpi-267",
-      "kpi-268",
-      "kpi-269"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -452,25 +154,8 @@
     "nombre": "Jefe Zonal",
     "nivel": "INTERMEDIO",
     "clasificacion": "JEFE SUCURSAL",
-    "resultadoClaveIds": [
-      "rc-4",
-      "rc-69",
-      "rc-36",
-      "rc-49"
-    ],
-    "kpiIds": [
-      "kpi-10",
-      "kpi-11",
-      "kpi-197",
-      "kpi-198",
-      "kpi-199",
-      "kpi-100",
-      "kpi-101",
-      "kpi-102",
-      "kpi-139",
-      "kpi-140",
-      "kpi-141"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   },
@@ -479,25 +164,8 @@
     "nombre": "Jefe de Negocios",
     "nivel": "INTERMEDIO",
     "clasificacion": "JEFE NEGOCIO",
-    "resultadoClaveIds": [
-      "rc-58",
-      "rc-50",
-      "rc-85",
-      "rc-76"
-    ],
-    "kpiIds": [
-      "kpi-164",
-      "kpi-165",
-      "kpi-166",
-      "kpi-142",
-      "kpi-143",
-      "kpi-144",
-      "kpi-243",
-      "kpi-244",
-      "kpi-217",
-      "kpi-218",
-      "kpi-219"
-    ],
+    "resultadoClaveIds": [],
+    "kpiIds": [],
     "accionLogroIds": [],
     "requisitoIds": []
   }

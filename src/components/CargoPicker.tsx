@@ -12,47 +12,66 @@ export default function CargoPicker({ cargos, selectedCargoId, onSelectCargo }: 
   const [nivel, setNivel] = useState<NivelKey | ''>('');
   const [clasificacion, setClasificacion] = useState<string>('');
 
-  // Se muestran siempre todos los niveles del catálogo (aunque todavía
-  // ningún cargo los use), para que niveles nuevos como Cardinal o Inicial
-  // queden disponibles para seleccionar desde el primer momento.
+  // Auto-selección por defecto del primer cargo si no hay ninguno seleccionado
+  useEffect(() => {
+    if (!selectedCargoId && cargos.length > 0) {
+      onSelectCargo(cargos[0].id);
+    }
+  }, [cargos, selectedCargoId, onSelectCargo]);
+
+  // Si el cargo seleccionado cambia, sincroniza los selectores de Nivel y Clasificación
+  useEffect(() => {
+    if (!selectedCargoId) return;
+    const c = cargos.find((item) => item.id === selectedCargoId);
+    if (!c) return;
+    setNivel(c.nivel);
+    setClasificacion(c.clasificacion || 'Sin clasificar');
+  }, [selectedCargoId, cargos]);
+
   const nivelesDisponibles = NIVELES;
 
   const clasificaciones = useMemo(() => {
-    if (!nivel) return [];
-    const set = new Set(cargos.filter((c) => c.nivel === nivel).map((c) => c.clasificacion || 'Sin clasificación'));
+    let source = cargos;
+    if (nivel) source = source.filter((c) => c.nivel === nivel);
+    const set = new Set(source.map((c) => c.clasificacion || 'Sin clasificar'));
     return Array.from(set).sort();
   }, [cargos, nivel]);
 
   const cargosDisponibles = useMemo(() => {
-    if (!nivel || !clasificacion) return [];
-    return cargos
-      .filter((c) => c.nivel === nivel && (c.clasificacion || 'Sin clasificación') === clasificacion)
-      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+    let list = cargos;
+    if (nivel) list = list.filter((c) => c.nivel === nivel);
+    if (clasificacion) list = list.filter((c) => (c.clasificacion || 'Sin clasificar') === clasificacion);
+    return [...list].sort((a, b) => a.nombre.localeCompare(b.nombre));
   }, [cargos, nivel, clasificacion]);
 
-  // Si el cargo seleccionado externamente cambia, sincroniza los selects.
-  useEffect(() => {
-    if (!selectedCargoId) return;
-    const c = cargos.find((c) => c.id === selectedCargoId);
-    if (!c) return;
-    setNivel(c.nivel);
-    setClasificacion(c.clasificacion || 'Sin clasificación');
-  }, [selectedCargoId]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
-    <div className="cargo-picker">
+    <div className="cargo-picker" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+      <label style={{ gridColumn: 'span 1' }}>
+        Puesto Seleccionado ({cargos.length})
+        <select
+          value={selectedCargoId ?? ''}
+          onChange={(e) => onSelectCargo(e.target.value || null)}
+          style={{ fontWeight: 600, borderColor: 'var(--accent)' }}
+        >
+          {cargos.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nombre} ({c.clasificacion || 'Sin clasificar'})
+            </option>
+          ))}
+        </select>
+      </label>
+
       <label>
-        1. Nivel
+        1. Nivel Jerárquico
         <select
           value={nivel}
           onChange={(e) => {
             const v = e.target.value as NivelKey | '';
             setNivel(v);
             setClasificacion('');
-            onSelectCargo(null);
           }}
         >
-          <option value="">Selecciona un nivel...</option>
+          <option value="">Todos los Niveles ({cargos.length})</option>
           {nivelesDisponibles.map((n) => (
             <option key={n.key} value={n.key}>{n.label}</option>
           ))}
@@ -63,13 +82,9 @@ export default function CargoPicker({ cargos, selectedCargoId, onSelectCargo }: 
         2. Clasificación
         <select
           value={clasificacion}
-          disabled={!nivel}
-          onChange={(e) => {
-            setClasificacion(e.target.value);
-            onSelectCargo(null);
-          }}
+          onChange={(e) => setClasificacion(e.target.value)}
         >
-          <option value="">{nivel ? 'Selecciona una clasificación...' : 'Elige primero un nivel'}</option>
+          <option value="">Todas las Clasificaciones ({clasificaciones.length})</option>
           {clasificaciones.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
@@ -77,13 +92,12 @@ export default function CargoPicker({ cargos, selectedCargoId, onSelectCargo }: 
       </label>
 
       <label>
-        3. Cargo
+        3. Puestos Filtrados
         <select
           value={selectedCargoId ?? ''}
-          disabled={!clasificacion}
           onChange={(e) => onSelectCargo(e.target.value || null)}
         >
-          <option value="">{clasificacion ? 'Selecciona un cargo...' : 'Elige primero una clasificación'}</option>
+          <option value="">Seleccionar de lista filtrada ({cargosDisponibles.length})...</option>
           {cargosDisponibles.map((c) => (
             <option key={c.id} value={c.id}>{c.nombre}</option>
           ))}
