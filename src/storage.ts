@@ -441,6 +441,24 @@ export async function saveToSupabase(data: AppData): Promise<void> {
           } else {
             console.log(`[REAL DB TEST - SUBMÓDULO REACT] OK | Filas confirmadas (perfiles_cargo): ${resPerf.length}`);
             notifyParentStatus('success', 'Guardado en BBDD');
+
+            if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+              window.parent.postMessage({
+                type: 'CARGO_DATA_MUTATED',
+                cargoId: cId,
+                section: 'kpis_acciones_requisitos',
+                payload: {
+                  resultados_clave: activeRCs,
+                  kpis: activeKPIs,
+                  contribuciones: activeContribs,
+                  formacion: formacionText,
+                  experiencia: experienciaText,
+                  otros_conocimientos: otrosConocimientosArr,
+                  condiciones_fisicas: condicionesFisicasArr,
+                  otros_requisitos: otrosRequisitosArr
+                }
+              }, '*');
+            }
           }
         } catch (ePerf) {
           console.error('[JSONB SYNC ERROR] Fallo al actualizar el perfil digital para PDF:', ePerf);
@@ -508,6 +526,17 @@ export async function deleteAccionLogroCascade(
             fecha_actualizacion: new Date().toISOString()
           }, { onConflict: 'id' });
           console.log(`[JSONB CLEANUP OK] perfiles_cargo.contribuciones actualizado para cargo ID "${cargoId}".`);
+
+          if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+            window.parent.postMessage({
+              type: 'CARGO_DATA_MUTATED',
+              cargoId: cargoId,
+              section: 'acciones',
+              payload: {
+                contribuciones: updatedContribs
+              }
+            }, '*');
+          }
         }
       }
     }
